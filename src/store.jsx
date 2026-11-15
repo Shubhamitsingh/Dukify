@@ -3,7 +3,7 @@ import { seed } from "./data";
 import { cascade, nextId } from "./local";
 import { normalizeSettings } from "./settings/data/defaults";
 
-const StoreContext = createContext(null);
+export const StoreContext = createContext(null);
 
 export function StoreProvider({ children }) {
   const [db, setDb] = useState(() => structuredClone(seed));

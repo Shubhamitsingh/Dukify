@@ -20,6 +20,7 @@ import {
 import { findCrumb, menu, navGroups, pathFor } from "./nav";
 import { formatDate, greeting } from "./lib/metrics";
 import { usePartner } from "./store";
+import { useAccessOptional } from "../access";
 import { FilterChip } from "./ui";
 
 const noticeMeta = {
@@ -74,6 +75,16 @@ export default function Shell({ children, session, dark, onToggleDark, onLogout 
     [notifications],
   );
   const openTickets = tickets.filter((ticket) => ticket.status === "Open").length;
+  const access = useAccessOptional();
+  const visibleNavGroups = useMemo(() => {
+    if (!access?.canPath) return navGroups;
+    return navGroups
+      .map((group) => ({
+        ...group,
+        items: group.items.filter((item) => access.canPath(item.to)),
+      }))
+      .filter((group) => group.items.length > 0);
+  }, [access]);
 
   useEffect(() => {
     setMobileOpen(false);
@@ -181,7 +192,7 @@ export default function Shell({ children, session, dark, onToggleDark, onLogout 
           </button>
         </div>
         <nav className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain py-2 pb-3">
-          {navGroups.map((group) => (
+          {visibleNavGroups.map((group) => (
             <div key={group.label} className="mb-1.5">
               {collapsed && !mobileOpen ? null : (
                 <p className="px-4 pt-2.5 pb-1.5 text-[10px] font-semibold tracking-[0.14em] text-gray-400 uppercase dark:text-gray-500">
@@ -586,34 +597,43 @@ function ProfileMenu({
         <p className="mb-2 text-[11px] text-gray-500">
           Signed-in brand: <span className="font-semibold text-gray-700 dark:text-gray-200">{session?.brandId || brand.id}</span>
         </p>
-        <label className="mb-2 flex items-center gap-2 text-[11px] font-semibold text-gray-600 dark:text-gray-300">
-          <input
-            type="checkbox"
-            checked={demoSwitch}
-            onChange={(event) => {
-              const on = event.target.checked;
-              setDemoSwitch(on);
-              if (on) unlockDemoTenantSwitch();
-              else if (session?.brandId) lockToBrand(session.brandId);
-            }}
-          />
-          Enable demo tenant switcher
-        </label>
-        <label className="block text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
-          Preview brand
-          <select
-            className="toolbar-field mt-1 w-full"
-            value={brand.id}
-            disabled={!demoSwitch}
-            onChange={(event) => switchBrand(event.target.value, { demo: true })}
-          >
-            {brands.map((item) => (
-              <option key={item.id} value={item.id}>
-                {item.name}
-              </option>
-            ))}
-          </select>
-        </label>
+        {import.meta.env.VITE_ALLOW_DEMO_TENANT_SWITCH === "true" ? (
+          <>
+            <label className="mb-2 flex items-center gap-2 text-[11px] font-semibold text-gray-600 dark:text-gray-300">
+              <input
+                type="checkbox"
+                checked={demoSwitch}
+                onChange={(event) => {
+                  const on = event.target.checked;
+                  setDemoSwitch(on);
+                  if (on) unlockDemoTenantSwitch();
+                  else if (session?.brandId) lockToBrand(session.brandId);
+                }}
+              />
+              Enable demo tenant switcher
+            </label>
+            <label className="block text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
+              Preview brand
+              <select
+                className="toolbar-field mt-1 w-full"
+                value={brand.id}
+                disabled={!demoSwitch}
+                onChange={(event) => switchBrand(event.target.value, { demo: true })}
+              >
+                {brands.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </>
+        ) : (
+          <p className="text-[11px] text-gray-500">
+            Tenant switching is disabled. Your session is locked to{" "}
+            <span className="font-semibold text-gray-700 dark:text-gray-200">{session?.brandId || brand.id}</span>.
+          </p>
+        )}
       </div>
       <button
         type="button"

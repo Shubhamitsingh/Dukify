@@ -47,6 +47,7 @@ import {
   X,
 } from "lucide-react";
 import { useStore } from "./store";
+import { useAccess } from "./access";
 import { approvals, exceptions } from "./work";
 
 export const navGroups = [
@@ -122,16 +123,14 @@ export const navGroups = [
     label: "Platform",
     items: [
       { to: "/reports", label: "Reports", icon: BarChart3 },
-      { to: "/staff", label: "Staff", icon: IdCard },
-      { to: "/roles", label: "Roles", icon: Shield },
+      { to: "/access/staff", label: "Staff & access", icon: IdCard },
+      { to: "/access/permissions", label: "Roles & permissions", icon: Shield },
+      { to: "/access/audit", label: "Audit log", icon: Activity },
       { to: "/settings", label: "Settings", icon: Settings },
       { to: "/integrations", label: "Integrations", icon: Unplug },
-      { to: "/security", label: "Security", icon: Activity },
     ],
   },
 ];
-
-const links = navGroups.flatMap((group) => group.items);
 
 function isSupportNavActive(to, pathname) {
   if (to === "/support") {
@@ -147,7 +146,37 @@ function dayGreeting(name = "Platform owner") {
 }
 
 export function Shell({ children, onLogout, dark, onToggleDark }) {
-  const { db } = useStore();
+  const { db: rawDb } = useStore();
+  const { principal, canPath, scopeOrders, scopeRows, roleLabel } = useAccess();
+  const db = useMemo(() => {
+    const brands = scopeRows(rawDb.brands, (b) => b.id);
+    const brandNameById = Object.fromEntries(rawDb.brands.map((b) => [b.id, b.name]));
+    const orders = scopeOrders(rawDb.orders, brandNameById);
+    const brandNames = new Set(brands.map((b) => b.name));
+    const orderIds = new Set(orders.map((o) => o.id));
+    return {
+      ...rawDb,
+      brands,
+      orders,
+      products: (rawDb.products || []).filter((p) => !p.brandId || brands.some((b) => b.id === p.brandId) || brandNames.has(p.brand)),
+      partners: rawDb.partners,
+      tickets: (rawDb.tickets || []).filter((t) => !t.brandId || brands.some((b) => b.id === t.brandId) || brandNames.has(t.brand)),
+      shipments: (rawDb.shipments || []).filter((s) => !s.order || orderIds.has(s.order)),
+      notices: rawDb.notices || [],
+    };
+  }, [rawDb, scopeOrders, scopeRows]);
+
+  const visibleNavGroups = useMemo(
+    () =>
+      navGroups
+        .map((group) => ({
+          ...group,
+          items: group.items.filter((item) => canPath(item.to)),
+        }))
+        .filter((group) => group.items.length > 0),
+    [canPath],
+  );
+
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
@@ -194,9 +223,11 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
   const results = useMemo(() => {
     const needle = query.trim().toLowerCase();
     if (!needle) return [];
-    const pages = links
+    const navLinks = visibleNavGroups.flatMap((g) => g.items);
+    const pages = navLinks
       .filter((item) => item.label.toLowerCase().includes(needle))
       .map((item) => ({ kind: "Page", label: item.label, to: item.to }));
+    // Search only scoped rows — never leak out-of-scope brand data
     const orders = db.orders
       .filter((order) => `${order.id} ${order.brand} ${order.product}`.toLowerCase().includes(needle))
       .slice(0, 4)
@@ -207,9 +238,11 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
     const products = db.products
       .filter((product) => `${product.name} ${product.sku} ${product.barcode || ""}`.toLowerCase().includes(needle))
       .map((product) => ({ kind: "Product", label: product.name, to: "/products", record: product.id }));
-    const partners = db.partners
-      .filter((partner) => partner.name.toLowerCase().includes(needle))
-      .map((partner) => ({ kind: "Partner", label: partner.name, to: "/partners", record: partner.id }));
+    const partners = canPath("/partners")
+      ? db.partners
+          .filter((partner) => partner.name.toLowerCase().includes(needle))
+          .map((partner) => ({ kind: "Partner", label: partner.name, to: "/partners", record: partner.id }))
+      : [];
     const shipments = db.shipments
       .filter((row) => `${row.awb} ${row.order}`.toLowerCase().includes(needle))
       .slice(0, 3)
@@ -227,7 +260,7 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
         to: `/support/ticket/${ticket.id}`,
       }));
     return [...pages, ...brands, ...partners, ...products, ...orders, ...shipments, ...tickets].slice(0, 8);
-  }, [db.brands, db.orders, db.partners, db.products, db.shipments, db.tickets, query]);
+  }, [canPath, db.brands, db.orders, db.partners, db.products, db.shipments, db.tickets, query, visibleNavGroups]);
 
   const width = collapsed ? 72 : 256;
   const railGap = 14;
@@ -249,7 +282,7 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
             {collapsed ? null : (
               <div className="min-w-0">
                 <span className="block truncate text-sm font-semibold whitespace-nowrap">Pahachan</span>
-                <span className="block truncate text-[11px] text-gray-500">Super Admin</span>
+                <span className="block truncate text-[11px] text-gray-500">{roleLabel || "Admin"}</span>
               </div>
             )}
           </div>
@@ -272,7 +305,7 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
           </button>
         </div>
         <nav className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden py-2 pb-3">
-          {navGroups.map((group) => {
+          {visibleNavGroups.map((group) => {
             const groupActive = group.items.some((item) =>
               item.to.startsWith("/support")
                 ? isSupportNavActive(item.to, location.pathname)
@@ -368,7 +401,7 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
             </button>
             <p className="min-w-0 truncate text-base font-bold tracking-tight sm:text-lg">
               {(() => {
-                const { when, name } = dayGreeting();
+                const { when, name } = dayGreeting(principal?.name || roleLabel || "there");
                 return (
                   <>
                     <span className="text-gray-600 dark:text-gray-300">{when}, </span>
@@ -559,8 +592,8 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
                   P
                 </span>
                 <span className="hidden text-left sm:block">
-                  <span className="block text-[13px] leading-4 font-semibold text-gray-900 dark:text-white">Platform owner</span>
-                  <span className="mt-0.5 block text-[11px] leading-3 text-gray-500">Super Admin</span>
+                  <span className="block text-[13px] leading-4 font-semibold text-gray-900 dark:text-white">{principal?.name || "User"}</span>
+                  <span className="mt-0.5 block text-[11px] leading-3 text-gray-500">{roleLabel}</span>
                 </span>
                 <ChevronDown className={`hidden h-3.5 w-3.5 text-gray-400 transition sm:block ${profileOpen ? "rotate-180" : ""}`} />
               </button>
@@ -574,8 +607,8 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
                       P
                     </span>
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-gray-900 dark:text-white">Platform owner</p>
-                      <p className="text-xs text-gray-500">Super Admin</p>
+                      <p className="truncate text-sm font-semibold text-gray-900 dark:text-white">{principal?.name || "User"}</p>
+                      <p className="text-xs text-gray-500">{roleLabel}</p>
                     </div>
                   </div>
                   <button

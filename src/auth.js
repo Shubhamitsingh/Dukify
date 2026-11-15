@@ -1,6 +1,16 @@
-import { brands } from "./brand/data/seed";
+import {
+  ROLES,
+  ROLE_LABELS,
+  isBrandRole,
+  isPlatformRole,
+  authenticateDemo,
+  isDemoMode,
+} from "./access";
 
-export const ROLES = {
+export { ROLES, ROLE_LABELS, isBrandRole, isPlatformRole };
+
+/** @deprecated Use ROLES.PLATFORM_OWNER — kept for any leftover imports during migration. */
+export const LEGACY_ROLES = {
   SUPER_ADMIN: "super_admin",
   BRAND_ADMIN: "brand_admin",
   BRAND_STAFF: "brand_staff",
@@ -9,25 +19,7 @@ export const ROLES = {
 export const SESSION_KEY = "pahachan-unified-session";
 export const THEME_KEY = "pahachan-theme";
 
-/** Demo Super Admin accounts (mock only). */
-export const SUPER_ADMIN_USERS = [
-  { email: "owner@pahachan.example", password: "admin1234", name: "Platform owner" },
-  { email: "admin@pahachan.example", password: "admin1234", name: "Platform admin" },
-];
-
-const DEFAULT_BRAND_PASSWORD = "demo1234";
-
-function norm(email) {
-  return String(email || "").trim().toLowerCase();
-}
-
-export function isSuperAdminRole(role) {
-  return role === ROLES.SUPER_ADMIN;
-}
-
-export function isBrandRole(role) {
-  return role === ROLES.BRAND_ADMIN || role === ROLES.BRAND_STAFF;
-}
+const VALID_ROLES = new Set(Object.values(ROLES));
 
 export function homeForRole(role) {
   if (isBrandRole(role)) return "/brand/dashboard/overview";
@@ -46,19 +38,40 @@ export function canAccessPath(session, pathname) {
   if (isBrandRole(session.role)) {
     return path === "/login" || isBrandWorkspacePath(path);
   }
-  if (isSuperAdminRole(session.role)) {
+  if (isPlatformRole(session.role)) {
     return !isBrandWorkspacePath(path);
   }
   return false;
+}
+
+function normalizeSession(parsed) {
+  if (!parsed?.email || !parsed?.role) return null;
+  // Invalidate legacy three-role sessions
+  if (!VALID_ROLES.has(parsed.role)) return null;
+  if (parsed.status === "revoked" || parsed.status === "disabled") return null;
+  return {
+    id: parsed.id,
+    email: parsed.email,
+    name: parsed.name,
+    role: parsed.role,
+    permissions: Array.isArray(parsed.permissions) ? parsed.permissions : [],
+    permissionSets: Array.isArray(parsed.permissionSets) ? parsed.permissionSets : [],
+    scope: parsed.scope || {
+      type: isBrandRole(parsed.role) ? "brand" : "selected_brands",
+      brandId: parsed.brandId || null,
+      brandIds: parsed.brandId ? [parsed.brandId] : [],
+      assignedRecordIds: [],
+    },
+    brandId: parsed.scope?.brandId || parsed.brandId || null,
+    status: parsed.status || "active",
+  };
 }
 
 export function readSession() {
   try {
     const raw = localStorage.getItem(SESSION_KEY);
     if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    if (!parsed?.email || !parsed?.role) return null;
-    return parsed;
+    return normalizeSession(JSON.parse(raw));
   } catch {
     return null;
   }
@@ -70,90 +83,59 @@ export function writeSession(session) {
 
 export function clearSession() {
   localStorage.removeItem(SESSION_KEY);
-  // Clear legacy keys so old sessions do not confuse demos
   localStorage.removeItem("pahachan-session");
   localStorage.removeItem("pahachan-partner-session");
 }
 
-function findBrandStaff(email) {
-  const needle = norm(email);
-  for (const brand of brands) {
-    const team = brand.team || [];
-    const member = team.find((row) => norm(row.email) === needle);
-    if (member) {
-      return { brand, member };
-    }
-  }
-  return null;
-}
-
 /**
- * Mock authentication — development only.
- * Returns { session } or { error }.
+ * Authentication entry.
+ * Demo: directory users (six roles). Production: Supabase Auth — see docs/ACCESS_SETUP.md.
+ * Browser storage is NOT a security boundary.
  */
 export function authenticate(email, password) {
-  const mail = norm(email);
+  const mail = String(email || "").trim().toLowerCase();
   const pass = String(password || "");
+  if (!mail || !pass) return { error: "Enter email and password." };
 
-  if (!mail || !pass) {
-    return { error: "Enter email and password." };
-  }
-
-  const superUser = SUPER_ADMIN_USERS.find((user) => norm(user.email) === mail);
-  if (superUser) {
-    if (pass !== superUser.password) {
-      return { error: "Wrong password for Super Admin demo account." };
-    }
+  if (!isDemoMode()) {
     return {
-      session: {
-        email: superUser.email,
-        role: ROLES.SUPER_ADMIN,
-        name: superUser.name,
-      },
+      error:
+        "Demo login is disabled. Set VITE_DEMO_MODE=true for local demos, or configure Supabase Auth (docs/ACCESS_SETUP.md).",
     };
   }
 
-  const brand = brands.find((item) => norm(item.email) === mail);
-  if (brand) {
-    if (pass !== DEFAULT_BRAND_PASSWORD) {
-      return { error: "Wrong password. Brand demo password is demo1234." };
-    }
-    return {
-      session: {
-        email: brand.email,
-        role: ROLES.BRAND_ADMIN,
-        brandId: brand.id,
-        name: brand.name,
-      },
-    };
-  }
+  const result = authenticateDemo(mail, pass);
+  if (!result.ok) return { error: result.error };
 
-  const staff = findBrandStaff(mail);
-  if (staff) {
-    if (pass !== DEFAULT_BRAND_PASSWORD) {
-      return { error: "Wrong password. Staff demo password is demo1234." };
-    }
-    return {
-      session: {
-        email: staff.member.email,
-        role: ROLES.BRAND_STAFF,
-        brandId: staff.brand.id,
-        name: staff.member.name,
-        staffRole: staff.member.role,
-      },
-    };
-  }
-
-  return { error: "Unknown demo account. Use a listed Super Admin or Brand email." };
+  const user = result.user;
+  return {
+    session: {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      permissions: user.permissions || [],
+      permissionSets: user.permissionSets || [],
+      scope: user.scope,
+      brandId: user.scope?.brandId || null,
+      status: user.status,
+    },
+  };
 }
 
-/** Demo tenant switcher is not membership. Production must scope by verified brandIds. */
+/** Demo tenant switcher must not unlock production isolation. */
 export function canSwitchDemoTenant(session) {
-  return Boolean(session && isBrandRole(session.role));
+  return Boolean(session && isBrandRole(session.role) && isDemoMode() && import.meta.env.VITE_ALLOW_DEMO_TENANT_SWITCH === "true");
 }
 
 export function isAssignedBrand(session, brandId) {
-  if (!session || !isBrandRole(session.role)) return false;
-  if (!session.brandId) return false;
-  return session.brandId === brandId;
+  if (!session || !brandId) return false;
+  const ids = session.scope?.brandIds || (session.brandId ? [session.brandId] : []);
+  if (session.scope?.type === "all_brands") return true;
+  return ids.includes(brandId);
+}
+
+/** @deprecated Prefer AccessProvider — kept for transitional imports. */
+export function isSuperAdminRole(role) {
+  return isPlatformRole(role);
 }

@@ -1,0 +1,510 @@
+{
+  "meta": {
+    "product": "Pahachan Super Admin",
+    "model": "role + permission + scope (default-deny)",
+    "source": "src/access/",
+    "note": "Browser demo is not production security. Production must enforce via API/RLS.",
+    "version": "1.0.0"
+  },
+  "concepts": {
+    "role": "User ka platform/brand ke saath relationship (6 templates only)",
+    "permission": "Ek specific action (view/create/edit/…)",
+    "scope": "Kaunse brands ya records par woh action apply hota hai",
+    "default_deny": true
+  },
+  "scope_types": {
+    "all_brands": {
+      "id": "all_brands",
+      "label": "All brands",
+      "description": "Har brand ka data (sirf explicitly granted ho to)"
+    },
+    "selected_brands": {
+      "id": "selected_brands",
+      "label": "Selected brands",
+      "description": "Sirf listed brand_ids"
+    },
+    "assigned_records": {
+      "id": "assigned_records",
+      "label": "Assigned records only",
+      "description": "Sirf explicitly assigned order/ticket/record ids"
+    },
+    "brand": {
+      "id": "brand",
+      "label": "Single brand",
+      "description": "Ek brand account (brand roles)"
+    }
+  },
+  "permissions_catalog": [
+    { "id": "dashboard.view", "group": "overview", "label": "View dashboard" },
+    { "id": "dashboard.all_brands", "group": "overview", "label": "See all-brand totals" },
+    { "id": "brands.view", "group": "brands", "label": "View brands" },
+    { "id": "brands.create", "group": "brands", "label": "Create brands" },
+    { "id": "brands.edit", "group": "brands", "label": "Edit brands" },
+    { "id": "brands.archive", "group": "brands", "label": "Archive brands" },
+    { "id": "catalog.view", "group": "catalog", "label": "View catalogue" },
+    { "id": "catalog.create", "group": "catalog", "label": "Create products" },
+    { "id": "catalog.edit", "group": "catalog", "label": "Edit products" },
+    { "id": "catalog.publish", "group": "catalog", "label": "Publish / hide products" },
+    { "id": "prices.manage", "group": "catalog", "label": "Manage prices" },
+    { "id": "supplier_cost.view", "group": "catalog", "label": "View supplier costs" },
+    { "id": "inventory.view", "group": "catalog", "label": "View inventory" },
+    { "id": "inventory.adjust", "group": "catalog", "label": "Adjust inventory" },
+    { "id": "purchasing.manage", "group": "catalog", "label": "Manage purchasing" },
+    { "id": "orders.view", "group": "orders", "label": "View orders" },
+    { "id": "orders.edit", "group": "orders", "label": "Edit orders" },
+    { "id": "orders.approve", "group": "orders", "label": "Approve order actions" },
+    { "id": "fulfillment.manage", "group": "orders", "label": "Manage fulfilment" },
+    { "id": "shipping.manage", "group": "orders", "label": "Manage shipping / NDR" },
+    { "id": "returns.manage", "group": "orders", "label": "Manage returns" },
+    { "id": "refunds.process", "group": "orders", "label": "Process refunds" },
+    { "id": "finance.view", "group": "finance", "label": "View finance" },
+    { "id": "finance.edit", "group": "finance", "label": "Edit finance ledger" },
+    { "id": "settlements.view", "group": "finance", "label": "View settlements" },
+    { "id": "settlements.manage", "group": "finance", "label": "Manage settlements" },
+    { "id": "margin.view", "group": "finance", "label": "View margins / costs" },
+    { "id": "brand_sales.view", "group": "finance", "label": "View brand sales" },
+    { "id": "customers.view", "group": "support", "label": "View customers" },
+    { "id": "support.view", "group": "support", "label": "View support tickets" },
+    { "id": "support.manage", "group": "support", "label": "Manage support" },
+    { "id": "reports.view", "group": "reports", "label": "View reports" },
+    { "id": "export.data", "group": "reports", "label": "Export data" },
+    { "id": "storefront.view", "group": "storefront", "label": "View storefront" },
+    { "id": "storefront.publish", "group": "storefront", "label": "Publish storefront" },
+    { "id": "marketing.manage", "group": "storefront", "label": "Manage marketing" },
+    { "id": "users.view", "group": "users", "label": "View users" },
+    { "id": "users.invite", "group": "users", "label": "Invite users" },
+    { "id": "users.manage", "group": "users", "label": "Manage / revoke users" },
+    { "id": "permissions.assign", "group": "users", "label": "Assign permissions" },
+    { "id": "audit.view", "group": "users", "label": "View audit log" },
+    { "id": "settings.view", "group": "settings", "label": "View settings" },
+    { "id": "settings.manage", "group": "settings", "label": "Manage settings" },
+    { "id": "integrations.manage", "group": "settings", "label": "Manage integrations" }
+  ],
+  "permission_sets": {
+    "orders": {
+      "id": "orders",
+      "label": "Orders",
+      "for_roles": ["internal_staff"],
+      "permissions": ["dashboard.view", "orders.view", "orders.edit", "customers.view"]
+    },
+    "catalog_inventory": {
+      "id": "catalog_inventory",
+      "label": "Catalog and inventory",
+      "for_roles": ["internal_staff"],
+      "permissions": [
+        "dashboard.view",
+        "catalog.view",
+        "catalog.create",
+        "catalog.edit",
+        "inventory.view",
+        "inventory.adjust",
+        "prices.manage"
+      ]
+    },
+    "fulfillment_shipping": {
+      "id": "fulfillment_shipping",
+      "label": "Fulfilment and shipping",
+      "for_roles": ["internal_staff"],
+      "permissions": [
+        "dashboard.view",
+        "orders.view",
+        "fulfillment.manage",
+        "shipping.manage",
+        "returns.manage",
+        "inventory.view"
+      ]
+    },
+    "finance_settlements": {
+      "id": "finance_settlements",
+      "label": "Finance and settlements",
+      "for_roles": ["internal_staff"],
+      "permissions": [
+        "dashboard.view",
+        "finance.view",
+        "finance.edit",
+        "settlements.view",
+        "settlements.manage",
+        "margin.view",
+        "brand_sales.view",
+        "refunds.process",
+        "export.data"
+      ]
+    },
+    "support_brand_success": {
+      "id": "support_brand_success",
+      "label": "Customer support and brand success",
+      "for_roles": ["internal_staff"],
+      "permissions": [
+        "dashboard.view",
+        "support.view",
+        "support.manage",
+        "customers.view",
+        "orders.view",
+        "brands.view"
+      ]
+    },
+    "reports_readonly": {
+      "id": "reports_readonly",
+      "label": "Reports (read-only)",
+      "for_roles": ["internal_staff", "brand_staff"],
+      "permissions": ["dashboard.view", "reports.view", "orders.view", "brand_sales.view"]
+    },
+    "brand_catalog": {
+      "id": "brand_catalog",
+      "label": "Brand catalogue & content",
+      "for_roles": ["brand_staff"],
+      "permissions": [
+        "dashboard.view",
+        "catalog.view",
+        "catalog.edit",
+        "storefront.view",
+        "storefront.publish",
+        "inventory.view"
+      ]
+    },
+    "brand_orders": {
+      "id": "brand_orders",
+      "label": "Brand orders (view / limited edit)",
+      "for_roles": ["brand_staff"],
+      "permissions": [
+        "dashboard.view",
+        "orders.view",
+        "orders.edit",
+        "customers.view",
+        "support.view"
+      ]
+    }
+  },
+  "roles": {
+    "platform_owner": {
+      "id": "platform_owner",
+      "label": "Platform Owner",
+      "family": "platform",
+      "home_route": "/dashboard",
+      "description": "Full platform-wide access across all brands, users, settings, audit.",
+      "default_scope": {
+        "type": "all_brands",
+        "brandIds": [],
+        "brandId": null
+      },
+      "permissions_mode": "all",
+      "default_permissions": ["*"],
+      "can_invite_roles": ["platform_admin", "internal_staff", "brand_owner", "brand_admin", "brand_staff"],
+      "restrictions": [
+        "Last platform_owner cannot be deleted or demoted"
+      ],
+      "denied_by_default": []
+    },
+    "platform_admin": {
+      "id": "platform_admin",
+      "label": "Platform Admin",
+      "family": "platform",
+      "home_route": "/dashboard",
+      "description": "Platform-wide ops with all permission IDs by default; ownership rules still apply.",
+      "default_scope": {
+        "type": "all_brands",
+        "brandIds": [],
+        "brandId": null
+      },
+      "permissions_mode": "all_with_guards",
+      "default_permissions": ["*"],
+      "can_invite_roles": ["internal_staff", "brand_owner", "brand_admin", "brand_staff"],
+      "restrictions": [
+        "Cannot assign platform_owner role",
+        "Cannot remove/demote last platform_owner",
+        "Cannot transfer ownership",
+        "Cannot grant self extra permissions beyond policy"
+      ],
+      "denied_by_default": []
+    },
+    "internal_staff": {
+      "id": "internal_staff",
+      "label": "Internal Staff",
+      "family": "platform",
+      "home_route": "/dashboard",
+      "description": "Role alone grants zero operational access. Owner/Admin must assign permission sets + data scope.",
+      "default_scope": {
+        "type": "selected_brands",
+        "brandIds": [],
+        "brandId": null,
+        "note": "Never defaults to all_brands"
+      },
+      "permissions_mode": "explicit_only",
+      "default_permissions": [],
+      "assignable_permission_sets": [
+        "orders",
+        "catalog_inventory",
+        "fulfillment_shipping",
+        "finance_settlements",
+        "support_brand_success",
+        "reports_readonly"
+      ],
+      "allowed_scope_types": ["selected_brands", "all_brands", "assigned_records"],
+      "can_invite_roles": [],
+      "restrictions": [
+        "Empty selected brands → No brands assigned state",
+        "No access until permissions + scope configured"
+      ],
+      "denied_by_default": ["*"]
+    },
+    "brand_owner": {
+      "id": "brand_owner",
+      "label": "Brand Owner",
+      "family": "brand",
+      "home_route": "/brand/dashboard/overview",
+      "description": "Assigned brand only. Dashboard, orders, storefront, permitted sales, products, settings, brand user invites.",
+      "default_scope": {
+        "type": "brand",
+        "brandId": "<assigned_brand_id>",
+        "brandIds": ["<assigned_brand_id>"]
+      },
+      "permissions_mode": "default_list",
+      "default_permissions": [
+        "dashboard.view",
+        "orders.view",
+        "orders.edit",
+        "catalog.view",
+        "catalog.create",
+        "catalog.edit",
+        "catalog.publish",
+        "prices.manage",
+        "inventory.view",
+        "storefront.view",
+        "storefront.publish",
+        "marketing.manage",
+        "brand_sales.view",
+        "finance.view",
+        "settlements.view",
+        "customers.view",
+        "support.view",
+        "support.manage",
+        "reports.view",
+        "export.data",
+        "users.view",
+        "users.invite",
+        "users.manage",
+        "settings.view",
+        "settings.manage"
+      ],
+      "can_invite_roles": ["brand_admin", "brand_staff"],
+      "restrictions": [
+        "Cannot access other brands",
+        "Cannot access platform-wide settings/staff",
+        "Cannot assign platform roles"
+      ],
+      "denied_by_default": [
+        "dashboard.all_brands",
+        "brands.create",
+        "brands.archive",
+        "supplier_cost.view",
+        "purchasing.manage",
+        "margin.view",
+        "settlements.manage",
+        "refunds.process",
+        "permissions.assign",
+        "integrations.manage",
+        "inventory.adjust",
+        "orders.approve",
+        "fulfillment.manage",
+        "shipping.manage",
+        "returns.manage",
+        "finance.edit",
+        "audit.view"
+      ]
+    },
+    "brand_admin": {
+      "id": "brand_admin",
+      "label": "Brand Admin",
+      "family": "brand",
+      "home_route": "/brand/dashboard/overview",
+      "description": "Assigned brand only. Manage brand ops and brand_staff. No platform roles.",
+      "default_scope": {
+        "type": "brand",
+        "brandId": "<assigned_brand_id>",
+        "brandIds": ["<assigned_brand_id>"]
+      },
+      "permissions_mode": "default_list",
+      "default_permissions": [
+        "dashboard.view",
+        "orders.view",
+        "orders.edit",
+        "catalog.view",
+        "catalog.create",
+        "catalog.edit",
+        "catalog.publish",
+        "prices.manage",
+        "inventory.view",
+        "storefront.view",
+        "storefront.publish",
+        "marketing.manage",
+        "brand_sales.view",
+        "finance.view",
+        "customers.view",
+        "support.view",
+        "support.manage",
+        "reports.view",
+        "users.view",
+        "users.invite",
+        "users.manage",
+        "settings.view"
+      ],
+      "can_invite_roles": ["brand_staff"],
+      "restrictions": [
+        "Cannot assign platform roles",
+        "Cannot access other brands",
+        "Cannot change platform-wide settings"
+      ],
+      "denied_by_default": [
+        "dashboard.all_brands",
+        "brands.create",
+        "brands.edit",
+        "brands.archive",
+        "supplier_cost.view",
+        "purchasing.manage",
+        "margin.view",
+        "settlements.view",
+        "settlements.manage",
+        "refunds.process",
+        "export.data",
+        "permissions.assign",
+        "settings.manage",
+        "integrations.manage",
+        "inventory.adjust",
+        "orders.approve",
+        "fulfillment.manage",
+        "shipping.manage",
+        "returns.manage",
+        "finance.edit",
+        "audit.view"
+      ]
+    },
+    "brand_staff": {
+      "id": "brand_staff",
+      "label": "Brand Staff",
+      "family": "brand",
+      "home_route": "/brand/dashboard/overview",
+      "description": "Assigned brand only. Role alone grants zero access — permission sets must be assigned.",
+      "default_scope": {
+        "type": "brand",
+        "brandId": "<assigned_brand_id>",
+        "brandIds": ["<assigned_brand_id>"]
+      },
+      "permissions_mode": "explicit_only",
+      "default_permissions": [],
+      "assignable_permission_sets": ["brand_orders", "brand_catalog", "reports_readonly"],
+      "can_invite_roles": [],
+      "restrictions": [
+        "No broad access merely because role is brand_staff",
+        "Cannot access other brands or platform data"
+      ],
+      "denied_by_default": ["*"]
+    }
+  },
+  "visibility_rules": {
+    "orders_require_brand_id": true,
+    "brand_users_see_only_own_brand": true,
+    "supplier_cost_hidden_from_brand_users_by_default": true,
+    "platform_margin_hidden_from_brand_users_by_default": true,
+    "cross_brand_customer_history_not_auto_exposed": true,
+    "payment_status_separate_from_fulfillment_status": true,
+    "dashboard_all_brand_totals_require": "dashboard.all_brands"
+  },
+  "route_permissions": {
+    "/dashboard": { "anyOf": ["dashboard.view"] },
+    "/brands": { "anyOf": ["brands.view"] },
+    "/partners": { "anyOf": ["brands.view"] },
+    "/websites": { "anyOf": ["storefront.view", "brands.view"] },
+    "/products": { "anyOf": ["catalog.view"] },
+    "/categories": { "anyOf": ["catalog.view"] },
+    "/suppliers": { "anyOf": ["purchasing.manage", "supplier_cost.view"] },
+    "/purchasing": { "anyOf": ["purchasing.manage"] },
+    "/warehouses": { "anyOf": ["inventory.view"] },
+    "/inventory": { "anyOf": ["inventory.view"] },
+    "/orders": { "anyOf": ["orders.view"] },
+    "/fulfillment": { "anyOf": ["fulfillment.manage", "orders.view"] },
+    "/shipping": { "anyOf": ["shipping.manage"] },
+    "/ndr": { "anyOf": ["shipping.manage"] },
+    "/returns": { "anyOf": ["returns.manage"] },
+    "/private-label": { "anyOf": ["catalog.view"] },
+    "/packaging": { "anyOf": ["fulfillment.manage"] },
+    "/customers": { "anyOf": ["customers.view"] },
+    "/payments": { "anyOf": ["finance.view"] },
+    "/settlements": { "anyOf": ["settlements.view"] },
+    "/finance": { "anyOf": ["finance.view"] },
+    "/pricing": { "anyOf": ["prices.manage", "catalog.view"] },
+    "/marketing": { "anyOf": ["marketing.manage"] },
+    "/academy": { "anyOf": ["dashboard.view"] },
+    "/notifications": { "anyOf": ["settings.view"] },
+    "/approvals": { "anyOf": ["orders.approve", "brands.edit"] },
+    "/exceptions": { "anyOf": ["orders.view", "fulfillment.manage"] },
+    "/quality": { "anyOf": ["inventory.view"] },
+    "/integrations": { "anyOf": ["integrations.manage"] },
+    "/reports": { "anyOf": ["reports.view"] },
+    "/settings": { "anyOf": ["settings.view"] },
+    "/access/staff": { "anyOf": ["users.view"] },
+    "/access/permissions": { "anyOf": ["permissions.assign", "users.view"] },
+    "/access/audit": { "anyOf": ["audit.view"] },
+    "/support": { "anyOf": ["support.view"] },
+    "/support/agents": { "anyOf": ["support.manage"] },
+    "/support/categories": { "anyOf": ["support.manage"] },
+    "/brand/dashboard": { "anyOf": ["dashboard.view"] },
+    "/brand/orders": { "anyOf": ["orders.view"] },
+    "/brand/products": { "anyOf": ["catalog.view"] },
+    "/brand/website": { "anyOf": ["storefront.view"] },
+    "/brand/finance": { "anyOf": ["finance.view", "brand_sales.view"] },
+    "/brand/reports": { "anyOf": ["reports.view"] },
+    "/brand/customers": { "anyOf": ["customers.view"] },
+    "/brand/support": { "anyOf": ["support.view"] },
+    "/brand/team": { "anyOf": ["users.view"] },
+    "/brand/settings": { "anyOf": ["settings.view"] }
+  },
+  "demo_accounts_examples": [
+    {
+      "role": "platform_owner",
+      "email": "owner@pahachan.demo",
+      "scope": "all_brands",
+      "permissions": "*"
+    },
+    {
+      "role": "platform_admin",
+      "email": "admin@pahachan.demo",
+      "scope": "all_brands",
+      "permissions": "*"
+    },
+    {
+      "role": "internal_staff",
+      "email": "orders.staff@pahachan.demo",
+      "permission_sets": ["orders", "fulfillment_shipping"],
+      "scope": { "type": "selected_brands", "brandIds": ["BRD-1001", "BRD-1002"] }
+    },
+    {
+      "role": "internal_staff",
+      "email": "finance.staff@pahachan.demo",
+      "permission_sets": ["finance_settlements", "reports_readonly"],
+      "scope": { "type": "all_brands" }
+    },
+    {
+      "role": "internal_staff",
+      "email": "new.staff@pahachan.demo",
+      "permission_sets": [],
+      "scope": { "type": "selected_brands", "brandIds": [] },
+      "note": "No access until configured"
+    },
+    {
+      "role": "brand_owner",
+      "email": "owner@aisa.demo",
+      "scope": { "type": "brand", "brandId": "brand-k" }
+    },
+    {
+      "role": "brand_admin",
+      "email": "admin@aisa.demo",
+      "scope": { "type": "brand", "brandId": "brand-k" }
+    },
+    {
+      "role": "brand_staff",
+      "email": "staff@aisa.demo",
+      "permission_sets": ["brand_orders"],
+      "scope": { "type": "brand", "brandId": "brand-k" }
+    }
+  ]
+}

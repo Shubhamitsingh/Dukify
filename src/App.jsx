@@ -2,7 +2,8 @@ import { Navigate, useLocation } from "react-router-dom";
 import { Login } from "./login";
 import { BrandApp, BrandStoreProvider } from "./brand";
 import { SuperAdminApp } from "./SuperAdminApp";
-import { homeForRole, isBrandRole, isBrandWorkspacePath, isSuperAdminRole } from "./auth";
+import { AccessProvider } from "./access";
+import { homeForRole, isBrandRole, isBrandWorkspacePath, isPlatformRole } from "./auth";
 
 export default function App({ session, dark, onLogin, onLogout, onToggleDark }) {
   const location = useLocation();
@@ -11,23 +12,25 @@ export default function App({ session, dark, onLogin, onLogout, onToggleDark }) 
     return <Login onSuccess={onLogin} />;
   }
 
-  if (isBrandRole(session.role)) {
-    if (!isBrandWorkspacePath(location.pathname) && location.pathname !== "/") {
-      return <Navigate to={homeForRole(session.role)} replace />;
-    }
-    return (
-      <BrandStoreProvider>
-        <BrandApp session={session} onLogout={onLogout} dark={dark} onToggleDark={onToggleDark} />
-      </BrandStoreProvider>
-    );
-  }
-
-  if (isSuperAdminRole(session.role)) {
-    if (isBrandWorkspacePath(location.pathname)) {
-      return <Navigate to={homeForRole(session.role)} replace />;
-    }
-    return <SuperAdminApp onLogout={onLogout} dark={dark} onToggleDark={onToggleDark} />;
-  }
-
-  return <Navigate to="/login" replace />;
+  return (
+    <AccessProvider principal={session}>
+      {isBrandRole(session.role) ? (
+        !isBrandWorkspacePath(location.pathname) && location.pathname !== "/" ? (
+          <Navigate to={homeForRole(session.role)} replace />
+        ) : (
+          <BrandStoreProvider>
+            <BrandApp session={session} onLogout={onLogout} dark={dark} onToggleDark={onToggleDark} />
+          </BrandStoreProvider>
+        )
+      ) : isPlatformRole(session.role) ? (
+        isBrandWorkspacePath(location.pathname) ? (
+          <Navigate to={homeForRole(session.role)} replace />
+        ) : (
+          <SuperAdminApp onLogout={onLogout} dark={dark} onToggleDark={onToggleDark} />
+        )
+      ) : (
+        <Navigate to="/login" replace />
+      )}
+    </AccessProvider>
+  );
 }

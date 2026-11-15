@@ -1,16 +1,25 @@
-# React + Vite
+# Pahachan Super Admin
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Multi-brand commerce / fulfilment CRM (Vite + React). Privilege model: six roles, granular permissions, and brand/record scope.
 
-Currently, two official plugins are available:
+## Quick start
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm install
+npm run dev
+```
 
-## React Compiler
+Demo login is available in development (or when `VITE_DEMO_MODE=true`). See the login screen for role accounts.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Access control
 
-## Expanding the Oxlint configuration
+- **Matrix:** [docs/PERMISSION_MATRIX.md](docs/PERMISSION_MATRIX.md)
+- **Setup / Supabase:** [docs/ACCESS_SETUP.md](docs/ACCESS_SETUP.md)
+- **Completion report:** [docs/ACCESS_COMPLETION_REPORT.md](docs/ACCESS_COMPLETION_REPORT.md)
+- **RLS migration:** [supabase/migrations/20261115_pahachan_rbac.sql](supabase/migrations/20261115_pahachan_rbac.sql)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+Client-side checks support the UI demo. **Production requires server-side auth + RLS** on a dedicated Pahachan Supabase project.
+
+## Stack
+
+Vite 8 · React 19 · React Router 7 · Tailwind 4

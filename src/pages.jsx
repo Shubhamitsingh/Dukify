@@ -32,6 +32,8 @@ import {
 import { blanks, partnerMoney, related } from "./local";
 import { navGroups } from "./shell";
 import { useStore } from "./store";
+import { useAccess } from "./access";
+import { PERMISSIONS } from "./access/permissions";
 import { settingsCurrency } from "./settings";
 import { DrawerShell, FilterChip, Kpi, ModalShell, PageHead, SoftButton, Status, Surface, Toolbar } from "./ui";
 import { approvals as approvalRows, exceptions, orderItems } from "./work";
@@ -69,7 +71,10 @@ const brandPalette = ["#ec4899", "#38bdf8", "#34d399", "#fbbf24", "#818cf8", "#f
 function brandStats(db) {
   return db.brands
     .map((brand, index) => {
-      const orders = db.orders.filter((order) => order.brand === brand.name && isBookedSalesOrder(order));
+      const orders = db.orders.filter(
+        (order) =>
+          (order.brandId === brand.id || order.brand === brand.name) && isBookedSalesOrder(order)
+      );
       return {
         ...brand,
         orders: orders.length,
@@ -82,13 +87,22 @@ function brandStats(db) {
 
 export function Dashboard() {
   const { db } = useStore();
+  const { can, canSeeAllBrandTotals, roleLabel, scope } = useAccess();
   const navigate = useNavigate();
   const brands = brandStats(db);
   const snap = commerceSnapshot(db);
   const paidOrders = db.orders.filter((order) => order.payment === "Captured" || order.payment === "COD pending");
   const sales = snap.bookedSales;
-  const margin = snap.grossMarginOnPaid;
-  const supply = snap.supplyOnPaid;
+  const showMargin = can(PERMISSIONS.MARGIN_VIEW) || can(PERMISSIONS.FINANCE_VIEW);
+  const showSupply = can(PERMISSIONS.SUPPLIER_COST_VIEW);
+  const margin = showMargin ? snap.grossMarginOnPaid : null;
+  const supply = showSupply ? snap.supplyOnPaid : null;
+  const scopeNote =
+    canSeeAllBrandTotals
+      ? "All brands in your access"
+      : scope.brandIds?.length
+        ? `${scope.brandIds.length} assigned brand(s)`
+        : "Scoped workspace";
   const low = db.inventory.filter((row) => row.available <= (Number(row.reorderAt) || 11));
   const pending = db.orders.filter((order) =>
     ["Confirmed", "Packing", "Ready to ship", "Payment failed", "New", "Processing"].includes(order.fulfilment) ||
@@ -114,6 +128,16 @@ export function Dashboard() {
 
   return (
     <div className="w-full space-y-5">
+      <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-gray-100 bg-white px-4 py-2.5 text-xs text-gray-500 shadow-sm">
+        <span>
+          Overview for <span className="font-semibold text-gray-800">{roleLabel}</span> · {scopeNote}
+        </span>
+        {!canSeeAllBrandTotals ? (
+          <span className="rounded-md bg-amber-50 px-2 py-0.5 font-medium text-amber-800">
+            Totals exclude brands outside your scope
+          </span>
+        ) : null}
+      </div>
       <section className="grid w-full grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-2.5 xl:grid-cols-4 2xl:grid-cols-7">
         <Kpi
           label="Booked GMV"
@@ -124,14 +148,24 @@ export function Dashboard() {
           trend={{ up: true, label: `${paidOrders.length} paid/COD` }}
           onClick={() => navigate("/reports")}
         />
-        <Kpi
-          label="Gross margin"
-          value={inr(margin)}
-          note={snap.labels.grossMarginNote}
-          tone="sky"
-          icon={<TrendingUp className="h-4 w-4" />}
-          onClick={() => navigate("/finance")}
-        />
+        {showMargin ? (
+          <Kpi
+            label="Gross margin"
+            value={inr(margin)}
+            note={snap.labels.grossMarginNote}
+            tone="sky"
+            icon={<TrendingUp className="h-4 w-4" />}
+            onClick={() => navigate("/finance")}
+          />
+        ) : (
+          <Kpi
+            label="Gross margin"
+            value="—"
+            note="Not in your permissions"
+            tone="sky"
+            icon={<TrendingUp className="h-4 w-4" />}
+          />
+        )}
         <Kpi
           label="Orders"
           value={snap.totalOrders}
@@ -178,7 +212,11 @@ export function Dashboard() {
 
       <section className="grid gap-3 md:grid-cols-3">
         <DeliveryRateCard pipeline={pipeline} total={db.orders.length} />
-        <MoneyCompareCard sales={sales} margin={margin} supply={supply} />
+        <MoneyCompareCard
+          sales={sales}
+          margin={showMargin ? margin : null}
+          supply={showSupply ? supply : null}
+        />
         <PaymentMixCard orders={db.orders} />
       </section>
 
@@ -712,13 +750,13 @@ function DeliveryRateCard({ pipeline, total }) {
 }
 
 function MoneyCompareCard({ sales, margin, supply }) {
-  const peak = Math.max(sales, margin, supply, 1);
+  const peak = Math.max(sales || 0, margin || 0, supply || 0, 1);
   const rings = [
-    { label: "Sales", value: sales, color: "#ec4899", radius: 46 },
-    { label: "Supply", value: supply, color: "#38bdf8", radius: 34 },
-    { label: "Margin", value: margin, color: "#34d399", radius: 22 },
-  ];
-  const marginPct = sales ? Math.round((margin / sales) * 100) : 0;
+    { label: "Sales", value: sales ?? 0, color: "#ec4899", radius: 46 },
+    supply == null ? null : { label: "Supply", value: supply, color: "#38bdf8", radius: 34 },
+    margin == null ? null : { label: "Margin", value: margin, color: "#34d399", radius: 22 },
+  ].filter(Boolean);
+  const marginPct = sales && margin != null ? Math.round((margin / sales) * 100) : null;
 
   return (
     <Surface title="Sales / Margin / Supply">
@@ -756,7 +794,7 @@ function MoneyCompareCard({ sales, margin, supply }) {
                 );
               })}
               <text x="60" y="58" textAnchor="middle" className="fill-gray-900 dark:fill-white" fontSize="14" fontWeight="700">
-                {marginPct}%
+                {marginPct == null ? "—" : `${marginPct}%`}
               </text>
               <text x="60" y="72" textAnchor="middle" className="fill-gray-400" fontSize="9" fontWeight="600">
                 margin
