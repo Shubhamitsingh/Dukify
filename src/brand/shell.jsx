@@ -421,9 +421,6 @@ export default function Shell({ children, session, dark, onToggleDark, onLogout 
         </header>
 
         <main className="app-main min-w-0 w-full">
-          <div className="mb-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] font-medium text-amber-950 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-100">
-            Browser demo — synthetic data only. No live payments, shipping, or customer emails. Frontend role checks are not production security.
-          </div>
           {flash ? (
             <button type="button" className="mb-3 w-full rounded-xl bg-gray-900 px-3 py-2 text-left text-sm text-white sm:mb-4" onClick={clearFlash}>
               {flash}

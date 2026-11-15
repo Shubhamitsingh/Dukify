@@ -356,9 +356,6 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
       ) : null}
 
       <div className="app-workspace transition-[padding] duration-200 max-lg:!pl-3" style={{ paddingLeft: workspacePad }}>
-        <div className="mb-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] font-medium text-amber-950 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-100">
-          Browser demo — synthetic data only. Integrations show demo state, not live connections. Frontend routes are not production authorization.
-        </div>
         <header className="app-topbar sticky top-3.5 z-20 grid h-[4.25rem] grid-cols-[1.2fr_minmax(12rem,28rem)_0.8fr] items-center gap-3 px-3 backdrop-blur sm:px-5">
           <div className="flex min-w-0 items-center justify-start gap-2">
             <button
