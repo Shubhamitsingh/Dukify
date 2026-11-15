@@ -1,3 +1,4 @@
+import { isBookedSalesOrder } from "../commerce/metrics";
 import { inr, sum } from "../data";
 
 const EXPENSE_CATEGORY = {
@@ -194,11 +195,9 @@ export function financeSummary(db, brand = "All") {
     return name === brand || set.partner === brand;
   });
 
-  // Sales = order value (exclude failed). Not the same as cash collected.
-  const totalSales = sum(
-    orders.filter((order) => order.payment !== "Failed"),
-    "value",
-  );
+  // Booked GMV — same selector as Reports / dashboard (isBookedSalesOrder).
+  // Not the same as cash collections below.
+  const totalSales = sum(orders.filter(isBookedSalesOrder), "value");
 
   const prepaidCollections = sum(
     payments.filter((pay) => pay.status === "Captured" && pay.method !== "COD"),

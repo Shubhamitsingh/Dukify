@@ -33,15 +33,15 @@ function Section({ Page }) {
  * Auth is handled by the unified root app; this only renders brand routes.
  */
 export function BrandApp({ session, onLogout, dark, onToggleDark }) {
-  const { switchBrand } = usePartner();
+  const { lockToBrand } = usePartner();
 
   useEffect(() => {
-    if (session?.brandId) switchBrand(session.brandId);
+    if (session?.brandId) lockToBrand(session.brandId);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- bind once per brandId from auth
   }, [session?.brandId]);
 
   return (
-    <Shell dark={dark} onToggleDark={onToggleDark} onLogout={onLogout}>
+    <Shell session={session} dark={dark} onToggleDark={onToggleDark} onLogout={onLogout}>
       <Routes>
         <Route path="/" element={<Navigate to="/brand/dashboard/overview" replace />} />
         <Route path="/brand" element={<Navigate to="/brand/dashboard/overview" replace />} />

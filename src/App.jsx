@@ -2,7 +2,7 @@ import { Navigate, useLocation } from "react-router-dom";
 import { Login } from "./login";
 import { BrandApp, BrandStoreProvider } from "./brand";
 import { SuperAdminApp } from "./SuperAdminApp";
-import { homeForRole, isBrandRole, isSuperAdminRole } from "./auth";
+import { homeForRole, isBrandRole, isBrandWorkspacePath, isSuperAdminRole } from "./auth";
 
 export default function App({ session, dark, onLogin, onLogout, onToggleDark }) {
   const location = useLocation();
@@ -12,7 +12,7 @@ export default function App({ session, dark, onLogin, onLogout, onToggleDark }) 
   }
 
   if (isBrandRole(session.role)) {
-    if (!location.pathname.startsWith("/brand") && location.pathname !== "/") {
+    if (!isBrandWorkspacePath(location.pathname) && location.pathname !== "/") {
       return <Navigate to={homeForRole(session.role)} replace />;
     }
     return (
@@ -23,7 +23,7 @@ export default function App({ session, dark, onLogin, onLogout, onToggleDark }) 
   }
 
   if (isSuperAdminRole(session.role)) {
-    if (location.pathname.startsWith("/brand")) {
+    if (isBrandWorkspacePath(location.pathname)) {
       return <Navigate to={homeForRole(session.role)} replace />;
     }
     return <SuperAdminApp onLogout={onLogout} dark={dark} onToggleDark={onToggleDark} />;

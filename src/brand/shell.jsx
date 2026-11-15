@@ -30,7 +30,7 @@ const noticeMeta = {
   announcement: { label: "Platform", icon: Megaphone, tone: "bg-violet-50 text-violet-700 dark:bg-violet-950/40 dark:text-violet-300" },
 };
 
-export default function Shell({ children, dark, onToggleDark, onLogout }) {
+export default function Shell({ children, session, dark, onToggleDark, onLogout }) {
   const {
     brand,
     brands,
@@ -40,11 +40,14 @@ export default function Shell({ children, dark, onToggleDark, onLogout }) {
     customers,
     tickets,
     switchBrand,
+    lockToBrand,
+    unlockDemoTenantSwitch,
     flash,
     clearFlash,
     markRead,
     markAllRead,
   } = usePartner();
+  const [demoSwitch, setDemoSwitch] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -402,7 +405,12 @@ export default function Shell({ children, dark, onToggleDark, onLogout }) {
                 <ProfileMenu
                   brand={brand}
                   brands={brands}
+                  session={session}
+                  demoSwitch={demoSwitch}
+                  setDemoSwitch={setDemoSwitch}
                   switchBrand={switchBrand}
+                  lockToBrand={lockToBrand}
+                  unlockDemoTenantSwitch={unlockDemoTenantSwitch}
                   navigate={navigate}
                   onLogout={onLogout}
                   setProfileOpen={setProfileOpen}
@@ -413,6 +421,9 @@ export default function Shell({ children, dark, onToggleDark, onLogout }) {
         </header>
 
         <main className="app-main min-w-0 w-full">
+          <div className="mb-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] font-medium text-amber-950 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-100">
+            Browser demo — synthetic data only. No live payments, shipping, or customer emails. Frontend role checks are not production security.
+          </div>
           {flash ? (
             <button type="button" className="mb-3 w-full rounded-xl bg-gray-900 px-3 py-2 text-left text-sm text-white sm:mb-4" onClick={clearFlash}>
               {flash}
@@ -541,7 +552,19 @@ function NotificationPanel({ unread, recentNotices, markAllRead, markRead, navig
   );
 }
 
-function ProfileMenu({ brand, brands, switchBrand, navigate, onLogout, setProfileOpen }) {
+function ProfileMenu({
+  brand,
+  brands,
+  session,
+  demoSwitch,
+  setDemoSwitch,
+  switchBrand,
+  lockToBrand,
+  unlockDemoTenantSwitch,
+  navigate,
+  onLogout,
+  setProfileOpen,
+}) {
   return (
     <div
       role="menu"
@@ -560,9 +583,33 @@ function ProfileMenu({ brand, brands, switchBrand, navigate, onLogout, setProfil
         </div>
       </div>
       <div className="border-b border-gray-100 px-3.5 py-3 dark:border-gray-700">
+        <p className="mb-1.5 rounded-lg bg-amber-50 px-2 py-1.5 text-[10px] font-semibold leading-4 text-amber-900 ring-1 ring-amber-200 dark:bg-amber-950/40 dark:text-amber-100 dark:ring-amber-900">
+          Demo only — not production access control. Backend must scope by membership.
+        </p>
+        <p className="mb-2 text-[11px] text-gray-500">
+          Signed-in brand: <span className="font-semibold text-gray-700 dark:text-gray-200">{session?.brandId || brand.id}</span>
+        </p>
+        <label className="mb-2 flex items-center gap-2 text-[11px] font-semibold text-gray-600 dark:text-gray-300">
+          <input
+            type="checkbox"
+            checked={demoSwitch}
+            onChange={(event) => {
+              const on = event.target.checked;
+              setDemoSwitch(on);
+              if (on) unlockDemoTenantSwitch();
+              else if (session?.brandId) lockToBrand(session.brandId);
+            }}
+          />
+          Enable demo tenant switcher
+        </label>
         <label className="block text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
-          Demo tenant
-          <select className="toolbar-field mt-1 w-full" value={brand.id} onChange={(event) => switchBrand(event.target.value)}>
+          Preview brand
+          <select
+            className="toolbar-field mt-1 w-full"
+            value={brand.id}
+            disabled={!demoSwitch}
+            onChange={(event) => switchBrand(event.target.value, { demo: true })}
+          >
             {brands.map((item) => (
               <option key={item.id} value={item.id}>
                 {item.name}

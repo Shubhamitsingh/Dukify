@@ -52,12 +52,12 @@ export const ATTENTION_FILTERS = [
 ];
 
 export const SUMMARY_CARDS = [
-  { id: "all", label: "Total Orders", fulfilment: null, icon: "total" },
-  { id: "new", label: "New Orders", fulfilment: "New", icon: "new" },
-  { id: "processing", label: "Processing", fulfilment: "Processing", icon: "processing" },
-  { id: "ready", label: "Ready to Ship", fulfilment: "Ready to Ship", icon: "ready" },
-  { id: "transit", label: "In Transit", fulfilment: "Shipped", icon: "transit" },
-  { id: "delivered", label: "Delivered", fulfilment: "Delivered", icon: "delivered" },
+  { id: "all", label: "Total Orders", fulfillment: null, icon: "total" },
+  { id: "new", label: "New Orders", fulfillment: "New", icon: "new" },
+  { id: "processing", label: "Processing", fulfillment: "Processing", icon: "processing" },
+  { id: "ready", label: "Ready to Ship", fulfillment: "Ready to Ship", icon: "ready" },
+  { id: "transit", label: "In Transit", fulfillment: "Shipped", icon: "transit" },
+  { id: "delivered", label: "Delivered", fulfillment: "Delivered", icon: "delivered" },
 ];
 
 /** Legacy seed fulfilment → OMS fulfillment label */

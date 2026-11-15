@@ -34,14 +34,20 @@ export function homeForRole(role) {
   return "/dashboard";
 }
 
+/** Brand workspace is `/brand` or `/brand/...` — must not match Admin `/brands`. */
+export function isBrandWorkspacePath(pathname) {
+  const path = pathname || "/";
+  return path === "/brand" || path.startsWith("/brand/");
+}
+
 export function canAccessPath(session, pathname) {
   if (!session) return false;
   const path = pathname || "/";
   if (isBrandRole(session.role)) {
-    return path === "/login" || path.startsWith("/brand");
+    return path === "/login" || isBrandWorkspacePath(path);
   }
   if (isSuperAdminRole(session.role)) {
-    return !path.startsWith("/brand");
+    return !isBrandWorkspacePath(path);
   }
   return false;
 }
@@ -138,12 +144,16 @@ export function authenticate(email, password) {
     };
   }
 
-  // Preserve previous Super Admin demo habit: unknown emails still open SA panel.
-  return {
-    session: {
-      email: String(email).trim(),
-      role: ROLES.SUPER_ADMIN,
-      name: "Platform owner",
-    },
-  };
+  return { error: "Unknown demo account. Use a listed Super Admin or Brand email." };
+}
+
+/** Demo tenant switcher is not membership. Production must scope by verified brandIds. */
+export function canSwitchDemoTenant(session) {
+  return Boolean(session && isBrandRole(session.role));
+}
+
+export function isAssignedBrand(session, brandId) {
+  if (!session || !isBrandRole(session.role)) return false;
+  if (!session.brandId) return false;
+  return session.brandId === brandId;
 }

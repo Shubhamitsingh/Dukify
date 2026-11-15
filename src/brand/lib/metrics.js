@@ -40,6 +40,7 @@ export function boundsFor(key, custom = {}) {
     const end = custom.start <= custom.end ? custom.end : custom.start;
     return { start, end, label: "Custom range" };
   }
+  // "all" and unknown keys → full demo window (matches Earnings all-time views)
   return { start: "2026-09-01", end: ANCHOR, label: "All demo dates" };
 }
 

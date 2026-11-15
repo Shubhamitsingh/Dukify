@@ -1,12 +1,12 @@
 import { inr } from "../../data";
 
 const CARDS = [
-  { key: "totalSales", label: "Total sales", note: "Order value · not cash", tone: "slate" },
+  { key: "totalSales", label: "Booked GMV", note: "≠ cash collected · same as Reports", tone: "sky" },
   { key: "prepaidCollections", label: "Prepaid collections", note: "Captured non-COD", tone: "emerald" },
   { key: "codCollections", label: "COD collections", note: "Courier-confirmed only", tone: "amber" },
   { key: "refunds", label: "Refunds", note: "Completed refunds", tone: "rose" },
-  { key: "brandPayables", label: "Brand payables", note: "Open settlements", tone: "sky" },
-  { key: "platformExpenses", label: "Platform expenses", note: "Ops ledger", tone: "violet" },
+  { key: "brandPayables", label: "Brand payables", note: "Open settlements", tone: "violet" },
+  { key: "platformExpenses", label: "Platform expenses", note: "Ops ledger", tone: "slate" },
 ];
 
 const TONES = {

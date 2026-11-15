@@ -51,16 +51,24 @@ function SuperAdminRoutes() {
       <Route path="/pricing" element={<PricingPage />} />
       <Route path="/orders" element={<OrdersPage />} />
       <Route path="/finance" element={<FinancePage />} />
+      {/* Explicit module routes first so /brands is never swallowed by /brand/* or * */}
+      <Route path="/brands" element={<ModulePage id="brands" />} />
+      <Route path="/partners" element={<ModulePage id="partners" />} />
+      <Route path="/websites" element={<ModulePage id="websites" />} />
+      <Route path="/products" element={<ModulePage id="products" />} />
       <Route path="/support" element={<TicketsPage initialTab="all" />} />
       <Route path="/support/brand" element={<TicketsPage initialTab="brand" />} />
       <Route path="/support/customer" element={<TicketsPage initialTab="customer" />} />
       <Route path="/support/ticket/:id" element={<TicketDetailPage />} />
       <Route path="/support/agents" element={<AgentsPage />} />
       <Route path="/support/categories" element={<CategoriesPage />} />
-      {moduleIds.map((id) => (
-        <Route key={id} path={`/${id}`} element={<ModulePage id={id} />} />
-      ))}
-      {/* Brand routes are blocked for Super Admin — send home */}
+      {moduleIds
+        .filter((id) => !["brands", "partners", "websites", "products"].includes(id))
+        .map((id) => (
+          <Route key={id} path={`/${id}`} element={<ModulePage id={id} />} />
+        ))}
+      {/* Brand Partner workspace is a different app — Super Admin cannot open it here */}
+      <Route path="/brand" element={<Navigate to="/dashboard" replace />} />
       <Route path="/brand/*" element={<Navigate to="/dashboard" replace />} />
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>

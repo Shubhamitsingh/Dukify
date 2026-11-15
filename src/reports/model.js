@@ -2,6 +2,7 @@ import { parseOrderDate, sampleToday, formatSampleDay } from "../orderDesk";
 import { fulfillmentOf, paymentOf } from "../orders/model";
 
 export const REPORT_PERIODS = [
+  { id: "all", label: "All dates" },
   { id: "today", label: "Today" },
   { id: "7d", label: "Last 7 Days" },
   { id: "30d", label: "Last 30 Days" },
@@ -10,7 +11,7 @@ export const REPORT_PERIODS = [
 ];
 
 export const DEFAULT_REPORT_FILTERS = {
-  period: "30d",
+  period: "all",
   brand: "All",
   customFrom: "",
   customTo: "",
@@ -26,6 +27,7 @@ function inReportPeriod(order, { period, customFrom, customTo }, today) {
   const day = startOfDay(when).getTime();
   const end = startOfDay(today).getTime();
 
+  if (period === "all") return true;
   if (period === "today") return day === end;
   if (period === "7d") {
     const from = new Date(today);

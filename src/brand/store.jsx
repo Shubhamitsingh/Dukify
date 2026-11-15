@@ -19,6 +19,8 @@ const StoreContext = createContext(null);
 
 const emptyState = {
   brandId: "brand-k",
+  /** When set, switchBrand without { demo: true } cannot leave this brand (session membership). */
+  lockedBrandId: null,
   selections: {},
   storefronts: {},
   read: {},
@@ -143,7 +145,27 @@ export function StoreProvider({ children }) {
       flash,
       clearFlash: () => setFlash(null),
       notify: (message) => setFlash(message),
-      switchBrand: (brandId) => setState((current) => ({ ...current, brandId })),
+      /**
+       * Demo-only tenant switch. Pass { demo: true } to leave the authenticated brand.
+       * Production must never allow this without server-side membership checks.
+       */
+      switchBrand: (brandId, options = {}) => {
+        setState((current) => {
+          const locked = current.lockedBrandId;
+          if (locked && brandId !== locked && !options.demo) {
+            setFlash("Demo: tenant locked to your signed-in brand. Enable demo switcher to preview others.");
+            return current;
+          }
+          return { ...current, brandId };
+        });
+      },
+      lockToBrand: (brandId) =>
+        setState((current) => ({
+          ...current,
+          brandId: brandId || current.brandId,
+          lockedBrandId: brandId || null,
+        })),
+      unlockDemoTenantSwitch: () => setState((current) => ({ ...current, lockedBrandId: null })),
       toggleSelected: (productId, selected) => patchSelection(productId, selected ? { selected: true } : { selected: false, featured: false }),
       savePrice: (product, retail, promo) => {
         const error = priceError(product, retail, promo);

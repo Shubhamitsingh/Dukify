@@ -62,11 +62,12 @@ const rangeChips = [
 export default function Dashboard({ section }) {
   const navigate = useNavigate();
   const partner = usePartner();
-  const [range, setRange] = useState("last30");
+  const [range, setRange] = useState("all");
   const [custom, setCustom] = useState({ start: "2026-10-12", end: "2026-11-11" });
   const summary = useMemo(() => summarize(partner.orders, partner.brand, range, custom), [partner, range, custom]);
   const series = useMemo(() => dailySeries(partner.orders, partner.brand, summary.bounds), [partner, summary.bounds]);
   const today = useMemo(() => summarize(partner.orders, partner.brand, "today"), [partner]);
+  const allTime = useMemo(() => summarize(partner.orders, partner.brand, "all"), [partner]);
   const tops = topProducts(summary.rows, partner.products, 5);
   const people = customerStats(partner.customers, partner.orders);
   const visits = trafficTotals(partner.traffic, summary.bounds);
@@ -76,6 +77,9 @@ export default function Dashboard({ section }) {
   const allPipeline = statusCounts(partner.orders);
   const recent = [...partner.orders].sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id)).slice(0, 6);
   const pending = partner.orders.filter((order) => ["New", "Confirmed", "Processing", "Packed"].includes(order.status)).length;
+  const orderCountInRange = summary.rows.length;
+  const salesInRange = summary.current.sales;
+  const earningsInRange = summary.current.earnings;
   const lowStock = partner.products.filter((product) => product.selected && product.availability === "Out of stock").length;
   const openTickets = partner.tickets.filter((ticket) => ticket.status === "Open").length;
   const unread = partner.notifications.filter((note) => !note.read).length;
@@ -189,18 +193,30 @@ export default function Dashboard({ section }) {
   }
 
   if (section === "overview") {
-    const aov = summary.current.orders ? summary.current.sales / summary.current.orders : 0;
+    const activeInRange = summary.rows.filter((order) => !order.quote.cancelled).length;
+    const aov = activeInRange ? summary.current.sales / activeInRange : 0;
     const returnsOpen = partner.orders.filter((order) =>
       ["Return requested", "Returned", "Refunded"].includes(order.status),
     ).length;
 
     return (
       <div className="w-full space-y-3">
+        <p className="text-xs text-gray-500">
+          Metrics for <span className="font-semibold text-gray-700 dark:text-gray-200">{summary.bounds.label}</span>
+          {range !== "all" ? (
+            <span>
+              {" "}
+              · all-time sales {inr(allTime.current.sales)} · all-time est. {inr(allTime.current.earnings)}
+            </span>
+          ) : (
+            <span> · matches Earnings / Orders when set to All dates</span>
+          )}
+        </p>
         <section className="grid w-full grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-2.5 xl:grid-cols-4 2xl:grid-cols-7">
           <Kpi
             label="Sales"
-            value={inr(summary.current.sales)}
-            note="Failed / cancelled excluded"
+            value={inr(salesInRange)}
+            note={`${summary.bounds.label} · excl. cancelled`}
             tone="hero"
             icon={<IndianRupee className="h-4 w-4" />}
             trend={delta(summary.current.sales, summary.prior.sales)}
@@ -208,8 +224,8 @@ export default function Dashboard({ section }) {
           />
           <Kpi
             label="Est. earnings"
-            value={inr(summary.current.earnings)}
-            note="Before settlement"
+            value={inr(earningsInRange)}
+            note={`${summary.bounds.label} · before settlement`}
             tone="sky"
             icon={<TrendingUp className="h-4 w-4" />}
             trend={delta(summary.current.earnings, summary.prior.earnings)}
@@ -217,8 +233,8 @@ export default function Dashboard({ section }) {
           />
           <Kpi
             label="Orders"
-            value={summary.current.orders}
-            note={`${today.current.orders} today`}
+            value={orderCountInRange}
+            note={`${partner.orders.length} all-time · ${today.current.orders} today`}
             tone="pink"
             icon={<ShoppingBag className="h-4 w-4" />}
             onClick={() => navigate("/brand/orders/all")}
@@ -226,7 +242,7 @@ export default function Dashboard({ section }) {
           <Kpi
             label="AOV"
             value={inr(aov)}
-            note="Avg order value"
+            note="On active sales in range"
             tone="emerald"
             icon={<Wallet className="h-4 w-4" />}
             onClick={() => navigate("/brand/analytics/sales")}

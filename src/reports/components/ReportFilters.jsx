@@ -3,7 +3,7 @@ import { REPORT_PERIODS } from "../model";
 export function ReportFilters({ filters, brands, orderCount, onChange, onReset }) {
   const set = (key) => (event) => onChange({ ...filters, [key]: event.target.value });
   const dirty =
-    filters.period !== "30d" ||
+    filters.period !== "all" ||
     filters.brand !== "All" ||
     Boolean(filters.customFrom) ||
     Boolean(filters.customTo);

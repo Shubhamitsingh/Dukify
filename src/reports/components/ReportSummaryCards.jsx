@@ -5,7 +5,7 @@ const CARDS = [
   { key: "totalProducts", label: "Total Products", tone: "pink", money: false },
   { key: "totalOrders", label: "Total Orders", tone: "sky", money: false },
   { key: "paidOrders", label: "Paid Orders", tone: "emerald", money: false, note: "Captured / Paid only" },
-  { key: "grossSales", label: "Gross Sales", tone: "amber", money: true, note: "Excludes failed, cancelled, refunded" },
+  { key: "grossSales", label: "Booked GMV", tone: "amber", money: true, note: "Same rule as Dashboard / Finance · excl. failed, cancelled, refunded" },
   { key: "refunds", label: "Refunds", tone: "rose", money: true, note: "Shown separately" },
 ];
 

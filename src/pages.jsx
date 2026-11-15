@@ -16,6 +16,7 @@ import {
 import { useNavigate, useSearchParams } from "react-router-dom";
 import * as XLSX from "xlsx";
 import { downloadBlob } from "./catalogue";
+import { commerceSnapshot, isBookedSalesOrder } from "./commerce/metrics";
 import { inr, sum } from "./data";
 import {
   ORDER_PERIODS,
@@ -68,7 +69,7 @@ const brandPalette = ["#ec4899", "#38bdf8", "#34d399", "#fbbf24", "#818cf8", "#f
 function brandStats(db) {
   return db.brands
     .map((brand, index) => {
-      const orders = db.orders.filter((order) => order.brand === brand.name && order.payment !== "Failed");
+      const orders = db.orders.filter((order) => order.brand === brand.name && isBookedSalesOrder(order));
       return {
         ...brand,
         orders: orders.length,
@@ -83,19 +84,20 @@ export function Dashboard() {
   const { db } = useStore();
   const navigate = useNavigate();
   const brands = brandStats(db);
-  const liveOrders = db.orders.filter((order) => order.payment !== "Failed");
+  const snap = commerceSnapshot(db);
   const paidOrders = db.orders.filter((order) => order.payment === "Captured" || order.payment === "COD pending");
-  const sales = sum(liveOrders, "value");
-  const supply = sum(paidOrders, "supply");
-  const margin = sum(paidOrders, "value") - supply;
+  const sales = snap.bookedSales;
+  const margin = snap.grossMarginOnPaid;
+  const supply = snap.supplyOnPaid;
   const low = db.inventory.filter((row) => row.available <= (Number(row.reorderAt) || 11));
   const pending = db.orders.filter((order) =>
-    ["Confirmed", "Packing", "Ready to ship", "Payment failed"].includes(order.fulfilment),
+    ["Confirmed", "Packing", "Ready to ship", "Payment failed", "New", "Processing"].includes(order.fulfilment) ||
+    ["New", "Processing", "Confirmed"].includes(order.fulfillmentStatus),
   ).length;
   const attention = exceptions(db).filter((row) => row.priority === "High" || row.priority === "Medium");
   const topProducts = [...db.products]
     .map((product) => {
-      const orders = db.orders.filter((order) => order.product === product.name && order.payment !== "Failed");
+      const orders = db.orders.filter((order) => order.product === product.name && isBookedSalesOrder(order));
       return { ...product, orders: orders.length, sales: sum(orders, "value") };
     })
     .sort((left, right) => right.sales - left.sales)
@@ -105,7 +107,7 @@ export function Dashboard() {
     name,
     count: db.orders.filter((order) => order.fulfilment === name).length,
   }));
-  const aov = liveOrders.length ? sales / liveOrders.length : 0;
+  const aov = snap.bookedOrders ? sales / snap.bookedOrders : 0;
   const ndrOpen = (db.shipments || []).filter((row) => row.status === "NDR").length;
   const openApprovals = approvalRows(db).length;
   const refunded = db.orders.filter((order) => order.payment === "Refunded").length;
@@ -114,26 +116,26 @@ export function Dashboard() {
     <div className="w-full space-y-5">
       <section className="grid w-full grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-2.5 xl:grid-cols-4 2xl:grid-cols-7">
         <Kpi
-          label="Revenue"
+          label="Booked GMV"
           value={inr(sales)}
-          note="Failed excluded"
+          note={snap.labels.bookedSalesNote}
           tone="hero"
           icon={<IndianRupee className="h-4 w-4" />}
-          trend={{ up: true, label: `${paidOrders.length} paid` }}
-          onClick={() => navigate("/orders")}
+          trend={{ up: true, label: `${paidOrders.length} paid/COD` }}
+          onClick={() => navigate("/reports")}
         />
         <Kpi
           label="Gross margin"
           value={inr(margin)}
-          note="Paid − supply"
+          note={snap.labels.grossMarginNote}
           tone="sky"
           icon={<TrendingUp className="h-4 w-4" />}
           onClick={() => navigate("/finance")}
         />
         <Kpi
           label="Orders"
-          value={liveOrders.length}
-          note={`${pending} pending`}
+          value={snap.totalOrders}
+          note={`${snap.liveOrders} live · ${pending} in ops`}
           tone="pink"
           icon={<ClipboardList className="h-4 w-4" />}
           onClick={() => navigate("/orders")}
@@ -141,7 +143,7 @@ export function Dashboard() {
         <Kpi
           label="AOV"
           value={inr(aov)}
-          note="Avg order value"
+          note="On booked GMV orders"
           tone="emerald"
           icon={<IndianRupee className="h-4 w-4" />}
           onClick={() => navigate("/reports")}
@@ -1076,7 +1078,8 @@ const modules = {
   },
   products: {
     title: "Products",
-    description: "Master catalogue. Partners sell only what the company publishes.",
+    description:
+      "Master catalogue (demo). Partners should sell only published SKUs. Brand Partner browse currently uses a richer clothing seed with shared style fields; unify product IDs in production so Admin and Brand never diverge.",
     collection: "products",
     statusKey: "status",
     statuses: ["Active", "Hidden", "Draft"],
@@ -1086,6 +1089,10 @@ const modules = {
       ["barcode", "Barcode"],
       ["category", "Category"],
       ["sizes", "Sizes"],
+      ["colors", "Colours"],
+      ["cost", "Company cost"],
+      ["supply", "Supply price"],
+      ["retail", "Retail"],
       ["status", "Status"],
     ],
   },

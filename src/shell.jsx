@@ -152,6 +152,9 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [openGroups, setOpenGroups] = useState(() =>
+    Object.fromEntries(navGroups.map((group) => [group.label, true])),
+  );
   const [query, setQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const [bellOpen, setBellOpen] = useState(false);
@@ -269,51 +272,77 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
           </button>
         </div>
         <nav className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden py-2 pb-3">
-          {navGroups.map((group) => (
-            <div key={group.label} className="mb-2.5">
-              {collapsed ? null : (
-                <p className="px-4 pt-2.5 pb-1.5 text-[10px] font-semibold tracking-[0.14em] text-gray-400 uppercase dark:text-gray-500">
-                  {group.label}
-                </p>
-              )}
-              {group.items.map((item) => {
-                const Icon = item.icon;
-                const badge =
-                  item.badge === "tickets" || item.to === "/support"
-                    ? openTickets
-                    : item.to === "/exceptions"
-                      ? openExceptions
-                      : item.to === "/approvals"
-                        ? openApprovals
-                        : item.to === "/ndr"
-                          ? openNdr
-                          : 0;
-                return (
-                  <NavLink
-                    key={item.to}
-                    to={item.to}
-                    title={item.label}
-                    end={item.to === "/support"}
-                    onClick={() => setMobileOpen(false)}
-                    className={({ isActive }) => {
-                      const supportActive = item.to.startsWith("/support")
-                        ? isSupportNavActive(item.to, location.pathname)
-                        : isActive;
-                      return `nav-link ${supportActive ? "nav-link-active" : ""}`;
-                    }}
+          {navGroups.map((group) => {
+            const groupActive = group.items.some((item) =>
+              item.to.startsWith("/support")
+                ? isSupportNavActive(item.to, location.pathname)
+                : location.pathname === item.to || location.pathname.startsWith(`${item.to}/`),
+            );
+            const expanded = collapsed || openGroups[group.label] || groupActive;
+            return (
+              <div key={group.label} className="mb-2.5">
+                {collapsed ? null : (
+                  <button
+                    type="button"
+                    className="flex w-full items-center justify-between px-4 pt-2.5 pb-1.5 text-left"
+                    onClick={() =>
+                      setOpenGroups((current) => ({ ...current, [group.label]: !current[group.label] }))
+                    }
+                    aria-expanded={expanded}
                   >
-                    <Icon className="h-4 w-4 shrink-0" />
-                    {collapsed ? null : <span className="min-w-0 truncate">{item.label}</span>}
-                    {!collapsed && badge > 0 ? (
-                      <span className="ml-auto shrink-0 rounded-full bg-rose-500 px-1.5 py-0.5 text-[10px] font-semibold text-white">
-                        {badge}
-                      </span>
-                    ) : null}
-                  </NavLink>
-                );
-              })}
-            </div>
-          ))}
+                    <span
+                      className={`text-[10px] font-semibold tracking-[0.14em] uppercase ${
+                        groupActive ? "text-pink-600 dark:text-pink-400" : "text-gray-400 dark:text-gray-500"
+                      }`}
+                    >
+                      {group.label}
+                    </span>
+                    <ChevronDown
+                      className={`h-3.5 w-3.5 text-gray-400 transition ${expanded ? "rotate-0" : "-rotate-90"}`}
+                    />
+                  </button>
+                )}
+                {expanded
+                  ? group.items.map((item) => {
+                      const Icon = item.icon;
+                      const badge =
+                        item.badge === "tickets" || item.to === "/support"
+                          ? openTickets
+                          : item.to === "/exceptions"
+                            ? openExceptions
+                            : item.to === "/approvals"
+                              ? openApprovals
+                              : item.to === "/ndr"
+                                ? openNdr
+                                : 0;
+                      return (
+                        <NavLink
+                          key={item.to}
+                          to={item.to}
+                          title={item.label}
+                          end={item.to === "/support"}
+                          onClick={() => setMobileOpen(false)}
+                          className={({ isActive }) => {
+                            const supportActive = item.to.startsWith("/support")
+                              ? isSupportNavActive(item.to, location.pathname)
+                              : isActive;
+                            return `nav-link ${supportActive ? "nav-link-active" : ""}`;
+                          }}
+                        >
+                          <Icon className="h-4 w-4 shrink-0" />
+                          {collapsed ? null : <span className="min-w-0 truncate">{item.label}</span>}
+                          {!collapsed && badge > 0 ? (
+                            <span className="ml-auto shrink-0 rounded-full bg-rose-500 px-1.5 py-0.5 text-[10px] font-semibold text-white">
+                              {badge}
+                            </span>
+                          ) : null}
+                        </NavLink>
+                      );
+                    })
+                  : null}
+              </div>
+            );
+          })}
         </nav>
       </aside>
 
@@ -327,6 +356,9 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
       ) : null}
 
       <div className="app-workspace transition-[padding] duration-200 max-lg:!pl-3" style={{ paddingLeft: workspacePad }}>
+        <div className="mb-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] font-medium text-amber-950 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-100">
+          Browser demo — synthetic data only. Integrations show demo state, not live connections. Frontend routes are not production authorization.
+        </div>
         <header className="app-topbar sticky top-3.5 z-20 grid h-[4.25rem] grid-cols-[1.2fr_minmax(12rem,28rem)_0.8fr] items-center gap-3 px-3 backdrop-blur sm:px-5">
           <div className="flex min-w-0 items-center justify-start gap-2">
             <button
