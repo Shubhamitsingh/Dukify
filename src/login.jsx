@@ -2,11 +2,29 @@ import { useState } from "react";
 import { LogIn } from "lucide-react";
 import { authenticate, SUPER_ADMIN_USERS } from "./auth";
 
+const DEMO_ACCOUNTS = [
+  {
+    label: "Super Admin",
+    email: SUPER_ADMIN_USERS[0].email,
+    password: SUPER_ADMIN_USERS[0].password,
+  },
+  {
+    label: "Brand Admin",
+    email: "brandk@pahachan.test",
+    password: "demo1234",
+    note: "Also: meera@auraloom.test, ananya@nivastudio.test",
+  },
+  {
+    label: "Brand Staff",
+    email: "neel@brandk.test",
+    password: "demo1234",
+  },
+];
+
 export function Login({ onSuccess }) {
-  const [email, setEmail] = useState("owner@pahachan.example");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState(DEMO_ACCOUNTS[0].email);
+  const [password, setPassword] = useState(DEMO_ACCOUNTS[0].password);
   const [show, setShow] = useState(false);
-  const [showHints, setShowHints] = useState(false);
   const [message, setMessage] = useState("");
 
   const ready = email.trim().length > 3 && password.trim().length > 0;
@@ -21,6 +39,12 @@ export function Login({ onSuccess }) {
     }
     setMessage("");
     onSuccess(result.session);
+  };
+
+  const useAccount = (account) => {
+    setEmail(account.email);
+    setPassword(account.password);
+    setMessage("");
   };
 
   return (
@@ -43,16 +67,15 @@ export function Login({ onSuccess }) {
           <div className="w-56 rounded-2xl border border-gray-100 bg-white/80 p-4 shadow-sm">
             <p className="text-xs text-gray-500">Unified platform</p>
             <p className="mt-2 text-sm font-semibold text-gray-900">Super Admin + Brand</p>
-            <p className="mt-1 text-xs text-gray-400">Browser mock demo — not production auth</p>
+            <p className="mt-1 text-xs text-gray-400">Demo login — mock only</p>
           </div>
         </div>
         <div className="absolute right-0 bottom-0 left-0 h-40 bg-gradient-to-t from-pink-400/80 to-transparent" />
       </div>
       <div className="flex w-full items-center justify-center px-6 lg:w-1/3">
         <form className="w-full max-w-sm" onSubmit={submit}>
-          <p className="mb-2 text-xs font-semibold tracking-wide text-amber-700 uppercase">Demo mode</p>
           <h1 className="text-2xl font-semibold text-gray-900">Sign in</h1>
-          <p className="mt-1 text-sm text-gray-500">Mock session stays in this browser only.</p>
+          <p className="mt-1 text-sm text-gray-500">Use a demo account below to explore the panel.</p>
           <label className="mt-6 block text-sm font-medium text-gray-700">
             Email
             <input
@@ -88,37 +111,25 @@ export function Login({ onSuccess }) {
             <LogIn className="h-4 w-4" />
             Login
           </button>
-          <button
-            type="button"
-            className="mt-4 w-full text-left text-xs font-semibold text-pink-700 hover:text-pink-800"
-            onClick={() => setShowHints((value) => !value)}
-          >
-            {showHints ? "Hide demo account hints" : "Show demo account hints"}
-          </button>
-          {showHints ? (
-            <div className="mt-3 space-y-3 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-950">
-              <p className="font-semibold">Synthetic demo accounts only — never use in production.</p>
-              <div>
-                <p className="font-semibold">Super Admin</p>
-                <p>
-                  {SUPER_ADMIN_USERS[0].email} · password shown after you open hints (demo)
+
+          <div className="mt-5 space-y-2 rounded-xl border border-gray-100 bg-gray-50 p-3 text-xs text-gray-700">
+            <p className="font-semibold text-gray-900">Demo accounts — click to fill</p>
+            {DEMO_ACCOUNTS.map((account) => (
+              <button
+                key={account.email}
+                type="button"
+                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-left transition hover:border-pink-300 hover:bg-pink-50"
+                onClick={() => useAccount(account)}
+              >
+                <p className="font-semibold text-gray-900">{account.label}</p>
+                <p className="mt-0.5 font-mono text-[11px] text-gray-600">
+                  {account.email} / {account.password}
                 </p>
-                <p className="mt-1 font-mono text-[11px]">{SUPER_ADMIN_USERS[0].password}</p>
-              </div>
-              <div>
-                <p className="font-semibold">Brand Admin</p>
-                <p>brandk@pahachan.test · demo1234</p>
-                <p className="text-amber-800/70">Also: meera@auraloom.test, ananya@nivastudio.test</p>
-              </div>
-              <div>
-                <p className="font-semibold">Brand Staff</p>
-                <p>neel@brandk.test · demo1234</p>
-              </div>
-            </div>
-          ) : null}
-          <p className="mt-4 text-xs leading-5 text-gray-500">
-            Mock auth only — not hashed, not server-side, not MFA. Do not treat this login as secure.
-          </p>
+                {account.note ? <p className="mt-0.5 text-[11px] text-gray-400">{account.note}</p> : null}
+              </button>
+            ))}
+          </div>
+          <p className="mt-4 text-xs leading-5 text-gray-500">Mock auth only — stays in this browser. Not production security.</p>
         </form>
       </div>
     </div>
