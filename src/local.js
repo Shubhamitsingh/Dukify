@@ -14,15 +14,54 @@ export const blanks = {
   brands: { name: "", partner: "", email: "", phone: "", domain: "", category: "Ethnic wear", status: "Draft", description: "" },
   partners: { name: "", brand: "", email: "", phone: "", city: "", verification: "Not started", status: "Draft", joined: "10 Nov 2026" },
   websites: { brand: "", url: "", theme: "Ivory editorial", color: "#9D174D", status: "Draft", ssl: "Pending" },
-  products: { name: "", sku: "", category: "Kurtis", sizes: "S M L", colors: "", cost: 0, supply: 0, retail: 0, status: "Draft" },
+  products: {
+    name: "",
+    handle: "",
+    description: "",
+    vendor: "",
+    tags: "",
+    sku: "",
+    barcode: "",
+    category: "Kurtis",
+    sizes: "S M L",
+    colors: "",
+    cost: 0,
+    supply: 0,
+    retail: 0,
+    status: "Draft",
+    images: [],
+  },
   categories: { name: "", parent: "Women's clothing", products: 0, order: 9, status: "Draft" },
   suppliers: { name: "", city: "", categories: "", contact: "", invoices: 0, status: "Active" },
   purchases: { supplier: "Jaipur Loom House", product: "Kurti A", qty: 10, cost: 0, status: "Draft", date: "10 Nov 2026" },
   warehouses: { name: "", city: "Gurugram", bins: 0, inbound: 0, outbound: 0, status: "Operating" },
-  inventory: { sku: "", product: "", size: "M", color: "", warehouse: "Central warehouse", onHand: 0, reserved: 0, available: 0, damaged: 0 },
-  orders: { brand: "Aisa Clothing", partner: "Aisa Studio", customer: "Customer · City", product: "Kurti A", sku: "KUR-001-M-RED", qty: 1, value: 2000, supply: 1700, payment: "Pending", method: "UPI", fulfilment: "Confirmed", delivery: "Not shipped", date: "10 Nov 2026" },
+  inventory: { sku: "", product: "", size: "M", color: "", warehouse: "Central warehouse", onHand: 0, reserved: 0, available: 0, damaged: 0, reorderAt: 12 },
+  orders: {
+    brand: "Aisa Clothing",
+    brandId: "BRD-1001",
+    partner: "Aisa Studio",
+    customer: "Customer · City",
+    customerName: "New customer",
+    customerPhone: "",
+    address: "",
+    product: "Kurti A",
+    sku: "KUR-001-M-RED",
+    qty: 1,
+    value: 2000,
+    supply: 1700,
+    payment: "Pending",
+    paymentStatus: "Pending",
+    method: "UPI",
+    fulfilment: "Confirmed",
+    fulfillmentStatus: "New",
+    delivery: "Not shipped",
+    shippingStatus: "Not Assigned",
+    date: "10 Nov 2026",
+  },
   fulfilment: { order: "", brand: "", task: "Pick", assignee: "Pick desk", branding: "Company label", status: "Waiting payment check" },
-  shipments: { order: "", courier: "Delhivery", awb: "", charge: 79, status: "In transit" },
+  shipments: { order: "", courier: "Delhivery", awb: "", charge: 79, status: "In transit", ndrReason: "", attempts: 0 },
+  inspections: { type: "Inbound", ref: "", product: "", qty: 1, result: "Pending", inspector: "Returns bay", notes: "" },
+  integrations: { name: "", kind: "Payments", status: "Not Connected", note: "Local sample only.", providerId: "", scope: "platform" },
   labels: { brand: "", type: "Neck label", artwork: "In review", charge: 18, stock: 0, status: "Pending approval" },
   packaging: { name: "", type: "Company", stock: 0, cost: 0, brands: "", status: "Available" },
   returns: { order: "", brand: "", reason: "", condition: "Good", refund: 0, status: "Pending approval" },
@@ -32,7 +71,25 @@ export const blanks = {
   settlements: { partner: "", sales: 0, supply: 0, margin: 0, adjustments: 0, status: "Pending", date: "10 Nov 2026" },
   campaigns: { name: "", scope: "Platform", discount: "", starts: "10 Nov 2026", ends: "30 Nov 2026", status: "Scheduled" },
   courses: { title: "", lessons: 1, partners: 0, status: "Draft" },
-  tickets: { from: "", topic: "", priority: "Medium", status: "Open", updated: "10 Nov 2026" },
+  tickets: {
+    from: "",
+    topic: "",
+    priority: "Medium",
+    status: "Open",
+    updated: "10 Nov 2026",
+    requesterType: "brand",
+    requesterName: "",
+    brandName: "",
+    subject: "",
+    category: "Other",
+    description: "",
+    assignedTo: null,
+    assignedName: null,
+    messages: [],
+    activityLogs: [],
+  },
+  supportAgents: { name: "", email: "", avatar: "", status: "Active", availability: "Online" },
+  ticketCategories: { name: "", scope: "brand", active: true },
   notices: { title: "", channel: "In-app", audience: "Operations", status: "Draft" },
   staff: { desk: "", department: "Operations", role: "Operations Manager", status: "Active" },
   roles: { name: "", access: "", people: 0 },
@@ -64,6 +121,7 @@ function addStock(db, productName, qty) {
       reserved: 0,
       available: qty,
       damaged: 0,
+      reorderAt: 12,
     },
     ...db.inventory,
   ];
@@ -108,6 +166,26 @@ export function cascade(db, collection, before, after) {
   if (collection === "purchases" && changed("status") && after.status === "Received") {
     next = { ...next, inventory: addStock(next, after.product, Number(after.qty) || 0) };
     notes.push(`Added ${after.qty} ${after.product} to central stock.`);
+  }
+
+  if (collection === "inspections" && changed("result") && after.result === "Pass" && after.type === "Inbound") {
+    const purchase = next.purchases.find((item) => item.id === after.ref);
+    if (purchase && purchase.status === "Inspection") {
+      next = {
+        ...next,
+        purchases: bump(next.purchases, purchase.id, { status: "Received" }),
+        inventory: addStock(next, purchase.product, Number(purchase.qty) || 0),
+      };
+      notes.push(`${purchase.id} received after quality pass. Added ${purchase.qty} ${purchase.product} to central stock.`);
+    }
+  }
+
+  if (collection === "inspections" && changed("result") && after.result === "Fail" && after.type === "Return") {
+    const ret = next.returns.find((item) => item.id === after.ref);
+    if (ret && ret.status === "Inspection") {
+      next = { ...next, returns: bump(next.returns, ret.id, { status: "Rejected" }) };
+      notes.push(`${ret.id} rejected after quality fail.`);
+    }
   }
 
   if (collection === "payments" && changed("status") && after.order) {
@@ -236,6 +314,7 @@ export function related(db, collection, row) {
     purchases: [
       block("Supplier", "/suppliers", db.suppliers.filter((item) => item.name === row.supplier), (item) => item.city),
       block("Stock", "/inventory", db.inventory.filter((item) => item.product === row.product), (item) => `${item.sku} · ${item.available} available`),
+      block("Quality", "/quality", (db.inspections || []).filter((item) => item.ref === row.id), (item) => `${item.id} · ${item.result}`),
     ],
     inventory: [
       block("Product", "/products", db.products.filter((item) => item.name === row.product), (item) => item.status),
@@ -259,6 +338,7 @@ export function related(db, collection, row) {
     ],
     returns: [
       block("Order", "/orders", db.orders.filter((item) => item.id === row.order), (item) => `${item.product} · ${item.payment}`),
+      block("Quality", "/quality", (db.inspections || []).filter((item) => item.ref === row.id), (item) => `${item.id} · ${item.result}`),
     ],
     customers: [
       block("Orders", "/orders", db.orders.filter((item) => item.customer === row.label && item.brand === row.brand), (item) => `${item.id} · ${item.product}`),
@@ -272,6 +352,10 @@ export function related(db, collection, row) {
     ],
     tickets: [
       block("Partner", "/partners", db.partners.filter((item) => item.name === row.from), (item) => item.brand),
+    ],
+    inspections: [
+      block("Purchase", "/purchasing", db.purchases.filter((item) => item.id === row.ref), (item) => `${item.product} · ${item.status}`),
+      block("Return", "/returns", db.returns.filter((item) => item.id === row.ref), (item) => `${item.reason} · ${item.status}`),
     ],
   };
 

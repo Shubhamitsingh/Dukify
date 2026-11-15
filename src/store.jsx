@@ -1,6 +1,7 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useCallback, useContext, useState } from "react";
 import { seed } from "./data";
 import { cascade, nextId } from "./local";
+import { normalizeSettings } from "./settings/data/defaults";
 
 const StoreContext = createContext(null);
 
@@ -18,6 +19,7 @@ export function StoreProvider({ children }) {
 
   const patch = (collection, id, changes, note) => {
     setDb((current) => {
+      if (!Array.isArray(current[collection])) return current;
       const before = current[collection].find((row) => row.id === id);
       const updated = current[collection].map((row) => (row.id === id ? { ...row, ...changes } : row));
       const after = updated.find((row) => row.id === id);
@@ -81,17 +83,95 @@ export function StoreProvider({ children }) {
     return created;
   };
 
-  const saveSettings = (settings) => {
+  const load = (next) => {
+    const payload = next && typeof next === "object"
+      ? { ...next, settings: normalizeSettings(next.settings) }
+      : next;
+    setDb(payload);
+    toast("Loaded into this browser session. Nothing was written to a database.");
+  };
+
+  /** Silent merge for module seed hydration (no toast). */
+  const mergeSilent = useCallback((partial) => {
+    setDb((current) => ({ ...current, ...partial }));
+  }, []);
+
+  const bulkUpsert = (collection, rows, note) => {
+    if (!Array.isArray(rows) || !rows.length) return { created: 0, updated: 0 };
+    let created = 0;
+    let updated = 0;
+    setDb((current) => {
+      if (!Array.isArray(current[collection])) return current;
+      let list = [...current[collection]];
+      rows.forEach((row) => {
+        const matchIndex = row.sku
+          ? list.findIndex((item) => item.sku === row.sku)
+          : row.id
+            ? list.findIndex((item) => item.id === row.id)
+            : -1;
+        if (matchIndex >= 0) {
+          list[matchIndex] = { ...list[matchIndex], ...row, id: list[matchIndex].id };
+          updated += 1;
+        } else {
+          const id = row.id || nextId(list);
+          list = [{ ...row, id }, ...list];
+          created += 1;
+        }
+      });
+      return {
+        ...current,
+        [collection]: list,
+        audit: [
+          {
+            id: `AUD-${Date.now()}`,
+            when: "Just now",
+            actor: "Platform owner",
+            what: note || `${collection} bulk upsert`,
+            detail: `${created} created · ${updated} updated · session only`,
+          },
+          ...current.audit,
+        ],
+      };
+    });
+    toast(`Bulk saved ${rows.length} ${collection} in this browser session.`);
+    return { created, updated };
+  };
+
+  const removeMany = (collection, ids, note) => {
+    const idSet = new Set(ids);
+    setDb((current) => {
+      if (!Array.isArray(current[collection])) return current;
+      return {
+        ...current,
+        [collection]: current[collection].filter((row) => !idSet.has(row.id)),
+        audit: [
+          {
+            id: `AUD-${Date.now()}`,
+            when: "Just now",
+            actor: "Platform owner",
+            what: note || `${collection} removed`,
+            detail: `${ids.length} rows · session only`,
+          },
+          ...current.audit,
+        ],
+      };
+    });
+    toast(`Removed ${ids.length} ${collection} from this browser session.`);
+  };
+
+  const saveSettings = (settings, note = "Platform settings updated") => {
+    const normalized = normalizeSettings(settings);
     setDb((current) => ({
       ...current,
-      settings,
+      settings: normalized,
       audit: [
         {
           id: `AUD-${Date.now()}`,
           when: "Just now",
           actor: "Platform owner",
-          what: "Company settings updated",
-          detail: settings.company,
+          what: note,
+          module: "Settings",
+          detail: normalized.company?.name || "Settings",
         },
         ...current.audit,
       ],
@@ -100,7 +180,7 @@ export function StoreProvider({ children }) {
   };
 
   return (
-    <StoreContext.Provider value={{ db, patch, add, saveSettings, toast }}>
+    <StoreContext.Provider value={{ db, patch, add, load, mergeSilent, bulkUpsert, removeMany, saveSettings, toast }}>
       {children}
       <div className="fixed bottom-4 right-4 z-50 flex w-[min(100%,320px)] flex-col gap-2">
         {toasts.map((item) => (

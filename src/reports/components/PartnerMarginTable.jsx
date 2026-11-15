@@ -1,0 +1,108 @@
+import { useMemo } from "react";
+import { inr } from "../../data";
+import { Surface } from "../../ui";
+import { SortTh, TablePager, TableSearch, useReportTable } from "./ReportTableChrome";
+
+export function PartnerMarginTable({ rows }) {
+  const searchKeys = useMemo(() => ["brand", "partner"], []);
+  const table = useReportTable(rows, {
+    defaultSort: "orderValue",
+    searchKeys,
+  });
+
+  return (
+    <Surface
+      title="Partner margin"
+      action={<TableSearch value={table.query} onChange={table.setQuery} placeholder="Search brands" />}
+    >
+      <div className="border-b border-gray-100 px-3 py-2 text-[11px] leading-4 text-gray-500 dark:border-gray-700">
+        Estimated from filtered orders — not settled cash profit. Courier charges shown as other deductions. Actual
+        payouts stay on Finance → Settlements.
+      </div>
+      <div className="overflow-x-auto">
+        <table className="min-w-full text-left text-sm">
+          <thead className="bg-gray-50 text-gray-500 dark:bg-gray-900">
+            <tr>
+              <SortTh label="Brand" column="brand" sortKey={table.sortKey} sortDir={table.sortDir} onSort={table.toggleSort} />
+              <SortTh
+                label="Order Value"
+                column="orderValue"
+                sortKey={table.sortKey}
+                sortDir={table.sortDir}
+                onSort={table.toggleSort}
+                align="right"
+              />
+              <SortTh
+                label="Supply Cost"
+                column="supplyCost"
+                sortKey={table.sortKey}
+                sortDir={table.sortDir}
+                onSort={table.toggleSort}
+                align="right"
+              />
+              <SortTh
+                label="Platform Commission"
+                column="platformCommission"
+                sortKey={table.sortKey}
+                sortDir={table.sortDir}
+                onSort={table.toggleSort}
+                align="right"
+              />
+              <SortTh
+                label="Other Deductions"
+                column="otherDeductions"
+                sortKey={table.sortKey}
+                sortDir={table.sortDir}
+                onSort={table.toggleSort}
+                align="right"
+              />
+              <SortTh
+                label="Est. Brand Payable"
+                column="estimatedBrandPayable"
+                sortKey={table.sortKey}
+                sortDir={table.sortDir}
+                onSort={table.toggleSort}
+                align="right"
+              />
+              <SortTh
+                label="Platform Gross Margin"
+                column="platformGrossMargin"
+                sortKey={table.sortKey}
+                sortDir={table.sortDir}
+                onSort={table.toggleSort}
+                align="right"
+              />
+            </tr>
+          </thead>
+          <tbody>
+            {table.rows.length ? (
+              table.rows.map((row) => (
+                <tr key={row.brand} className="border-b border-gray-50 last:border-0 dark:border-gray-700">
+                  <td className="px-3 py-3">
+                    <p className="font-medium text-gray-900 dark:text-white">{row.brand}</p>
+                    <p className="text-[11px] text-gray-400">{row.partner}</p>
+                  </td>
+                  <td className="px-3 py-3 text-right tabular-nums">{inr(row.orderValue)}</td>
+                  <td className="px-3 py-3 text-right tabular-nums">{inr(row.supplyCost)}</td>
+                  <td className="px-3 py-3 text-right tabular-nums">{inr(row.platformCommission)}</td>
+                  <td className="px-3 py-3 text-right tabular-nums text-rose-600 dark:text-rose-300">{inr(row.otherDeductions)}</td>
+                  <td className="px-3 py-3 text-right font-medium tabular-nums">{inr(row.estimatedBrandPayable)}</td>
+                  <td className="px-3 py-3 text-right tabular-nums text-emerald-700 dark:text-emerald-300">
+                    {inr(row.platformGrossMargin)}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={7} className="px-3 py-8 text-center text-sm text-gray-400">
+                  No margin rows in this range.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+      <TablePager page={table.page} pages={table.pages} total={table.total} onPage={table.setPage} />
+    </Surface>
+  );
+}

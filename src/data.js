@@ -1,3 +1,8 @@
+import { integrationsSeedRows } from "./integrations/data/integrations";
+import { seedOrders } from "./orders/seedOrders";
+import { DEFAULT_SETTINGS } from "./settings/data/defaults";
+import { supportAgentsSeed, ticketCategoriesSeed, ticketsSeed } from "./support/data/seed";
+
 export const seed = {
   brands: [
     { id: "BRD-1001", name: "Aisa Clothing", partner: "Aisa Studio", email: "studio@aisa.example", phone: "+91 98000 10001", domain: "aisa.platformdomain.in", category: "Ethnic wear", status: "Active", description: "Everyday kurtis and co-ord sets." },
@@ -24,14 +29,14 @@ export const seed = {
     { id: "WEB-06", brand: "Gulmohar", url: "Not assigned", theme: "Not selected", color: "#9D174D", status: "Draft", ssl: "Not issued" },
   ],
   products: [
-    { id: "PRD-01", name: "Kurti A", sku: "KUR-001", category: "Kurtis", sizes: "S M L XL", colors: "Red, Black", cost: 1500, supply: 1700, retail: 2000, status: "Active" },
-    { id: "PRD-02", name: "Suit B", sku: "SUT-014", category: "Suits", sizes: "M L XL", colors: "Wine, Ivory", cost: 2600, supply: 2900, retail: 3499, status: "Active" },
-    { id: "PRD-03", name: "Saree C", sku: "SAR-008", category: "Sarees", sizes: "Free", colors: "Maroon, Gold", cost: 1800, supply: 2100, retail: 2599, status: "Active" },
-    { id: "PRD-04", name: "Co-ord D", sku: "CRD-003", category: "Co-ord sets", sizes: "S M L", colors: "Sage, Black", cost: 1200, supply: 1450, retail: 1799, status: "Active" },
-    { id: "PRD-05", name: "Dress E", sku: "DRS-021", category: "Dresses", sizes: "S M L", colors: "Blush", cost: 900, supply: 1100, retail: 1499, status: "Active" },
-    { id: "PRD-06", name: "Dupatta F", sku: "DUP-006", category: "Dupattas", sizes: "Free", colors: "Ivory", cost: 350, supply: 450, retail: 699, status: "Active" },
-    { id: "PRD-07", name: "Top G", sku: "TOP-011", category: "Tops", sizes: "S M L", colors: "White, Navy", cost: 500, supply: 650, retail: 899, status: "Hidden" },
-    { id: "PRD-08", name: "Jeans H", sku: "JNS-004", category: "Jeans", sizes: "28 30 32", colors: "Indigo", cost: 800, supply: 980, retail: 1299, status: "Draft" },
+    { id: "PRD-01", name: "Kurti A", sku: "KUR-001", barcode: "890100000001", category: "Kurtis", sizes: "S M L XL", colors: "Red, Black", cost: 1500, supply: 1700, retail: 2000, status: "Active" },
+    { id: "PRD-02", name: "Suit B", sku: "SUT-014", barcode: "890100000002", category: "Suits", sizes: "M L XL", colors: "Wine, Ivory", cost: 2600, supply: 2900, retail: 3499, status: "Active" },
+    { id: "PRD-03", name: "Saree C", sku: "SAR-008", barcode: "890100000003", category: "Sarees", sizes: "Free", colors: "Maroon, Gold", cost: 1800, supply: 2100, retail: 2599, status: "Active" },
+    { id: "PRD-04", name: "Co-ord D", sku: "CRD-003", barcode: "890100000004", category: "Co-ord sets", sizes: "S M L", colors: "Sage, Black", cost: 1200, supply: 1450, retail: 1799, status: "Active" },
+    { id: "PRD-05", name: "Dress E", sku: "DRS-021", barcode: "890100000005", category: "Dresses", sizes: "S M L", colors: "Blush", cost: 900, supply: 1100, retail: 1499, status: "Active" },
+    { id: "PRD-06", name: "Dupatta F", sku: "DUP-006", barcode: "890100000006", category: "Dupattas", sizes: "Free", colors: "Ivory", cost: 350, supply: 450, retail: 699, status: "Active" },
+    { id: "PRD-07", name: "Top G", sku: "TOP-011", barcode: "890100000007", category: "Tops", sizes: "S M L", colors: "White, Navy", cost: 500, supply: 650, retail: 899, status: "Hidden" },
+    { id: "PRD-08", name: "Jeans H", sku: "JNS-004", barcode: "890100000008", category: "Jeans", sizes: "28 30 32", colors: "Indigo", cost: 800, supply: 980, retail: 1299, status: "Draft" },
   ],
   categories: [
     { id: "CAT-01", name: "Kurtis", parent: "Women's clothing", products: 1, order: 1, status: "Active" },
@@ -61,27 +66,16 @@ export const seed = {
     { id: "WH-02", name: "Returns bay", city: "Gurugram", bins: 8, inbound: 3, outbound: 0, status: "Inspection only" },
   ],
   inventory: [
-    { id: "INV-01", sku: "KUR-001-M-RED", product: "Kurti A", size: "M", color: "Red", warehouse: "Central warehouse", onHand: 42, reserved: 6, available: 36, damaged: 0 },
-    { id: "INV-02", sku: "KUR-001-L-BLK", product: "Kurti A", size: "L", color: "Black", warehouse: "Central warehouse", onHand: 28, reserved: 2, available: 26, damaged: 1 },
-    { id: "INV-03", sku: "SUT-014-L-WIN", product: "Suit B", size: "L", color: "Wine", warehouse: "Central warehouse", onHand: 0, reserved: 0, available: 0, damaged: 2 },
-    { id: "INV-04", sku: "SAR-008-FR-MAR", product: "Saree C", size: "Free", color: "Maroon", warehouse: "Central warehouse", onHand: 18, reserved: 3, available: 15, damaged: 0 },
-    { id: "INV-05", sku: "CRD-003-S-SAG", product: "Co-ord D", size: "S", color: "Sage", warehouse: "Central warehouse", onHand: 12, reserved: 1, available: 11, damaged: 0 },
-    { id: "INV-06", sku: "DRS-021-M-BLS", product: "Dress E", size: "M", color: "Blush", warehouse: "Central warehouse", onHand: 9, reserved: 0, available: 9, damaged: 0 },
-    { id: "INV-07", sku: "DUP-006-FR-IVR", product: "Dupatta F", size: "Free", color: "Ivory", warehouse: "Central warehouse", onHand: 40, reserved: 4, available: 36, damaged: 0 },
-    { id: "INV-08", sku: "SUT-014-M-RET", product: "Suit B", size: "M", color: "Wine", warehouse: "Returns bay", onHand: 2, reserved: 0, available: 0, damaged: 2 },
+    { id: "INV-01", sku: "KUR-001-M-RED", product: "Kurti A", size: "M", color: "Red", warehouse: "Central warehouse", onHand: 42, reserved: 6, available: 36, damaged: 0, reorderAt: 12 },
+    { id: "INV-02", sku: "KUR-001-L-BLK", product: "Kurti A", size: "L", color: "Black", warehouse: "Central warehouse", onHand: 28, reserved: 2, available: 26, damaged: 1, reorderAt: 12 },
+    { id: "INV-03", sku: "SUT-014-L-WIN", product: "Suit B", size: "L", color: "Wine", warehouse: "Central warehouse", onHand: 0, reserved: 0, available: 0, damaged: 2, reorderAt: 8 },
+    { id: "INV-04", sku: "SAR-008-FR-MAR", product: "Saree C", size: "Free", color: "Maroon", warehouse: "Central warehouse", onHand: 18, reserved: 3, available: 15, damaged: 0, reorderAt: 10 },
+    { id: "INV-05", sku: "CRD-003-S-SAG", product: "Co-ord D", size: "S", color: "Sage", warehouse: "Central warehouse", onHand: 12, reserved: 1, available: 11, damaged: 0, reorderAt: 12 },
+    { id: "INV-06", sku: "DRS-021-M-BLS", product: "Dress E", size: "M", color: "Blush", warehouse: "Central warehouse", onHand: 9, reserved: 0, available: 9, damaged: 0, reorderAt: 10 },
+    { id: "INV-07", sku: "DUP-006-FR-IVR", product: "Dupatta F", size: "Free", color: "Ivory", warehouse: "Central warehouse", onHand: 40, reserved: 4, available: 36, damaged: 0, reorderAt: 20 },
+    { id: "INV-08", sku: "SUT-014-M-RET", product: "Suit B", size: "M", color: "Wine", warehouse: "Returns bay", onHand: 2, reserved: 0, available: 0, damaged: 2, reorderAt: 0 },
   ],
-  orders: [
-    { id: "ORD-1048", brand: "Aisa Clothing", partner: "Aisa Studio", customer: "Customer · Delhi", product: "Kurti A", sku: "KUR-001-M-RED", qty: 1, value: 2000, supply: 1700, payment: "Captured", method: "UPI", fulfilment: "Packing", delivery: "Not shipped", date: "10 Nov 2026" },
-    { id: "ORD-1047", brand: "Royal Ethnic", partner: "Royal Ethnic House", customer: "Customer · Jaipur", product: "Suit B", sku: "SUT-014-M-IVR", qty: 1, value: 3499, supply: 2900, payment: "Captured", method: "Card", fulfilment: "Shipped", delivery: "In transit", date: "10 Nov 2026" },
-    { id: "ORD-1046", brand: "Noor Fashion", partner: "Noor Fashion Desk", customer: "Customer · Lucknow", product: "Saree C", sku: "SAR-008-FR-MAR", qty: 1, value: 2599, supply: 2100, payment: "COD pending", method: "COD", fulfilment: "Confirmed", delivery: "Not shipped", date: "09 Nov 2026" },
-    { id: "ORD-1045", brand: "Aisa Clothing", partner: "Aisa Studio", customer: "Customer · Pune", product: "Co-ord D", sku: "CRD-003-S-SAG", qty: 1, value: 1799, supply: 1450, payment: "Captured", method: "UPI", fulfilment: "Delivered", delivery: "Delivered", date: "08 Nov 2026" },
-    { id: "ORD-1044", brand: "Royal Ethnic", partner: "Royal Ethnic House", customer: "Customer · Delhi", product: "Saree C", sku: "SAR-008-FR-GLD", qty: 1, value: 2599, supply: 2100, payment: "Captured", method: "Net banking", fulfilment: "Delivered", delivery: "Delivered", date: "07 Nov 2026" },
-    { id: "ORD-1043", brand: "Noor Fashion", partner: "Noor Fashion Desk", customer: "Customer · Kanpur", product: "Kurti A", sku: "KUR-001-L-BLK", qty: 2, value: 4000, supply: 3400, payment: "Refunded", method: "UPI", fulfilment: "Returned", delivery: "Returned", date: "06 Nov 2026" },
-    { id: "ORD-1042", brand: "Aisa Clothing", partner: "Aisa Studio", customer: "Customer · Ahmedabad", product: "Dress E", sku: "DRS-021-M-BLS", qty: 1, value: 1499, supply: 1100, payment: "Captured", method: "UPI", fulfilment: "Ready to ship", delivery: "Label ready", date: "06 Nov 2026" },
-    { id: "ORD-1041", brand: "Lotus Thread", partner: "Lotus Thread", customer: "Customer · Pune", product: "Top G", sku: "TOP-011-M-WHT", qty: 1, value: 899, supply: 650, payment: "Captured", method: "UPI", fulfilment: "Cancelled", delivery: "Not shipped", date: "01 Nov 2026" },
-    { id: "ORD-1040", brand: "Royal Ethnic", partner: "Royal Ethnic House", customer: "Customer · Chandigarh", product: "Dupatta F", sku: "DUP-006-FR-IVR", qty: 2, value: 1398, supply: 900, payment: "Captured", method: "COD", fulfilment: "Delivered", delivery: "Delivered", date: "29 Oct 2026" },
-    { id: "ORD-1039", brand: "Aisa Clothing", partner: "Aisa Studio", customer: "Customer · Delhi", product: "Kurti A", sku: "KUR-001-M-RED", qty: 1, value: 2000, supply: 1700, payment: "Failed", method: "UPI", fulfilment: "Payment failed", delivery: "Not shipped", date: "10 Nov 2026" },
-  ],
+  orders: seedOrders,
   fulfilment: [
     { id: "FUL-18", order: "ORD-1048", brand: "Aisa Clothing", task: "Pack", assignee: "Packing desk", branding: "Partner label", status: "Packing" },
     { id: "FUL-17", order: "ORD-1047", brand: "Royal Ethnic", task: "Handover", assignee: "Dispatch desk", branding: "Company label", status: "Shipped" },
@@ -89,11 +83,11 @@ export const seed = {
     { id: "FUL-15", order: "ORD-1042", brand: "Aisa Clothing", task: "Label", assignee: "Dispatch desk", branding: "Partner label", status: "Ready to ship" },
   ],
   shipments: [
-    { id: "SHP-77", order: "ORD-1047", courier: "Delhivery", awb: "DLV8842101", charge: 79, status: "In transit" },
-    { id: "SHP-76", order: "ORD-1045", courier: "Shiprocket", awb: "SR2291004", charge: 69, status: "Delivered" },
-    { id: "SHP-75", order: "ORD-1044", courier: "Delhivery", awb: "DLV8841008", charge: 89, status: "Delivered" },
-    { id: "SHP-74", order: "ORD-1040", courier: "Xpressbees", awb: "XB110293", charge: 59, status: "Delivered" },
-    { id: "SHP-73", order: "ORD-1043", courier: "Delhivery", awb: "DLV8839002", charge: 99, status: "RTO" },
+    { id: "SHP-77", order: "ORD-1047", courier: "Delhivery", awb: "DLV8842101", charge: 79, status: "NDR", ndrReason: "Customer not available", attempts: 2 },
+    { id: "SHP-76", order: "ORD-1045", courier: "Shiprocket", awb: "SR2291004", charge: 69, status: "Delivered", ndrReason: "", attempts: 1 },
+    { id: "SHP-75", order: "ORD-1044", courier: "Delhivery", awb: "DLV8841008", charge: 89, status: "Delivered", ndrReason: "", attempts: 1 },
+    { id: "SHP-74", order: "ORD-1040", courier: "Xpressbees", awb: "XB110293", charge: 59, status: "Delivered", ndrReason: "", attempts: 1 },
+    { id: "SHP-73", order: "ORD-1043", courier: "Delhivery", awb: "DLV8839002", charge: 99, status: "RTO", ndrReason: "Refused at door", attempts: 3 },
   ],
   labels: [
     { id: "LBL-01", brand: "Aisa Clothing", type: "Neck label", artwork: "Approved", charge: 18, stock: 240, status: "Active" },
@@ -133,8 +127,9 @@ export const seed = {
     { id: "EXP-02", head: "Courier", amount: 395, month: "Nov 2026", note: "Five sample shipments" },
     { id: "EXP-03", head: "Packaging", amount: 2400, month: "Nov 2026", note: "Mailers and cards" },
     { id: "EXP-04", head: "Gateway", amount: 186, month: "Nov 2026", note: "Captured UPI and card fees" },
-    { id: "EXP-05", head: "Refunds", amount: 4000, month: "Nov 2026", note: "ORD-1043" },
+    { id: "EXP-05", head: "Refunds", amount: 4000, month: "Nov 2026", note: "ORD-1043 — tracked in refunds, excluded from ops expense total" },
     { id: "EXP-06", head: "Warehouse", amount: 45000, month: "Nov 2026", note: "Gurugram rent share" },
+    { id: "EXP-07", head: "Marketing", amount: 12000, month: "Nov 2026", note: "Festive campaign boost" },
   ],
   settlements: [
     { id: "SET-14", partner: "Aisa Studio", sales: 7298, supply: 5950, margin: 1348, adjustments: 0, status: "Pending", date: "10 Nov 2026" },
@@ -154,13 +149,9 @@ export const seed = {
     { id: "CRS-03", title: "Pricing and margin", lessons: 4, partners: 2, status: "Published" },
     { id: "CRS-04", title: "Customer support", lessons: 3, partners: 1, status: "Draft" },
   ],
-  tickets: [
-    { id: "TKT-88", from: "Aisa Studio", topic: "Domain", priority: "High", status: "Open", updated: "10 Nov 2026" },
-    { id: "TKT-87", from: "Noor Fashion Desk", topic: "Branding", priority: "Medium", status: "In review", updated: "09 Nov 2026" },
-    { id: "TKT-86", from: "Customer · Kanpur", topic: "Return", priority: "High", status: "Open", updated: "08 Nov 2026" },
-    { id: "TKT-85", from: "Royal Ethnic House", topic: "Payout", priority: "Low", status: "Resolved", updated: "02 Nov 2026" },
-    { id: "TKT-84", from: "Zari Atelier", topic: "Onboarding", priority: "Medium", status: "Open", updated: "02 Nov 2026" },
-  ],
+  tickets: ticketsSeed,
+  supportAgents: supportAgentsSeed,
+  ticketCategories: ticketCategoriesSeed,
   notices: [
     { id: "NTC-01", title: "New order ORD-1048", channel: "In-app", audience: "Operations", status: "Delivered" },
     { id: "NTC-02", title: "Kurti A size M is low", channel: "In-app", audience: "Inventory", status: "Delivered" },
@@ -192,15 +183,14 @@ export const seed = {
     { id: "AUD-03", when: "08 Nov 2026 · 16:02", actor: "Operations desk", what: "Aisa neck label approved", detail: "Applies to new orders only" },
     { id: "AUD-04", when: "02 Nov 2026 · 09:20", actor: "Support desk", what: "Zari application left pending", detail: "Storefront stays unpublished" },
   ],
-  settings: {
-    company: "Pahachan",
-    email: "ops@pahachan.example",
-    phone: "+91 98000 00000",
-    city: "Gurugram",
-    currency: "INR",
-    tax: "GST details stay with the company ledger.",
-    shipping: "Every partner order ships from the central warehouse.",
-  },
+  inspections: [
+    { id: "QC-01", type: "Inbound", ref: "PO-303", product: "Saree C", qty: 60, result: "Pending", inspector: "Returns bay", notes: "Drape and colour check" },
+    { id: "QC-02", type: "Return", ref: "RET-12", product: "Kurti A", qty: 2, result: "Pending", inspector: "Returns bay", notes: "Reported damaged on arrival" },
+    { id: "QC-03", type: "Inbound", ref: "PO-301", product: "Kurti A", qty: 200, result: "Pass", inspector: "Central warehouse", notes: "Received 02 Oct" },
+    { id: "QC-04", type: "Packaging", ref: "PKG-04", product: "Festive sleeve", qty: 8, result: "Fail", inspector: "Packing desk", notes: "Print rubs off. Stock left as Low." },
+  ],
+  integrations: integrationsSeedRows(),
+  settings: structuredClone(DEFAULT_SETTINGS),
 };
 
 export function inr(value) {

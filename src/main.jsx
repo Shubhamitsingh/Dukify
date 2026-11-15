@@ -4,12 +4,10 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App.jsx";
 import "./index.css";
 import { StoreProvider } from "./store.jsx";
-
-const SESSION_KEY = "pahachan-session";
-const THEME_KEY = "pahachan-theme";
+import { clearSession, readSession, THEME_KEY, writeSession } from "./auth";
 
 function Root() {
-  const [session, setSession] = useState(() => localStorage.getItem(SESSION_KEY));
+  const [session, setSession] = useState(() => readSession());
   const [dark, setDark] = useState(() => localStorage.getItem(THEME_KEY) === "dark");
 
   useEffect(() => {
@@ -23,12 +21,12 @@ function Root() {
         <App
           session={session}
           dark={dark}
-          onLogin={(email) => {
-            localStorage.setItem(SESSION_KEY, email);
-            setSession(email);
+          onLogin={(next) => {
+            writeSession(next);
+            setSession(next);
           }}
           onLogout={() => {
-            localStorage.removeItem(SESSION_KEY);
+            clearSession();
             setSession(null);
           }}
           onToggleDark={() => setDark((value) => !value)}
