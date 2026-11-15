@@ -7,9 +7,17 @@ import { normalizeScope } from "./scopes";
 import { ROLES } from "./roles";
 
 const DIR_KEY = "pahachan-access-directory";
+const DIR_VER_KEY = "pahachan-access-directory-ver";
+/** Bump when DEMO_USERS change so browsers reseed login accounts. */
+const DIR_VERSION = "3";
 
+/**
+ * Demo login stays ON by default so anyone can explore the CRM.
+ * Set VITE_DEMO_MODE=false only when real Supabase Auth is live.
+ */
 function isDemoMode() {
-  return import.meta.env.VITE_DEMO_MODE === "true" || import.meta.env.DEV;
+  if (import.meta.env.VITE_DEMO_MODE === "false") return false;
+  return true;
 }
 
 function seedDirectory() {
@@ -18,13 +26,15 @@ function seedDirectory() {
 
 export function loadDirectory() {
   try {
+    const ver = localStorage.getItem(DIR_VER_KEY);
     const raw = localStorage.getItem(DIR_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw && ver === DIR_VERSION) return JSON.parse(raw);
   } catch {
     /* ignore */
   }
   const seeded = seedDirectory();
   localStorage.setItem(DIR_KEY, JSON.stringify(seeded));
+  localStorage.setItem(DIR_VER_KEY, DIR_VERSION);
   return seeded;
 }
 

@@ -19,7 +19,7 @@ Copy `.env.example` to `.env.local`:
 
 | Variable | Purpose |
 |----------|---------|
-| `VITE_DEMO_MODE` | `true` to allow demo directory login outside DEV |
+| `VITE_DEMO_MODE` | Default ON. Set `false` only after real Supabase Auth is live |
 | `VITE_ALLOW_DEMO_TENANT_SWITCH` | `true` only for intentional multi-tenant UI demos |
 | `VITE_SUPABASE_URL` | Pahachan Supabase project URL |
 | `VITE_SUPABASE_ANON_KEY` | Publishable anon key (never service role in the browser) |

@@ -458,53 +458,65 @@
     "/brand/team": { "anyOf": ["users.view"] },
     "/brand/settings": { "anyOf": ["settings.view"] }
   },
-  "demo_accounts_examples": [
-    {
-      "role": "platform_owner",
-      "email": "owner@pahachan.demo",
-      "scope": "all_brands",
-      "permissions": "*"
-    },
-    {
-      "role": "platform_admin",
-      "email": "admin@pahachan.demo",
-      "scope": "all_brands",
-      "permissions": "*"
-    },
-    {
-      "role": "internal_staff",
-      "email": "orders.staff@pahachan.demo",
-      "permission_sets": ["orders", "fulfillment_shipping"],
-      "scope": { "type": "selected_brands", "brandIds": ["BRD-1001", "BRD-1002"] }
-    },
-    {
-      "role": "internal_staff",
-      "email": "finance.staff@pahachan.demo",
-      "permission_sets": ["finance_settlements", "reports_readonly"],
-      "scope": { "type": "all_brands" }
-    },
-    {
-      "role": "internal_staff",
-      "email": "new.staff@pahachan.demo",
-      "permission_sets": [],
-      "scope": { "type": "selected_brands", "brandIds": [] },
-      "note": "No access until configured"
-    },
-    {
-      "role": "brand_owner",
-      "email": "owner@aisa.demo",
-      "scope": { "type": "brand", "brandId": "brand-k" }
-    },
-    {
-      "role": "brand_admin",
-      "email": "admin@aisa.demo",
-      "scope": { "type": "brand", "brandId": "brand-k" }
-    },
-    {
-      "role": "brand_staff",
-      "email": "staff@aisa.demo",
-      "permission_sets": ["brand_orders"],
-      "scope": { "type": "brand", "brandId": "brand-k" }
-    }
-  ]
+  "demo_login": {
+    "enabled_by_default": true,
+    "disable_with": "VITE_DEMO_MODE=false",
+    "accounts": [
+      {
+        "role": "platform_owner",
+        "email": "owner@pahachan.demo",
+        "password": "OwnerDemo!2026",
+        "scope": "all_brands",
+        "permissions": "*"
+      },
+      {
+        "role": "platform_admin",
+        "email": "admin@pahachan.demo",
+        "password": "AdminDemo!2026",
+        "scope": "all_brands",
+        "permissions": "*"
+      },
+      {
+        "role": "internal_staff",
+        "email": "orders.staff@pahachan.demo",
+        "password": "StaffDemo!2026",
+        "permission_sets": ["orders", "fulfillment_shipping"],
+        "scope": { "type": "selected_brands", "brandIds": ["BRD-1001", "BRD-1002"] }
+      },
+      {
+        "role": "internal_staff",
+        "email": "finance.staff@pahachan.demo",
+        "password": "FinanceDemo!2026",
+        "permission_sets": ["finance_settlements", "reports_readonly"],
+        "scope": { "type": "all_brands" }
+      },
+      {
+        "role": "internal_staff",
+        "email": "new.staff@pahachan.demo",
+        "password": "EmptyDemo!2026",
+        "permission_sets": [],
+        "scope": { "type": "selected_brands", "brandIds": [] },
+        "note": "No access until configured"
+      },
+      {
+        "role": "brand_owner",
+        "email": "owner@aisa.demo",
+        "password": "BrandOwner!2026",
+        "scope": { "type": "brand", "brandId": "brand-k" }
+      },
+      {
+        "role": "brand_admin",
+        "email": "admin@aisa.demo",
+        "password": "BrandAdmin!2026",
+        "scope": { "type": "brand", "brandId": "brand-k" }
+      },
+      {
+        "role": "brand_staff",
+        "email": "staff@aisa.demo",
+        "password": "BrandStaff!2026",
+        "permission_sets": ["brand_orders"],
+        "scope": { "type": "brand", "brandId": "brand-k" }
+      }
+    ]
+  }
 }

@@ -3,22 +3,23 @@ import { LogIn } from "lucide-react";
 import { authenticate } from "./auth";
 import { DEMO_USERS, isDemoMode } from "./access";
 
-const DEMO_PICKS = isDemoMode()
-  ? [
-      { label: "Platform Owner", email: "owner@pahachan.demo", password: "OwnerDemo!2026" },
-      { label: "Platform Admin", email: "admin@pahachan.demo", password: "AdminDemo!2026" },
-      { label: "Orders Staff (2 brands)", email: "orders.staff@pahachan.demo", password: "StaffDemo!2026" },
-      { label: "Finance Staff", email: "finance.staff@pahachan.demo", password: "FinanceDemo!2026" },
-      { label: "Unscoped Staff", email: "new.staff@pahachan.demo", password: "EmptyDemo!2026" },
-      { label: "Brand Owner", email: "owner@aisa.demo", password: "BrandOwner!2026" },
-      { label: "Brand Admin", email: "admin@aisa.demo", password: "BrandAdmin!2026" },
-      { label: "Brand Staff", email: "staff@aisa.demo", password: "BrandStaff!2026" },
-    ]
-  : [];
+/** Always show clickable demo accounts while demo mode is on (default). */
+const DEMO_PICKS = [
+  { label: "Platform Owner", email: "owner@pahachan.demo", password: "OwnerDemo!2026" },
+  { label: "Platform Admin", email: "admin@pahachan.demo", password: "AdminDemo!2026" },
+  { label: "Orders Staff (2 brands)", email: "orders.staff@pahachan.demo", password: "StaffDemo!2026" },
+  { label: "Finance Staff", email: "finance.staff@pahachan.demo", password: "FinanceDemo!2026" },
+  { label: "Unscoped Staff", email: "new.staff@pahachan.demo", password: "EmptyDemo!2026" },
+  { label: "Brand Owner", email: "owner@aisa.demo", password: "BrandOwner!2026" },
+  { label: "Brand Admin", email: "admin@aisa.demo", password: "BrandAdmin!2026" },
+  { label: "Brand Staff", email: "staff@aisa.demo", password: "BrandStaff!2026" },
+];
 
 export function Login({ onSuccess }) {
-  const [email, setEmail] = useState(DEMO_PICKS[0]?.email || "");
-  const [password, setPassword] = useState(DEMO_PICKS[0]?.password || "");
+  const demoOn = isDemoMode();
+  const picks = demoOn ? DEMO_PICKS : [];
+  const [email, setEmail] = useState(picks[0]?.email || "");
+  const [password, setPassword] = useState(picks[0]?.password || "");
   const [show, setShow] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -61,9 +62,7 @@ export function Login({ onSuccess }) {
             <p className="text-xs text-gray-500">Privilege-based admin</p>
             <p className="mt-2 text-sm font-semibold text-gray-900">Six roles · permissions · brand scope</p>
             <p className="mt-1 text-xs text-gray-400">
-              {isDemoMode()
-                ? "Demo login only — not production security"
-                : "Configure Supabase Auth to sign in"}
+              {demoOn ? "Demo login enabled — click an account to sign in" : "Configure Supabase Auth to sign in"}
             </p>
           </div>
         </div>
@@ -73,9 +72,9 @@ export function Login({ onSuccess }) {
         <form className="w-full max-w-sm" onSubmit={submit}>
           <h1 className="text-2xl font-semibold text-gray-900">Sign in</h1>
           <p className="mt-1 text-sm text-gray-500">
-            {isDemoMode()
-              ? "Pick a demo role below. Server-side auth is required for production."
-              : "Production sign-in requires Supabase Auth (see docs/ACCESS_SETUP.md)."}
+            {demoOn
+              ? "Use any demo account below — email and password are filled for you."
+              : "Demo login is off. Set VITE_DEMO_MODE=true or configure Supabase Auth."}
           </p>
           <label className="mt-6 block text-sm font-medium text-gray-700">
             Email
@@ -113,10 +112,12 @@ export function Login({ onSuccess }) {
             Login
           </button>
 
-          {DEMO_PICKS.length ? (
-            <div className="mt-5 max-h-56 space-y-2 overflow-y-auto rounded-xl border border-gray-100 bg-gray-50 p-3 text-xs text-gray-700">
-              <p className="font-semibold text-gray-900">Demo accounts — click to fill ({DEMO_USERS.length} roles)</p>
-              {DEMO_PICKS.map((account) => (
+          {picks.length ? (
+            <div className="mt-5 max-h-64 space-y-2 overflow-y-auto rounded-xl border border-gray-100 bg-gray-50 p-3 text-xs text-gray-700">
+              <p className="font-semibold text-gray-900">
+                Demo accounts — click to fill ({DEMO_USERS.length} users)
+              </p>
+              {picks.map((account) => (
                 <button
                   key={account.email}
                   type="button"
@@ -124,7 +125,10 @@ export function Login({ onSuccess }) {
                   onClick={() => useAccount(account)}
                 >
                   <span className="font-medium text-gray-900">{account.label}</span>
-                  <span className="text-gray-500">{account.email}</span>
+                  <span className="text-gray-600">{account.email}</span>
+                  <span className="mt-0.5 font-mono text-[11px] text-pink-700">
+                    password: {account.password}
+                  </span>
                 </button>
               ))}
             </div>
