@@ -1,5 +1,6 @@
-import { useEffect, useId, useState } from "react";
-import { ArrowLeft, LogIn, X } from "lucide-react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { ArrowLeft, LogIn } from "lucide-react";
 import { authenticate } from "./auth";
 import { DEMO_USERS, isDemoMode } from "./access";
 
@@ -45,7 +46,7 @@ export function LoginForm({ onSuccess }) {
 
   return (
     <form className="w-full" onSubmit={submit}>
-      <h2 className="text-2xl font-bold tracking-tight text-[#161815]">Sign in</h2>
+      <h1 className="text-2xl font-bold tracking-tight text-[#161815]">Sign in</h1>
       <p className="mt-1.5 text-sm leading-relaxed text-[#6E685F]">
         {demoOn
           ? "Use any demo account below — email and password are filled for you."
@@ -97,7 +98,7 @@ export function LoginForm({ onSuccess }) {
       </button>
 
       {picks.length ? (
-        <div className="mt-5 max-h-40 space-y-2 overflow-y-auto rounded-xl border border-[#DDD6CB] bg-[#F3F0EA] p-3 text-xs text-[#6E685F] sm:max-h-48">
+        <div className="mt-5 max-h-44 space-y-2 overflow-y-auto rounded-xl border border-[#E5E5E5] bg-[#FAFAFA] p-3 text-xs text-[#6E685F] sm:max-h-52">
           <p className="font-semibold text-[#161815]">
             Demo accounts — click to fill ({DEMO_USERS.length} users)
           </p>
@@ -105,7 +106,7 @@ export function LoginForm({ onSuccess }) {
             <button
               key={account.email}
               type="button"
-              className="flex w-full flex-col rounded-lg border border-[#DDD6CB] bg-white px-2.5 py-2 text-left transition hover:border-[#69ce11]"
+              className="flex w-full flex-col rounded-lg border border-[#E5E5E5] bg-white px-2.5 py-2 text-left transition hover:border-[#69ce11]"
               onClick={() => useAccount(account)}
             >
               <span className="font-medium text-[#161815]">{account.label}</span>
@@ -121,67 +122,22 @@ export function LoginForm({ onSuccess }) {
   );
 }
 
-/** Landing popup login — always closable back to home. */
-export function LoginModal({ open, onClose, onSuccess }) {
-  const titleId = useId();
-
-  useEffect(() => {
-    if (!open) return undefined;
-    const onKey = (e) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prev;
-    };
-  }, [open, onClose]);
-
-  if (!open) return null;
-
+/**
+ * Dedicated login page: blank white background + centered popup-style card.
+ */
+export function Login({ onSuccess }) {
   return (
-    <div className="fixed inset-0 z-[100] flex items-end justify-center p-0 sm:items-center sm:p-6">
-      <button
-        type="button"
-        className="absolute inset-0 bg-[#161815]/50"
-        aria-label="Close login and go back"
-        onClick={onClose}
-      />
-
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={titleId}
-        className="relative z-10 flex max-h-[92svh] w-full max-w-md flex-col overflow-hidden rounded-t-2xl border border-[#DDD6CB] bg-[#FBFAF7] shadow-[0_24px_80px_rgba(22,24,21,0.28)] sm:rounded-2xl"
-        onClick={(e) => e.stopPropagation()}
+    <div className="relative flex min-h-[100svh] items-center justify-center bg-white px-4 py-10 sm:px-6">
+      <Link
+        to="/"
+        className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold text-[#161815] transition hover:bg-black/5 sm:left-6 sm:top-6"
       >
-        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-[#E8DFD0] px-4 py-3 sm:px-5">
-          <button
-            type="button"
-            onClick={onClose}
-            className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold text-[#161815] transition hover:bg-[#E6E0D6]"
-          >
-            <ArrowLeft className="h-4 w-4" strokeWidth={2.25} />
-            Back to home
-          </button>
-          <button
-            type="button"
-            onClick={onClose}
-            className="grid h-9 w-9 place-items-center rounded-full text-[#6E685F] transition hover:bg-[#E6E0D6] hover:text-[#161815]"
-            aria-label="Close"
-          >
-            <X className="h-5 w-5" strokeWidth={2} />
-          </button>
-        </div>
+        <ArrowLeft className="h-4 w-4" strokeWidth={2.25} />
+        Back to home
+      </Link>
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-7 sm:py-6">
-          <div id={titleId} className="sr-only">
-            Sign in
-          </div>
-          <LoginForm onSuccess={onSuccess} />
-        </div>
+      <div className="relative w-full max-w-md rounded-2xl border border-[#E8E8E8] bg-white p-6 shadow-[0_24px_80px_rgba(0,0,0,0.12)] sm:p-8">
+        <LoginForm onSuccess={onSuccess} />
       </div>
     </div>
   );

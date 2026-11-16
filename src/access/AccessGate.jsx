@@ -49,7 +49,7 @@ export function RequireAccess({ children, permission, anyOf }) {
   const { can, canPath, principal, scope, canSeeAllBrandTotals } = useAccess();
   const location = useLocation();
 
-  if (!principal) return <Navigate to="/?login=1" replace />;
+  if (!principal) return <Navigate to="/login" replace />;
 
   const allowed = permission
     ? can(permission)

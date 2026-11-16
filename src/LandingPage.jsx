@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   ArrowRight,
   Bell,
@@ -15,7 +15,6 @@ import {
   Users,
   Wallet,
 } from "lucide-react";
-import { LoginModal } from "./login";
 
 /**
  * Landing-only colors
@@ -263,19 +262,7 @@ function Reveal({ children, className = "", delay = 0 }) {
   );
 }
 
-export function LandingPage({ onLogin }) {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const loginOpen = searchParams.get("login") === "1";
-
-  const openLogin = useCallback(() => {
-    navigate({ pathname: "/", search: "?login=1" }, { replace: false });
-  }, [navigate]);
-
-  const closeLogin = useCallback(() => {
-    navigate("/", { replace: true });
-  }, [navigate]);
-
+export function LandingPage() {
   const [tab, setTab] = useState(featureTabs[0].id);
   const [openFaq, setOpenFaq] = useState(0);
   const [scrolled, setScrolled] = useState(false);
@@ -625,21 +612,19 @@ export function LandingPage({ onLogin }) {
           </div>
 
           <div className="flex shrink-0 items-center gap-4 sm:gap-5">
-            <button
-              type="button"
-              onClick={openLogin}
+            <Link
+              to="/login"
               className={`hidden text-[1rem] font-medium sm:inline transition-opacity hover:opacity-70 lg:text-[1.05rem] ${scrolled ? "text-[#161815]" : "text-white"}`}
             >
               Log in
-            </button>
-            <button
-              type="button"
-              onClick={openLogin}
+            </Link>
+            <Link
+              to="/login"
               className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-[0.95rem] font-bold text-[#161815] transition hover:brightness-110 sm:px-6"
               style={{ background: C.accent }}
             >
               Open workspace
-            </button>
+            </Link>
           </div>
         </div>
       </header>
@@ -687,14 +672,13 @@ export function LandingPage({ onLogin }) {
               </p>
 
               <div className="mt-16 flex flex-wrap items-center justify-center gap-3 sm:mt-20 sm:gap-4">
-                <button
-                  type="button"
-                  onClick={openLogin}
+                <Link
+                  to="/login"
                   className="inline-flex h-12 items-center justify-center rounded-full px-8 text-[0.95rem] font-bold leading-none tracking-tight text-[#161815] transition hover:brightness-110"
                   style={{ background: C.accent }}
                 >
                   Open workspace
-                </button>
+                </Link>
                 <a
                   href="#platform"
                   className="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-white/20 bg-white/5 px-6 text-[0.95rem] font-semibold leading-none tracking-tight text-white transition hover:border-white/40 hover:bg-white/10"
@@ -1394,9 +1378,9 @@ export function LandingPage({ onLogin }) {
               <p className="mx-auto mt-4 max-w-xl text-base text-[#6E685F] sm:text-lg">
                 Start a clothing brand with Pahachan products—then continue in your brand workspace.
               </p>
-              <button type="button" onClick={openLogin} className="lp-btn-primary mt-9">
+              <Link to="/login" className="lp-btn-primary mt-9">
                 Open workspace <ArrowRight className="h-4 w-4" />
-              </button>
+              </Link>
             </div>
           </Reveal>
         </section>
@@ -1415,14 +1399,13 @@ export function LandingPage({ onLogin }) {
             <p className="truncate text-sm font-semibold text-[#161815]">Start your clothing brand</p>
             <p className="truncate text-[11px] text-[#6E685F]">Catalogue, store & orders in one place</p>
           </div>
-          <button
-            type="button"
-            onClick={openLogin}
+          <Link
+            to="/login"
             className="inline-flex shrink-0 items-center justify-center rounded-full px-4 py-2.5 text-sm font-bold text-[#161815] transition hover:brightness-110 sm:px-5"
             style={{ background: C.accent }}
           >
             Open workspace
-          </button>
+          </Link>
         </div>
       </div>
 
@@ -1486,14 +1469,14 @@ export function LandingPage({ onLogin }) {
                     { label: "How it works", href: "#how" },
                     { label: "What you get", href: "#results" },
                     { label: "Catalogue", href: "#platform" },
-                    { label: "Log in", action: "login" },
+                    { label: "Log in", to: "/login" },
                   ],
                 },
                 {
                   title: "Learn",
                   links: [
                     { label: "FAQ", href: "#faq" },
-                    { label: "Brand workspace", action: "login" },
+                    { label: "Brand workspace", to: "/login" },
                   ],
                 },
                 {
@@ -1518,14 +1501,13 @@ export function LandingPage({ onLogin }) {
                   <ul className="mt-4 space-y-2.5">
                     {col.links.map((link) => (
                       <li key={link.label}>
-                        {link.action === "login" ? (
-                          <button
-                            type="button"
-                            onClick={openLogin}
+                        {link.to ? (
+                          <Link
+                            to={link.to}
                             className="text-[0.9rem] text-[#161815]/75 transition hover:text-[#161815]"
                           >
                             {link.label}
-                          </button>
+                          </Link>
                         ) : (
                           <a
                             href={link.href}
@@ -1597,14 +1579,6 @@ export function LandingPage({ onLogin }) {
         </div>
       </footer>
 
-      <LoginModal
-        open={loginOpen}
-        onClose={closeLogin}
-        onSuccess={(session) => {
-          closeLogin();
-          onLogin?.(session);
-        }}
-      />
     </div>
   );
 }

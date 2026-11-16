@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { LandingPage } from "./LandingPage";
+import { Login } from "./login";
 import { BrandApp, BrandStoreProvider } from "./brand";
 import { SuperAdminApp } from "./SuperAdminApp";
 import { AccessProvider } from "./access";
@@ -14,12 +15,12 @@ export default function App({ session, dark, onLogin, onLogout, onToggleDark }) 
     navigate(homeForRole(next.role), { replace: true });
   };
 
-  // Guests: home page only. /login → home with login popup. Back closes popup to /.
+  // Guests: landing at /, dedicated white login page at /login
   if (!session) {
     return (
       <Routes>
-        <Route path="/" element={<LandingPage onLogin={handleLogin} />} />
-        <Route path="/login" element={<Navigate to="/?login=1" replace />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<Login onSuccess={handleLogin} />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     );
