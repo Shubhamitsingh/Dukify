@@ -7,9 +7,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Only fonts actually used; display=swap avoids blank text. Instrument Serif was unused. -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
+    />
+    <!-- Landing LCP: hero poster before JS bundle parses -->
+    <link
+      rel="preload"
+      as="image"
+      href="/landing/hero-poster.webp"
+      type="image/webp"
+      imagesrcset="/landing/hero-poster-640.webp 640w, /landing/hero-poster.webp 1200w"
+      imagesizes="100vw"
+      fetchpriority="high"
     />
     <title>Pahachan Super Admin</title>
   </head>

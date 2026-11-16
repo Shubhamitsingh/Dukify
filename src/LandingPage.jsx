@@ -232,27 +232,54 @@ const heroVideos = [
   "/landing/hero-3.mp4", // #3 happy collab on laptop — B2C brand partnership feel
 ];
 
+const HERO_POSTER = {
+  webp: "/landing/hero-poster.webp",
+  webp640: "/landing/hero-poster-640.webp",
+  jpg: "/landing/hero-poster.jpg",
+  width: 864,
+  height: 1152,
+};
+
 /** Foreign fashion storefronts — rotating demo screenshots (different brand types) */
 const storeDemos = [
   {
     name: "Everlane",
     url: "everlane.com",
     href: "https://www.everlane.com/",
-    img: "/landing/store-demo-1.png",
+    img: "/landing/store-demo-1.webp",
+    img800: "/landing/store-demo-1-800.webp",
+    width: 1200,
+    height: 750,
   },
   {
     name: "Reformation",
     url: "thereformation.com",
     href: "https://www.reformation.com/",
-    img: "/landing/store-demo-2.png",
+    img: "/landing/store-demo-2.webp",
+    img800: "/landing/store-demo-2-800.webp",
+    width: 1200,
+    height: 750,
   },
   {
     name: "Allbirds",
     url: "allbirds.com",
     href: "https://www.allbirds.com/",
-    img: "/landing/store-demo-3.png",
+    img: "/landing/store-demo-3.webp",
+    img800: "/landing/store-demo-3-800.webp",
+    width: 1200,
+    height: 750,
   },
 ];
+
+function prefersReducedMotion() {
+  return typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function prefersSaveData() {
+  if (typeof navigator === "undefined") return false;
+  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  return Boolean(conn?.saveData || conn?.effectiveType === "slow-2g" || conn?.effectiveType === "2g");
+}
 
 function Reveal({ children, className = "", delay = 0 }) {
   return (
@@ -270,24 +297,97 @@ export function LandingPage() {
   const [heroAnim, setHeroAnim] = useState(true);
   const [storeDemo, setStoreDemo] = useState(0);
   const [heroVid, setHeroVid] = useState(0);
+  const [heroVideoEnabled, setHeroVideoEnabled] = useState(false);
+  const [heroVideoPlaying, setHeroVideoPlaying] = useState(false);
   const heroVideoRef = useRef(null);
+  const storeSectionRef = useRef(null);
+  const storeInViewRef = useRef(false);
+  const prefetchedVideos = useRef(new Set());
   const active = featureTabs.find((t) => t.id === tab) || featureTabs[0];
   const rotating = heroRotatingLines[heroLine];
   const liveStore = storeDemos[storeDemo];
 
+  // Poster paints first; enable video after first paint unless reduced-motion / save-data.
+  useEffect(() => {
+    if (prefersReducedMotion() || prefersSaveData()) {
+      setHeroVideoEnabled(false);
+      return undefined;
+    }
+    let cancelled = false;
+    const raf = window.requestAnimationFrame(() => {
+      window.setTimeout(() => {
+        if (!cancelled) setHeroVideoEnabled(true);
+      }, 50);
+    });
+    return () => {
+      cancelled = true;
+      window.cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  // Load only the active clip — no remount key (avoids blank flash + full reload thrash).
   useEffect(() => {
     const el = heroVideoRef.current;
-    if (!el) return;
+    if (!el || !heroVideoEnabled) return undefined;
+
+    const src = heroVideos[heroVid];
     const applySpeed = () => {
-      el.playbackRate = 1.85; // faster so playlist cycles sooner
+      try {
+        el.playbackRate = 1.85;
+      } catch {
+        /* ignore */
+      }
     };
+    const onLoaded = () => applySpeed();
+    const onPlaying = () => setHeroVideoPlaying(true);
+    const onWaiting = () => setHeroVideoPlaying(false);
+    const onError = () => setHeroVideoPlaying(false);
+
+    el.addEventListener("loadedmetadata", onLoaded);
+    el.addEventListener("playing", onPlaying);
+    el.addEventListener("waiting", onWaiting);
+    el.addEventListener("error", onError);
+
+    if (el.getAttribute("src") !== src) {
+      setHeroVideoPlaying(false);
+      el.src = src;
+      el.load();
+    }
     applySpeed();
-    el.addEventListener("loadedmetadata", applySpeed);
-    el.load();
-    const play = el.play();
-    if (play?.catch) play.catch(() => {});
-    return () => el.removeEventListener("loadedmetadata", applySpeed);
-  }, [heroVid]);
+    const playAttempt = el.play();
+    if (playAttempt?.catch) {
+      playAttempt.catch(() => setHeroVideoPlaying(false));
+    }
+
+    return () => {
+      el.removeEventListener("loadedmetadata", onLoaded);
+      el.removeEventListener("playing", onPlaying);
+      el.removeEventListener("waiting", onWaiting);
+      el.removeEventListener("error", onError);
+    };
+  }, [heroVid, heroVideoEnabled]);
+
+  // Prefetch next hero clip only when current is nearly done — never preload all videos.
+  useEffect(() => {
+    const el = heroVideoRef.current;
+    if (!el || !heroVideoEnabled) return undefined;
+
+    const onTime = () => {
+      if (!el.duration || !Number.isFinite(el.duration)) return;
+      if (el.currentTime / el.duration < 0.82) return;
+      const next = heroVideos[(heroVid + 1) % heroVideos.length];
+      if (prefetchedVideos.current.has(next)) return;
+      prefetchedVideos.current.add(next);
+      const link = document.createElement("link");
+      link.rel = "prefetch";
+      link.as = "video";
+      link.href = next;
+      document.head.appendChild(link);
+    };
+
+    el.addEventListener("timeupdate", onTime);
+    return () => el.removeEventListener("timeupdate", onTime);
+  }, [heroVid, heroVideoEnabled]);
 
   useEffect(() => {
     // Refresh / revisit always opens on first slide (hero), not a mid-page restore
@@ -317,6 +417,7 @@ export function LandingPage() {
   }, []);
 
   useEffect(() => {
+    if (prefersReducedMotion()) return undefined;
     const id = setInterval(() => {
       setHeroAnim(false);
       window.setTimeout(() => {
@@ -327,11 +428,25 @@ export function LandingPage() {
     return () => clearInterval(id);
   }, []);
 
+  // Rotate store demos only while the showcase is near the viewport.
   useEffect(() => {
+    const root = storeSectionRef.current;
+    if (!root) return undefined;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        storeInViewRef.current = entry.isIntersecting;
+      },
+      { rootMargin: "200px 0px" },
+    );
+    io.observe(root);
     const id = setInterval(() => {
+      if (!storeInViewRef.current) return;
       setStoreDemo((i) => (i + 1) % storeDemos.length);
     }, 4200);
-    return () => clearInterval(id);
+    return () => {
+      io.disconnect();
+      clearInterval(id);
+    };
   }, []);
 
   useEffect(() => {
@@ -573,12 +688,12 @@ export function LandingPage() {
           borderBottom: scrolled ? "1px solid #DDD6CB" : "1px solid transparent",
         }}
       >
-        <div className="mx-auto flex h-16 w-full max-w-[1600px] items-center gap-6 px-6 sm:px-10 md:px-14 lg:h-[4.25rem] lg:px-16 xl:px-20">
+        <div className="mx-auto flex h-14 w-full max-w-[1600px] items-center gap-3 px-4 sm:h-16 sm:gap-6 sm:px-10 md:px-14 lg:h-[4.25rem] lg:px-16 xl:px-20">
           {/* Left: logo + nav links (Shopify layout) */}
           <div className="flex min-w-0 flex-1 items-center gap-6 lg:gap-8">
             <a
               href="#top"
-              className={`flex shrink-0 items-center gap-2.5 text-[1.45rem] font-bold tracking-tight sm:text-[1.55rem] ${scrolled ? "text-[#161815]" : "text-white"}`}
+              className={`flex shrink-0 items-center gap-2 text-[1.25rem] font-bold tracking-tight sm:gap-2.5 sm:text-[1.55rem] ${scrolled ? "text-[#161815]" : "text-white"}`}
             >
               <span
                 className="grid h-8 w-8 place-items-center rounded-md text-sm font-extrabold text-[#161815]"
@@ -620,7 +735,7 @@ export function LandingPage() {
             </Link>
             <Link
               to="/login"
-              className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-[0.95rem] font-bold text-[#161815] transition hover:brightness-110 sm:px-6"
+              className="inline-flex items-center justify-center rounded-full px-4 py-2 text-[0.875rem] font-bold text-[#161815] transition hover:brightness-110 sm:px-6 sm:py-2.5 sm:text-[0.95rem]"
               style={{ background: C.accent }}
             >
               Open workspace
@@ -631,19 +746,39 @@ export function LandingPage() {
 
       <main id="top">
         <section className="relative isolate min-h-[100svh] overflow-hidden">
-          {/* Layer 1 — 3 ecommerce videos in sequence, then loop */}
-          <video
-            ref={heroVideoRef}
-            key={heroVideos[heroVid]}
-            className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover"
-            autoPlay
-            muted
-            playsInline
-            poster="/landing/lp-3d-tee.jpg"
-            onEnded={() => setHeroVid((i) => (i + 1) % heroVideos.length)}
-          >
-            <source src={heroVideos[heroVid]} type="video/mp4" />
-          </video>
+          {/* Layer 1a — poster paints immediately (LCP). Never lazy-load. */}
+          <picture>
+            <source
+              type="image/webp"
+              srcSet={`${HERO_POSTER.webp640} 640w, ${HERO_POSTER.webp} 1200w`}
+              sizes="100vw"
+            />
+            <img
+              src={HERO_POSTER.jpg}
+              alt=""
+              width={HERO_POSTER.width}
+              height={HERO_POSTER.height}
+              decoding="async"
+              fetchPriority="high"
+              className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover"
+              style={{ opacity: heroVideoPlaying ? 0 : 1, transition: "opacity 400ms ease" }}
+              aria-hidden="true"
+            />
+          </picture>
+
+          {/* Layer 1b — hero video loads after paint; only one clip at a time */}
+          {heroVideoEnabled ? (
+            <video
+              ref={heroVideoRef}
+              className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover"
+              style={{ opacity: heroVideoPlaying ? 1 : 0, transition: "opacity 400ms ease" }}
+              muted
+              playsInline
+              preload="metadata"
+              poster={HERO_POSTER.jpg}
+              onEnded={() => setHeroVid((i) => (i + 1) % heroVideos.length)}
+            />
+          ) : null}
 
           {/* Layer 2 — dark overlay so text stays readable */}
           <div
@@ -658,8 +793,8 @@ export function LandingPage() {
           <div className="lp-shell relative z-[2] flex min-h-[100svh] items-center justify-center py-28 text-center sm:py-32">
             <div className="mx-auto flex w-full max-w-4xl flex-col items-center">
               <h1 className="font-bold leading-[1.05] tracking-[-0.04em] text-white">
-                <span className="block text-[clamp(3rem,8.5vw,6.25rem)]">Start your clothing</span>
-                <span className="lp-hero-rotate mt-1 text-[clamp(2.35rem,6.5vw,4.75rem)]">
+                <span className="block text-[clamp(2.35rem,8.5vw,6.25rem)]">Start your clothing</span>
+                <span className="lp-hero-rotate mt-1 text-[clamp(1.85rem,6.5vw,4.75rem)]">
                   <span className={`lp-hero-rotate-inner ${heroAnim ? "is-in" : "is-out"}`}>
                     {rotating.before}{" "}
                     <span style={{ color: C.accent }}>{rotating.accent}</span>
@@ -667,11 +802,11 @@ export function LandingPage() {
                 </span>
               </h1>
 
-              <p className="mt-6 max-w-xl text-[clamp(1rem,2vw,1.2rem)] font-medium leading-relaxed text-white/75">
+              <p className="mt-6 max-w-xl px-1 text-[clamp(0.95rem,2vw,1.2rem)] font-medium leading-relaxed text-white/75">
                 Your workspace to pick clothing, launch a branded store, and sell to the audience you already have.
               </p>
 
-              <div className="mt-16 flex flex-wrap items-center justify-center gap-3 sm:mt-20 sm:gap-4">
+              <div className="mt-12 flex w-full max-w-sm flex-col items-stretch gap-3 sm:mt-20 sm:max-w-none sm:flex-row sm:flex-wrap sm:items-center sm:justify-center sm:gap-4">
                 <Link
                   to="/login"
                   className="inline-flex h-12 items-center justify-center rounded-full px-8 text-[0.95rem] font-bold leading-none tracking-tight text-[#161815] transition hover:brightness-110"
@@ -742,15 +877,21 @@ export function LandingPage() {
                   {/* Wishlink-style: lifestyle creator image, no heavy border */}
                   <div className="relative overflow-hidden rounded-[1.75rem] bg-[#E6E0D6]">
                     <img
-                      src="/landing/lp-creator.jpg"
+                      src="/landing/lp-creator.webp"
+                      srcSet="/landing/lp-creator-640.webp 640w, /landing/lp-creator.webp 900w"
+                      sizes="(max-width: 1024px) 100vw, 480px"
                       alt="Creator shopping for a clothing brand"
+                      width={900}
+                      height={600}
+                      loading="lazy"
+                      decoding="async"
                       className="aspect-[4/5] w-full object-cover object-[center_20%]"
                     />
                     <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#161815]/25 via-transparent to-transparent" />
                   </div>
 
                   {/* Floating chips — simple, soft shadow, no thick borders */}
-                  <div className="absolute left-3 top-6 z-10 flex max-w-[12.5rem] items-center gap-2 rounded-2xl bg-[#FBFAF7] p-2 shadow-[0_12px_32px_rgba(22,24,21,0.16)] sm:left-4 sm:top-8 sm:max-w-[13.5rem] sm:p-2.5">
+                  <div className="absolute left-3 top-6 z-10 hidden max-w-[12.5rem] items-center gap-2 rounded-2xl bg-[#FBFAF7] p-2 shadow-[0_12px_32px_rgba(22,24,21,0.16)] sm:left-4 sm:top-8 sm:flex sm:max-w-[13.5rem] sm:p-2.5">
                     <span
                       className="grid h-9 w-9 shrink-0 place-items-center rounded-xl text-[#161815]"
                       style={{ background: C.accent }}
@@ -763,7 +904,7 @@ export function LandingPage() {
                     </div>
                   </div>
 
-                  <div className="absolute right-3 top-[38%] z-10 flex max-w-[13rem] items-center gap-2 rounded-2xl bg-[#FBFAF7] p-2 shadow-[0_12px_32px_rgba(22,24,21,0.16)] sm:right-0 sm:max-w-[14rem] sm:p-2.5">
+                  <div className="absolute right-3 top-[38%] z-10 hidden max-w-[13rem] items-center gap-2 rounded-2xl bg-[#FBFAF7] p-2 shadow-[0_12px_32px_rgba(22,24,21,0.16)] sm:right-0 sm:flex sm:max-w-[14rem] sm:p-2.5">
                     <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#161815] text-[#FBFAF7]">
                       <Store className="h-4 w-4" strokeWidth={2.25} />
                     </span>
@@ -773,7 +914,7 @@ export function LandingPage() {
                     </div>
                   </div>
 
-                  <div className="absolute bottom-5 left-3 z-10 flex items-center gap-2 rounded-full bg-[#FBFAF7] py-1.5 pl-1.5 pr-3 shadow-[0_12px_32px_rgba(22,24,21,0.14)] sm:bottom-6 sm:left-4">
+                  <div className="absolute bottom-5 left-3 z-10 hidden items-center gap-2 rounded-full bg-[#FBFAF7] py-1.5 pl-1.5 pr-3 shadow-[0_12px_32px_rgba(22,24,21,0.14)] sm:bottom-6 sm:left-4 sm:flex">
                     <span className="grid h-7 w-7 place-items-center rounded-full bg-[#0ea5e9]/15 text-[#0ea5e9]">
                       <Truck className="h-3.5 w-3.5" strokeWidth={2.25} />
                     </span>
@@ -788,7 +929,7 @@ export function LandingPage() {
         </section>
 
         {/* Free brand website — section heading + 80% site / 20% side copy */}
-        <section id="website" className="py-16 sm:py-24" style={{ background: C.bg }}>
+        <section id="website" ref={storeSectionRef} className="py-16 sm:py-24" style={{ background: C.bg }}>
           <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
             <Reveal>
               <div className="mx-auto max-w-3xl text-center">
@@ -824,7 +965,7 @@ export function LandingPage() {
                         Example · {liveStore.name} · {liveStore.url}
                       </span>
                     </a>
-                    <div className="hidden gap-1 sm:flex">
+                    <div className="flex gap-1">
                       {storeDemos.map((demo, i) => (
                         <button
                           key={demo.url}
@@ -842,16 +983,27 @@ export function LandingPage() {
                   </div>
 
                   <div className="relative min-h-0 flex-1 overflow-hidden bg-[#111]">
-                    {storeDemos.map((demo, i) => (
-                      <img
-                        key={demo.url}
-                        src={demo.img}
-                        alt={`${demo.name} storefront example`}
-                        className={`lp-store-shot absolute inset-0 h-full w-full object-cover object-top ${
-                          i === storeDemo ? "is-active" : "is-idle"
-                        }`}
-                      />
-                    ))}
+                    {/* Only mount nearby demos so we don't download all large shots on first paint */}
+                    {storeDemos.map((demo, i) => {
+                      const near = i === storeDemo || i === (storeDemo + 1) % storeDemos.length;
+                      if (!near) return null;
+                      return (
+                        <img
+                          key={demo.url}
+                          src={demo.img}
+                          srcSet={`${demo.img800} 800w, ${demo.img} 1200w`}
+                          sizes="(max-width: 1024px) 100vw, 72vw"
+                          alt={`${demo.name} storefront example`}
+                          width={demo.width}
+                          height={demo.height}
+                          loading="lazy"
+                          decoding="async"
+                          className={`lp-store-shot absolute inset-0 h-full w-full object-cover object-top ${
+                            i === storeDemo ? "is-active" : "is-idle"
+                          }`}
+                        />
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -952,8 +1104,14 @@ export function LandingPage() {
                 {/* Product-style media — image only, no nested chrome card */}
                 <div className="overflow-hidden rounded-[1.5rem]">
                   <img
-                    src="/landing/brand-dashboard.png"
+                    src="/landing/brand-dashboard.webp"
+                    srcSet="/landing/brand-dashboard-800.webp 800w, /landing/brand-dashboard.webp 1400w"
+                    sizes="(max-width: 1024px) 100vw, 560px"
                     alt="Pahachan brand workspace dashboard"
+                    width={1400}
+                    height={788}
+                    loading="lazy"
+                    decoding="async"
                     className="h-auto w-full object-cover object-top"
                     style={{ maxHeight: 440 }}
                   />
@@ -1018,8 +1176,12 @@ export function LandingPage() {
                     <div className="grid grid-cols-12 gap-3 sm:gap-4">
                       <div className="relative col-span-12 overflow-hidden rounded-[1.5rem] sm:col-span-7 sm:row-span-2 sm:rounded-[1.75rem]">
                         <img
-                          src="/landing/lp-d2c-rack.jpg"
+                          src="/landing/lp-d2c-rack.webp"
                           alt="Clothing rack ready for a brand line"
+                          width={1000}
+                          height={667}
+                          loading="lazy"
+                          decoding="async"
                           className="h-full min-h-[280px] w-full object-cover sm:min-h-[420px]"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-[#161815]/50 via-transparent to-transparent" />
@@ -1031,8 +1193,12 @@ export function LandingPage() {
 
                       <div className="relative col-span-6 overflow-hidden rounded-[1.25rem] sm:col-span-5">
                         <img
-                          src="/landing/lp-d2c-flatlay.jpg"
+                          src="/landing/lp-d2c-flatlay.webp"
                           alt="Apparel flat lay for brand merchandising"
+                          width={800}
+                          height={1200}
+                          loading="lazy"
+                          decoding="async"
                           className="aspect-[4/3] h-full w-full object-cover sm:aspect-auto sm:min-h-[200px]"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-[#161815]/45 to-transparent" />
@@ -1041,8 +1207,12 @@ export function LandingPage() {
 
                       <div className="relative col-span-6 overflow-hidden rounded-[1.25rem] sm:col-span-5">
                         <img
-                          src="/landing/lp-d2c-store.jpg"
+                          src="/landing/lp-d2c-store.webp"
                           alt="Retail clothing display"
+                          width={800}
+                          height={534}
+                          loading="lazy"
+                          decoding="async"
                           className="aspect-[4/3] h-full w-full object-cover sm:aspect-auto sm:min-h-[200px]"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-[#161815]/45 to-transparent" />
@@ -1159,8 +1329,14 @@ export function LandingPage() {
 
                   <div className="overflow-hidden rounded-[1.5rem] shadow-[0_24px_60px_rgba(22,24,21,0.12)]">
                     <img
-                      src="/landing/brand-dashboard.png"
+                      src="/landing/brand-dashboard.webp"
+                      srcSet="/landing/brand-dashboard-800.webp 800w, /landing/brand-dashboard.webp 1400w"
+                      sizes="(max-width: 1024px) 100vw, 560px"
                       alt="Brand workspace dashboard"
+                      width={1400}
+                      height={788}
+                      loading="lazy"
+                      decoding="async"
                       className="h-auto w-full object-cover object-top"
                       style={{ maxHeight: 400 }}
                     />
@@ -1387,8 +1563,8 @@ export function LandingPage() {
       </main>
 
       {/* Sticky CTA — single persistent action */}
-      <div className="pointer-events-none fixed inset-x-0 bottom-4 z-40 flex justify-center px-4 sm:bottom-6">
-        <div className="pointer-events-auto flex w-full max-w-xl items-center gap-3 rounded-2xl border border-[#DDD6CB] bg-[#FBFAF7]/95 px-3 py-2.5 shadow-[0_20px_60px_rgba(22,24,21,0.12)] backdrop-blur-md sm:gap-4 sm:px-4 sm:py-3">
+      <div className="pointer-events-none fixed inset-x-0 bottom-4 z-40 flex justify-center px-3 pb-[env(safe-area-inset-bottom)] sm:bottom-6 sm:px-4">
+        <div className="pointer-events-auto flex w-full max-w-xl items-center gap-2.5 rounded-2xl border border-[#DDD6CB] bg-[#FBFAF7]/95 px-3 py-2.5 shadow-[0_20px_60px_rgba(22,24,21,0.12)] backdrop-blur-md sm:gap-4 sm:px-4 sm:py-3">
           <span
             className="hidden h-10 w-10 shrink-0 place-items-center rounded-xl text-sm font-extrabold text-[#161815] sm:grid"
             style={{ background: C.accent }}
@@ -1525,10 +1701,10 @@ export function LandingPage() {
           </div>
 
           {/* Large brand wordmark graphic — Funner-style, on Paper, no cards */}
-          <div className="relative mt-14 overflow-hidden sm:mt-20" aria-hidden="true">
+          <div className="relative mt-10 max-w-full overflow-hidden sm:mt-20" aria-hidden="true">
             <svg
               viewBox="0 0 1440 340"
-              className="h-auto w-full select-none"
+              className="h-auto w-full max-w-full select-none"
               xmlns="http://www.w3.org/2000/svg"
               preserveAspectRatio="xMidYMid meet"
             >
