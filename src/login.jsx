@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { LogIn, X } from "lucide-react";
+import { useEffect, useId, useState } from "react";
+import { ArrowLeft, LogIn, X } from "lucide-react";
 import { authenticate } from "./auth";
 import { DEMO_USERS, isDemoMode } from "./access";
 
@@ -97,7 +97,7 @@ export function LoginForm({ onSuccess }) {
       </button>
 
       {picks.length ? (
-        <div className="mt-5 max-h-52 space-y-2 overflow-y-auto rounded-xl border border-[#DDD6CB] bg-[#F3F0EA] p-3 text-xs text-[#6E685F]">
+        <div className="mt-5 max-h-40 space-y-2 overflow-y-auto rounded-xl border border-[#DDD6CB] bg-[#F3F0EA] p-3 text-xs text-[#6E685F] sm:max-h-48">
           <p className="font-semibold text-[#161815]">
             Demo accounts — click to fill ({DEMO_USERS.length} users)
           </p>
@@ -121,19 +121,10 @@ export function LoginForm({ onSuccess }) {
   );
 }
 
-/** Full-page login (legacy route fallback). */
-export function Login({ onSuccess }) {
-  return (
-    <div className="flex min-h-screen items-center justify-center px-6" style={{ background: "#F3F0EA" }}>
-      <div className="w-full max-w-md rounded-2xl border border-[#DDD6CB] bg-[#FBFAF7] p-6 sm:p-8">
-        <LoginForm onSuccess={onSuccess} />
-      </div>
-    </div>
-  );
-}
-
-/** Landing popup login. */
+/** Landing popup login — always closable back to home. */
 export function LoginModal({ open, onClose, onSuccess }) {
+  const titleId = useId();
+
   useEffect(() => {
     if (!open) return undefined;
     const onKey = (e) => {
@@ -151,31 +142,46 @@ export function LoginModal({ open, onClose, onSuccess }) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+    <div className="fixed inset-0 z-[100] flex items-end justify-center p-0 sm:items-center sm:p-6">
       <button
         type="button"
-        className="absolute inset-0 bg-[#161815]/45"
-        aria-label="Close login"
+        className="absolute inset-0 bg-[#161815]/50"
+        aria-label="Close login and go back"
         onClick={onClose}
       />
+
       <div
         role="dialog"
         aria-modal="true"
-        aria-labelledby="login-modal-title"
-        className="relative z-10 w-full max-w-md rounded-2xl border border-[#DDD6CB] bg-[#FBFAF7] p-6 shadow-[0_24px_80px_rgba(22,24,21,0.28)] sm:p-8"
+        aria-labelledby={titleId}
+        className="relative z-10 flex max-h-[92svh] w-full max-w-md flex-col overflow-hidden rounded-t-2xl border border-[#DDD6CB] bg-[#FBFAF7] shadow-[0_24px_80px_rgba(22,24,21,0.28)] sm:rounded-2xl"
+        onClick={(e) => e.stopPropagation()}
       >
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full text-[#6E685F] transition hover:bg-[#E6E0D6] hover:text-[#161815]"
-          aria-label="Close"
-        >
-          <X className="h-5 w-5" strokeWidth={2} />
-        </button>
-        <div id="login-modal-title" className="sr-only">
-          Sign in
+        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-[#E8DFD0] px-4 py-3 sm:px-5">
+          <button
+            type="button"
+            onClick={onClose}
+            className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold text-[#161815] transition hover:bg-[#E6E0D6]"
+          >
+            <ArrowLeft className="h-4 w-4" strokeWidth={2.25} />
+            Back to home
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="grid h-9 w-9 place-items-center rounded-full text-[#6E685F] transition hover:bg-[#E6E0D6] hover:text-[#161815]"
+            aria-label="Close"
+          >
+            <X className="h-5 w-5" strokeWidth={2} />
+          </button>
         </div>
-        <LoginForm onSuccess={onSuccess} />
+
+        <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-7 sm:py-6">
+          <div id={titleId} className="sr-only">
+            Sign in
+          </div>
+          <LoginForm onSuccess={onSuccess} />
+        </div>
       </div>
     </div>
   );

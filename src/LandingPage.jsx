@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useCallback } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { LoginModal } from "./login";
 
 /**
@@ -13,23 +13,28 @@ const C = {
   accent: "#69ce11",
 };
 
-export function LandingPage({ onLogin, startWithLogin = false }) {
-  const location = useLocation();
-  const [loginOpen, setLoginOpen] = useState(
-    Boolean(startWithLogin || location.pathname === "/login"),
-  );
+export function LandingPage({ onLogin }) {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const loginOpen = searchParams.get("login") === "1";
 
-  useEffect(() => {
-    if (location.pathname === "/login") setLoginOpen(true);
-  }, [location.pathname]);
+  const openLogin = useCallback(() => {
+    navigate({ pathname: "/", search: "?login=1" }, { replace: false });
+  }, [navigate]);
 
-  const openLogin = () => setLoginOpen(true);
-  const closeLogin = () => setLoginOpen(false);
+  const closeLogin = useCallback(() => {
+    navigate("/", { replace: true });
+  }, [navigate]);
 
   return (
     <div className="min-h-[100svh]" style={{ background: C.bg, color: C.text }}>
       <header className="mx-auto flex h-16 w-full max-w-[1100px] items-center justify-between px-6 sm:px-8">
-        <div className="flex items-center gap-2.5">
+        <button
+          type="button"
+          onClick={closeLogin}
+          className="flex items-center gap-2.5"
+          aria-label="Pahachan home"
+        >
           <span
             className="grid h-8 w-8 place-items-center rounded-md text-sm font-extrabold text-[#161815]"
             style={{ background: C.accent }}
@@ -37,7 +42,7 @@ export function LandingPage({ onLogin, startWithLogin = false }) {
             P
           </span>
           <span className="text-[1.35rem] font-bold tracking-tight">pahachan</span>
-        </div>
+        </button>
 
         <button
           type="button"

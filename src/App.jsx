@@ -14,12 +14,12 @@ export default function App({ session, dark, onLogin, onLogout, onToggleDark }) 
     navigate(homeForRole(next.role), { replace: true });
   };
 
-  // Guests always land on the simple home page; /login opens the same page with popup.
+  // Guests: home page only. /login → home with login popup. Back closes popup to /.
   if (!session) {
     return (
       <Routes>
         <Route path="/" element={<LandingPage onLogin={handleLogin} />} />
-        <Route path="/login" element={<LandingPage onLogin={handleLogin} startWithLogin />} />
+        <Route path="/login" element={<Navigate to="/?login=1" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     );
