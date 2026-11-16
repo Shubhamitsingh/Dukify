@@ -688,12 +688,12 @@ export function LandingPage() {
           borderBottom: scrolled ? "1px solid #DDD6CB" : "1px solid transparent",
         }}
       >
-        <div className="mx-auto flex h-14 w-full max-w-[1600px] items-center gap-3 px-4 sm:h-16 sm:gap-6 sm:px-10 md:px-14 lg:h-[4.25rem] lg:px-16 xl:px-20">
+        <div className="mx-auto flex h-16 w-full max-w-[1600px] items-center gap-6 px-6 sm:px-10 md:px-14 lg:h-[4.25rem] lg:px-16 xl:px-20">
           {/* Left: logo + nav links (Shopify layout) */}
           <div className="flex min-w-0 flex-1 items-center gap-6 lg:gap-8">
             <a
               href="#top"
-              className={`flex shrink-0 items-center gap-2 text-[1.25rem] font-bold tracking-tight sm:gap-2.5 sm:text-[1.55rem] ${scrolled ? "text-[#161815]" : "text-white"}`}
+              className={`flex shrink-0 items-center gap-2.5 text-[1.45rem] font-bold tracking-tight sm:text-[1.55rem] ${scrolled ? "text-[#161815]" : "text-white"}`}
             >
               <span
                 className="grid h-8 w-8 place-items-center rounded-md text-sm font-extrabold text-[#161815]"
@@ -735,7 +735,7 @@ export function LandingPage() {
             </Link>
             <Link
               to="/login"
-              className="inline-flex items-center justify-center rounded-full px-4 py-2 text-[0.875rem] font-bold text-[#161815] transition hover:brightness-110 sm:px-6 sm:py-2.5 sm:text-[0.95rem]"
+              className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-[0.95rem] font-bold text-[#161815] transition hover:brightness-110 sm:px-6"
               style={{ background: C.accent }}
             >
               Open workspace
@@ -793,8 +793,8 @@ export function LandingPage() {
           <div className="lp-shell relative z-[2] flex min-h-[100svh] items-center justify-center py-28 text-center sm:py-32">
             <div className="mx-auto flex w-full max-w-4xl flex-col items-center">
               <h1 className="font-bold leading-[1.05] tracking-[-0.04em] text-white">
-                <span className="block text-[clamp(2.35rem,8.5vw,6.25rem)]">Start your clothing</span>
-                <span className="lp-hero-rotate mt-1 text-[clamp(1.85rem,6.5vw,4.75rem)]">
+                <span className="block text-[clamp(3rem,8.5vw,6.25rem)]">Start your clothing</span>
+                <span className="lp-hero-rotate mt-1 text-[clamp(2.35rem,6.5vw,4.75rem)]">
                   <span className={`lp-hero-rotate-inner ${heroAnim ? "is-in" : "is-out"}`}>
                     {rotating.before}{" "}
                     <span style={{ color: C.accent }}>{rotating.accent}</span>
@@ -802,11 +802,11 @@ export function LandingPage() {
                 </span>
               </h1>
 
-              <p className="mt-6 max-w-xl px-1 text-[clamp(0.95rem,2vw,1.2rem)] font-medium leading-relaxed text-white/75">
+              <p className="mt-6 max-w-xl text-[clamp(1rem,2vw,1.2rem)] font-medium leading-relaxed text-white/75">
                 Your workspace to pick clothing, launch a branded store, and sell to the audience you already have.
               </p>
 
-              <div className="mt-12 flex w-full max-w-sm flex-col items-stretch gap-3 sm:mt-20 sm:max-w-none sm:flex-row sm:flex-wrap sm:items-center sm:justify-center sm:gap-4">
+              <div className="mt-16 flex flex-wrap items-center justify-center gap-3 sm:mt-20 sm:gap-4">
                 <Link
                   to="/login"
                   className="inline-flex h-12 items-center justify-center rounded-full px-8 text-[0.95rem] font-bold leading-none tracking-tight text-[#161815] transition hover:brightness-110"
@@ -891,7 +891,7 @@ export function LandingPage() {
                   </div>
 
                   {/* Floating chips — simple, soft shadow, no thick borders */}
-                  <div className="absolute left-3 top-6 z-10 hidden max-w-[12.5rem] items-center gap-2 rounded-2xl bg-[#FBFAF7] p-2 shadow-[0_12px_32px_rgba(22,24,21,0.16)] sm:left-4 sm:top-8 sm:flex sm:max-w-[13.5rem] sm:p-2.5">
+                  <div className="absolute left-3 top-6 z-10 flex max-w-[12.5rem] items-center gap-2 rounded-2xl bg-[#FBFAF7] p-2 shadow-[0_12px_32px_rgba(22,24,21,0.16)] sm:left-4 sm:top-8 sm:max-w-[13.5rem] sm:p-2.5">
                     <span
                       className="grid h-9 w-9 shrink-0 place-items-center rounded-xl text-[#161815]"
                       style={{ background: C.accent }}
@@ -904,7 +904,7 @@ export function LandingPage() {
                     </div>
                   </div>
 
-                  <div className="absolute right-3 top-[38%] z-10 hidden max-w-[13rem] items-center gap-2 rounded-2xl bg-[#FBFAF7] p-2 shadow-[0_12px_32px_rgba(22,24,21,0.16)] sm:right-0 sm:flex sm:max-w-[14rem] sm:p-2.5">
+                  <div className="absolute right-3 top-[38%] z-10 flex max-w-[13rem] items-center gap-2 rounded-2xl bg-[#FBFAF7] p-2 shadow-[0_12px_32px_rgba(22,24,21,0.16)] sm:right-0 sm:max-w-[14rem] sm:p-2.5">
                     <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#161815] text-[#FBFAF7]">
                       <Store className="h-4 w-4" strokeWidth={2.25} />
                     </span>
@@ -914,7 +914,7 @@ export function LandingPage() {
                     </div>
                   </div>
 
-                  <div className="absolute bottom-5 left-3 z-10 hidden items-center gap-2 rounded-full bg-[#FBFAF7] py-1.5 pl-1.5 pr-3 shadow-[0_12px_32px_rgba(22,24,21,0.14)] sm:bottom-6 sm:left-4 sm:flex">
+                  <div className="absolute bottom-5 left-3 z-10 flex items-center gap-2 rounded-full bg-[#FBFAF7] py-1.5 pl-1.5 pr-3 shadow-[0_12px_32px_rgba(22,24,21,0.14)] sm:bottom-6 sm:left-4">
                     <span className="grid h-7 w-7 place-items-center rounded-full bg-[#0ea5e9]/15 text-[#0ea5e9]">
                       <Truck className="h-3.5 w-3.5" strokeWidth={2.25} />
                     </span>
@@ -965,7 +965,7 @@ export function LandingPage() {
                         Example · {liveStore.name} · {liveStore.url}
                       </span>
                     </a>
-                    <div className="flex gap-1">
+                    <div className="hidden gap-1 sm:flex">
                       {storeDemos.map((demo, i) => (
                         <button
                           key={demo.url}
@@ -1563,8 +1563,8 @@ export function LandingPage() {
       </main>
 
       {/* Sticky CTA — single persistent action */}
-      <div className="pointer-events-none fixed inset-x-0 bottom-4 z-40 flex justify-center px-3 pb-[env(safe-area-inset-bottom)] sm:bottom-6 sm:px-4">
-        <div className="pointer-events-auto flex w-full max-w-xl items-center gap-2.5 rounded-2xl border border-[#DDD6CB] bg-[#FBFAF7]/95 px-3 py-2.5 shadow-[0_20px_60px_rgba(22,24,21,0.12)] backdrop-blur-md sm:gap-4 sm:px-4 sm:py-3">
+      <div className="pointer-events-none fixed inset-x-0 bottom-4 z-40 flex justify-center px-4 sm:bottom-6">
+        <div className="pointer-events-auto flex w-full max-w-xl items-center gap-3 rounded-2xl border border-[#DDD6CB] bg-[#FBFAF7]/95 px-3 py-2.5 shadow-[0_20px_60px_rgba(22,24,21,0.12)] backdrop-blur-md sm:gap-4 sm:px-4 sm:py-3">
           <span
             className="hidden h-10 w-10 shrink-0 place-items-center rounded-xl text-sm font-extrabold text-[#161815] sm:grid"
             style={{ background: C.accent }}
@@ -1701,10 +1701,10 @@ export function LandingPage() {
           </div>
 
           {/* Large brand wordmark graphic — Funner-style, on Paper, no cards */}
-          <div className="relative mt-10 max-w-full overflow-hidden sm:mt-20" aria-hidden="true">
+          <div className="relative mt-14 overflow-hidden sm:mt-20" aria-hidden="true">
             <svg
               viewBox="0 0 1440 340"
-              className="h-auto w-full max-w-full select-none"
+              className="h-auto w-full select-none"
               xmlns="http://www.w3.org/2000/svg"
               preserveAspectRatio="xMidYMid meet"
             >
