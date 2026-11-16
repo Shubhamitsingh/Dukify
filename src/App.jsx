@@ -1,5 +1,6 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { Login } from "./login";
+import { LandingPage } from "./LandingPage";
 import { BrandApp, BrandStoreProvider } from "./brand";
 import { SuperAdminApp } from "./SuperAdminApp";
 import { AccessProvider } from "./access";
@@ -9,7 +10,13 @@ export default function App({ session, dark, onLogin, onLogout, onToggleDark }) 
   const location = useLocation();
 
   if (!session) {
-    return <Login onSuccess={onLogin} />;
+    if (location.pathname === "/login") {
+      return <Login onSuccess={onLogin} />;
+    }
+    if (location.pathname === "/" || location.pathname === "") {
+      return <LandingPage />;
+    }
+    return <Navigate to="/login" replace />;
   }
 
   return (
