@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { LogIn } from "lucide-react";
+import { useEffect, useState } from "react";
+import { LogIn, X } from "lucide-react";
 import { authenticate } from "./auth";
 import { DEMO_USERS, isDemoMode } from "./access";
 
@@ -15,7 +15,7 @@ const DEMO_PICKS = [
   { label: "Brand Staff", email: "staff@aisa.demo", password: "BrandStaff!2026" },
 ];
 
-export function Login({ onSuccess }) {
+export function LoginForm({ onSuccess }) {
   const demoOn = isDemoMode();
   const picks = demoOn ? DEMO_PICKS : [];
   const [email, setEmail] = useState(picks[0]?.email || "");
@@ -44,96 +44,138 @@ export function Login({ onSuccess }) {
   };
 
   return (
-    <div className="flex min-h-screen bg-white">
-      <div className="relative hidden w-2/3 overflow-hidden bg-gradient-to-br from-gray-50 via-white to-gray-50 lg:block">
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute -top-20 -left-20 h-96 w-96 rounded-full border border-gray-300" />
-          <div className="absolute top-10 left-10 h-80 w-80 rounded-full border border-gray-300" />
-          <div className="absolute top-32 left-32 h-64 w-64 rounded-full border border-gray-300" />
-        </div>
-        <div className="absolute top-24 left-24 h-32 w-32 rounded-full bg-pink-300 opacity-30 blur-3xl" />
-        <div className="absolute right-24 bottom-32 h-40 w-40 rounded-full bg-purple-300 opacity-30 blur-3xl" />
-        <div className="absolute top-16 left-16">
-          <div className="mb-8 flex items-center gap-2">
-            <span className="h-6 w-1 rounded-full bg-pink-500" />
-            <span className="text-sm font-semibold">Pahachan</span>
-          </div>
-          <div className="w-64 rounded-2xl border border-gray-100 bg-white/80 p-4 shadow-sm">
-            <p className="text-xs text-gray-500">Privilege-based admin</p>
-            <p className="mt-2 text-sm font-semibold text-gray-900">Six roles · permissions · brand scope</p>
-            <p className="mt-1 text-xs text-gray-400">
-              {demoOn ? "Demo login enabled — click an account to sign in" : "Configure Supabase Auth to sign in"}
-            </p>
-          </div>
-        </div>
-        <div className="absolute right-0 bottom-0 left-0 h-40 bg-gradient-to-t from-pink-400/80 to-transparent" />
-      </div>
-      <div className="flex w-full items-center justify-center px-6 lg:w-1/3">
-        <form className="w-full max-w-sm" onSubmit={submit}>
-          <h1 className="text-2xl font-semibold text-gray-900">Sign in</h1>
-          <p className="mt-1 text-sm text-gray-500">
-            {demoOn
-              ? "Use any demo account below — email and password are filled for you."
-              : "Demo login is off. Set VITE_DEMO_MODE=true or configure Supabase Auth."}
-          </p>
-          <label className="mt-6 block text-sm font-medium text-gray-700">
-            Email
-            <input
-              className="input-field mt-1.5 w-full"
-              type="email"
-              autoComplete="username"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-            />
-          </label>
-          <label className="mt-4 block text-sm font-medium text-gray-700">
-            Password
-            <div className="relative mt-1.5">
-              <input
-                className="input-field w-full pr-14"
-                type={show ? "text" : "password"}
-                autoComplete="current-password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-              />
-              <button
-                type="button"
-                className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-400"
-                onClick={() => setShow((value) => !value)}
-                aria-label={show ? "Hide password" : "Show password"}
-              >
-                {show ? "Hide" : "Show"}
-              </button>
-            </div>
-          </label>
-          {message ? <p className="mt-3 text-sm text-rose-600">{message}</p> : null}
-          <button type="submit" className="btn-primary mt-5 w-full" disabled={!ready}>
-            <LogIn className="h-4 w-4" />
-            Login
-          </button>
+    <form className="w-full" onSubmit={submit}>
+      <h2 className="text-2xl font-bold tracking-tight text-[#161815]">Sign in</h2>
+      <p className="mt-1.5 text-sm leading-relaxed text-[#6E685F]">
+        {demoOn
+          ? "Use any demo account below — email and password are filled for you."
+          : "Demo login is off. Set VITE_DEMO_MODE=true or configure Supabase Auth."}
+      </p>
 
-          {picks.length ? (
-            <div className="mt-5 max-h-64 space-y-2 overflow-y-auto rounded-xl border border-gray-100 bg-gray-50 p-3 text-xs text-gray-700">
-              <p className="font-semibold text-gray-900">
-                Demo accounts — click to fill ({DEMO_USERS.length} users)
-              </p>
-              {picks.map((account) => (
-                <button
-                  key={account.email}
-                  type="button"
-                  className="flex w-full flex-col rounded-lg border border-gray-200 bg-white px-2.5 py-2 text-left hover:border-pink-300"
-                  onClick={() => useAccount(account)}
-                >
-                  <span className="font-medium text-gray-900">{account.label}</span>
-                  <span className="text-gray-600">{account.email}</span>
-                  <span className="mt-0.5 font-mono text-[11px] text-pink-700">
-                    password: {account.password}
-                  </span>
-                </button>
-              ))}
-            </div>
-          ) : null}
-        </form>
+      <label className="mt-6 block text-sm font-medium text-[#161815]">
+        Email
+        <input
+          className="mt-1.5 w-full rounded-xl border border-[#DDD6CB] bg-white px-3.5 py-2.5 text-[#161815] outline-none transition focus:border-[#69ce11]"
+          type="email"
+          autoComplete="username"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+        />
+      </label>
+
+      <label className="mt-4 block text-sm font-medium text-[#161815]">
+        Password
+        <div className="relative mt-1.5">
+          <input
+            className="w-full rounded-xl border border-[#DDD6CB] bg-white px-3.5 py-2.5 pr-14 text-[#161815] outline-none transition focus:border-[#69ce11]"
+            type={show ? "text" : "password"}
+            autoComplete="current-password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+          />
+          <button
+            type="button"
+            className="absolute top-1/2 right-3 -translate-y-1/2 text-sm text-[#6E685F]"
+            onClick={() => setShow((value) => !value)}
+            aria-label={show ? "Hide password" : "Show password"}
+          >
+            {show ? "Hide" : "Show"}
+          </button>
+        </div>
+      </label>
+
+      {message ? <p className="mt-3 text-sm text-rose-600">{message}</p> : null}
+
+      <button
+        type="submit"
+        disabled={!ready}
+        className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-bold text-[#161815] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+        style={{ background: "#69ce11" }}
+      >
+        <LogIn className="h-4 w-4" />
+        Login
+      </button>
+
+      {picks.length ? (
+        <div className="mt-5 max-h-52 space-y-2 overflow-y-auto rounded-xl border border-[#DDD6CB] bg-[#F3F0EA] p-3 text-xs text-[#6E685F]">
+          <p className="font-semibold text-[#161815]">
+            Demo accounts — click to fill ({DEMO_USERS.length} users)
+          </p>
+          {picks.map((account) => (
+            <button
+              key={account.email}
+              type="button"
+              className="flex w-full flex-col rounded-lg border border-[#DDD6CB] bg-white px-2.5 py-2 text-left transition hover:border-[#69ce11]"
+              onClick={() => useAccount(account)}
+            >
+              <span className="font-medium text-[#161815]">{account.label}</span>
+              <span className="text-[#6E685F]">{account.email}</span>
+              <span className="mt-0.5 font-mono text-[11px] text-[#1F5C40]">
+                password: {account.password}
+              </span>
+            </button>
+          ))}
+        </div>
+      ) : null}
+    </form>
+  );
+}
+
+/** Full-page login (legacy route fallback). */
+export function Login({ onSuccess }) {
+  return (
+    <div className="flex min-h-screen items-center justify-center px-6" style={{ background: "#F3F0EA" }}>
+      <div className="w-full max-w-md rounded-2xl border border-[#DDD6CB] bg-[#FBFAF7] p-6 sm:p-8">
+        <LoginForm onSuccess={onSuccess} />
+      </div>
+    </div>
+  );
+}
+
+/** Landing popup login. */
+export function LoginModal({ open, onClose, onSuccess }) {
+  useEffect(() => {
+    if (!open) return undefined;
+    const onKey = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [open, onClose]);
+
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+      <button
+        type="button"
+        className="absolute inset-0 bg-[#161815]/45"
+        aria-label="Close login"
+        onClick={onClose}
+      />
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="login-modal-title"
+        className="relative z-10 w-full max-w-md rounded-2xl border border-[#DDD6CB] bg-[#FBFAF7] p-6 shadow-[0_24px_80px_rgba(22,24,21,0.28)] sm:p-8"
+      >
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full text-[#6E685F] transition hover:bg-[#E6E0D6] hover:text-[#161815]"
+          aria-label="Close"
+        >
+          <X className="h-5 w-5" strokeWidth={2} />
+        </button>
+        <div id="login-modal-title" className="sr-only">
+          Sign in
+        </div>
+        <LoginForm onSuccess={onSuccess} />
       </div>
     </div>
   );
