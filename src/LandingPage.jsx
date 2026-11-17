@@ -202,7 +202,7 @@ const faqs = [
   },
   {
     q: "Do you publish pricing on this site?",
-    a: "Not yet. Pricing and fee details are shared during onboarding with your account. This page does not list subscription or commission numbers.",
+    a: "Yes. There is no subscription fee, no website setup fee, and no monthly maintenance charge. Commission on your marketing budget is 0%. Dukify charges 3% + GST on delivered orders.",
   },
 ];
 
@@ -282,8 +282,32 @@ function prefersSaveData() {
 }
 
 function Reveal({ children, className = "", delay = 0 }) {
+  const ref = useRef(null);
+  const [shown, setShown] = useState(false);
+
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return undefined;
+    if (prefersReducedMotion()) {
+      setShown(true);
+      return undefined;
+    }
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setShown(true);
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
+    );
+    io.observe(node);
+    return () => io.disconnect();
+  }, []);
+
   return (
-    <div className={`lp-reveal ${className}`} style={{ transitionDelay: `${delay}ms` }}>
+    <div
+      ref={ref}
+      className={`lp-reveal ${shown ? "is-visible" : ""} ${className}`}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
       {children}
     </div>
   );
@@ -447,20 +471,6 @@ export function LandingPage() {
       io.disconnect();
       clearInterval(id);
     };
-  }, []);
-
-  useEffect(() => {
-    const nodes = document.querySelectorAll(".lp-reveal");
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) entry.target.classList.add("is-visible");
-        });
-      },
-      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
-    );
-    nodes.forEach((n) => io.observe(n));
-    return () => io.disconnect();
   }, []);
 
   return (
@@ -700,9 +710,9 @@ export function LandingPage() {
         <div className="mx-auto flex h-16 w-full max-w-[1600px] items-center gap-6 px-6 sm:px-10 md:px-14 lg:h-[4.25rem] lg:px-16 xl:px-20">
           {/* Left: logo + nav links (Shopify layout) */}
           <div className="flex min-w-0 flex-1 items-center gap-6 lg:gap-8">
-            <a href="#top" className="inline-flex shrink-0 items-center overflow-hidden rounded-md bg-white px-2 py-1">
+            <a href="#top" className="inline-flex shrink-0 items-center">
               <img
-                src="/logo/logo-ducku-2.png"
+                src={scrolled ? "/logo/logo-ducku-2.png" : "/logo/logo-ducku-light.png"}
                 alt="Dukify"
                 className="h-9 w-auto sm:h-10"
               />
@@ -723,6 +733,9 @@ export function LandingPage() {
               </a>
               <a href="#results" className={`rounded-full px-4 py-1.5 transition ${scrolled ? "hover:bg-[#EEF3FA]" : "hover:bg-white/10 hover:text-white"}`}>
                 What you get
+              </a>
+              <a href="#pricing" className={`rounded-full px-4 py-1.5 transition ${scrolled ? "hover:bg-[#EEF3FA]" : "hover:bg-white/10 hover:text-white"}`}>
+                Pricing
               </a>
               <a href="#faq" className={`rounded-full px-4 py-1.5 transition ${scrolled ? "hover:bg-[#EEF3FA]" : "hover:bg-white/10 hover:text-white"}`}>
                 FAQ
@@ -833,9 +846,6 @@ export function LandingPage() {
 
         <section className="relative py-12 sm:py-16" style={{ background: C.bg }}>
           <div className="mb-8 flex flex-col items-center gap-2 px-4 text-center">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#64748B]">
-              Built for
-            </p>
             <h2 className="max-w-xl text-[clamp(1.5rem,3vw,2.1rem)] font-bold tracking-[-0.03em] text-[#001E55]">
               Creators and brand owners who want their own clothing label
             </h2>
@@ -859,10 +869,7 @@ export function LandingPage() {
             <Reveal>
               <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
                 <div className="max-w-xl">
-                  <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#64748B]">
-                    Why Dukify
-                  </p>
-                  <h2 className="mt-3 text-[clamp(2.1rem,4.5vw,3.5rem)] font-bold leading-[1.12] tracking-[-0.035em] text-[#001E55]">
+                  <h2 className="text-[clamp(2.1rem,4.5vw,3.5rem)] font-bold leading-[1.12] tracking-[-0.035em] text-[#001E55]">
                     Empowering creators to launch, sell and{" "}
                     <em className="not-italic font-bold" style={{ color: C.accent }}>
                       grow
@@ -937,10 +944,7 @@ export function LandingPage() {
           <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
             <Reveal>
               <div className="mx-auto max-w-3xl text-center">
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#64748B]">
-                  Free brand website
-                </p>
-                <h2 className="mt-3 text-[clamp(2rem,5vw,3.5rem)] font-bold leading-[1.12] tracking-[-0.035em] text-[#001E55]">
+                <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-bold leading-[1.12] tracking-[-0.035em] text-[#001E55]">
                   Your clothing storefront, included free
                 </h2>
                 <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-[#64748B] sm:text-lg">
@@ -1013,10 +1017,7 @@ export function LandingPage() {
 
                 {/* Side copy — one clear text card, no code blocks */}
                 <div className="flex h-full flex-col justify-center rounded-[1.25rem] border border-[#E2E8F0] bg-[#FFFFFF] px-5 py-6 sm:px-6 sm:py-8 lg:px-7 lg:py-10">
-                  <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#64748B]">
-                    What you get
-                  </p>
-                  <h3 className="mt-3 text-[1.45rem] font-extrabold leading-tight tracking-tight text-[#001E55] sm:text-[1.65rem]">
+                  <h3 className="text-[1.45rem] font-extrabold leading-tight tracking-tight text-[#001E55] sm:text-[1.65rem]">
                     Your clothing website is completely free
                   </h3>
                   <p className="mt-4 text-[0.95rem] leading-relaxed text-[#64748B] sm:text-base">
@@ -1040,10 +1041,7 @@ export function LandingPage() {
           <div className="lp-shell">
             <Reveal>
               <div className="mx-auto max-w-3xl text-center">
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#64748B]">
-                  Our offerings
-                </p>
-                <h2 className="mt-3 text-[clamp(2rem,5vw,3.5rem)] font-bold leading-[1.12] tracking-[-0.035em] text-[#001E55]">
+                <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-bold leading-[1.12] tracking-[-0.035em] text-[#001E55]">
                   What you get to run your brand
                 </h2>
                 <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-[#64748B] sm:text-lg">
@@ -1081,10 +1079,7 @@ export function LandingPage() {
             <Reveal delay={80}>
               <div className="mt-10 grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
                 <div className="max-w-lg">
-                  <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#64748B]">
-                    {active.label}
-                  </p>
-                  <h3 className="mt-4 text-[clamp(2rem,4vw,3.25rem)] font-bold leading-[1.1] tracking-[-0.035em] text-[#001E55]">
+                  <h3 className="text-[clamp(2rem,4vw,3.25rem)] font-bold leading-[1.1] tracking-[-0.035em] text-[#001E55]">
                     {active.sub}
                   </h3>
                   <p className="mt-5 text-base leading-relaxed text-[#64748B] sm:text-lg">
@@ -1127,10 +1122,7 @@ export function LandingPage() {
           <div className="lp-shell space-y-20 sm:space-y-28">
               <Reveal>
                 <div className="mx-auto max-w-3xl text-center">
-                  <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#64748B]">
-                    How your brand runs
-                  </p>
-                  <h2 className="mt-3 text-[clamp(2rem,5vw,3.5rem)] font-bold leading-[1.12] tracking-[-0.035em] text-[#001E55]">
+                  <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-bold leading-[1.12] tracking-[-0.035em] text-[#001E55]">
                     From products to selling, clearly laid out
                   </h2>
                   <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-[#64748B] sm:text-lg">
@@ -1349,10 +1341,7 @@ export function LandingPage() {
           <div className="lp-shell">
             <Reveal>
               <div className="mb-12 max-w-2xl">
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#64748B]">
-                  What you get
-                </p>
-                <h2 className="mt-3 text-[clamp(2rem,4vw,3.25rem)] font-bold tracking-[-0.035em] text-[#001E55]">
+                <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-bold tracking-[-0.035em] text-[#001E55]">
                   Everything to run your clothing brand
                 </h2>
                 <p className="mt-4 max-w-xl text-base leading-relaxed text-[#64748B] sm:text-lg">
@@ -1432,10 +1421,7 @@ export function LandingPage() {
           <div className="lp-shell">
             <Reveal>
               <div className="mx-auto max-w-2xl text-center">
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#64748B]">
-                  How it works
-                </p>
-                <h2 className="mt-3 text-[clamp(2rem,4vw,3.25rem)] font-bold tracking-[-0.035em] text-[#001E55]">
+                <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-bold tracking-[-0.035em] text-[#001E55]">
                   Steps to set up and sell
                 </h2>
                 <p className="mx-auto mt-4 max-w-lg text-base text-[#64748B] sm:text-lg">
@@ -1470,113 +1456,132 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section id="advantage" className="bg-[#001E55] py-20 text-white sm:py-28">
+        <section id="advantage" className="bg-[#001E55] py-16 text-white sm:py-20">
           <div className="lp-shell">
             <Reveal>
-              <div className="max-w-2xl">
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#EE8802]">
-                  The Dukify advantage
-                </p>
-                <h2 className="mt-3 text-[clamp(2rem,4vw,3.25rem)] font-bold tracking-[-0.035em] text-white">
-                  Your audience can become your next brand.
-                </h2>
-                <p className="mt-4 max-w-xl text-base leading-relaxed text-white/75 sm:text-lg">
-                  Launch your own branded storefront and sell ready-to-launch products. Dukify helps manage the inventory and order operations behind your brand.
-                </p>
+              <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+                <div className="max-w-2xl">
+                  <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-bold tracking-[-0.035em] text-white">
+                    Your audience can become your next brand.
+                  </h2>
+                  <p className="mt-4 max-w-xl text-base leading-relaxed text-white/75 sm:text-lg">
+                    Launch your own branded storefront and sell ready-to-launch products. Dukify helps manage the inventory and order operations behind your brand.
+                  </p>
+                </div>
+                <Link
+                  to="/support"
+                  className="lp-btn-primary shrink-0 self-start focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white lg:self-auto"
+                >
+                  Book a demo <ArrowRight className="h-4 w-4" />
+                </Link>
               </div>
             </Reveal>
 
-            <ol className="mt-10 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs font-bold tracking-[0.16em] text-white/80">
-              {["Source", "Stock", "Store", "Ship"].map((step, index) => (
-                <li key={step} className="flex items-center gap-3">
-                  {index > 0 ? <span className="text-[#EE8802]" aria-hidden="true">→</span> : null}
-                  <span>{step}</span>
-                </li>
-              ))}
-            </ol>
-
-            <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:gap-5">
-              {[
-                {
-                  icon: Store,
-                  title: "Your brand, your storefront",
-                  body: "A store under your name, ready to share with the audience you already have.",
-                },
-                {
-                  icon: Shirt,
-                  title: "Ready-to-sell product catalogue",
-                  body: "Pick clothing from the catalogue and list it as your label. No factory setup to start.",
-                },
-                {
-                  icon: Package,
-                  title: "Inventory managed by Dukify",
-                  body: "Stock sits with Dukify. You stay on the brand, not the warehouse.",
-                },
-                {
-                  icon: Truck,
-                  title: "Orders packed and delivered",
-                  body: "When an order comes in, Dukify packs it and sends it out.",
-                },
-              ].map((item, index) => {
-                const Icon = item.icon;
-                return (
-                  <Reveal key={item.title} delay={index * 50}>
-                    <article className="h-full rounded-2xl border border-white/10 bg-white/[0.06] p-6 sm:p-7">
-                      <div className="flex items-center justify-between">
+            <div className="mt-10 overflow-hidden rounded-3xl border border-white/12 sm:mt-12">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4">
+                {[
+                  {
+                    step: "Source",
+                    icon: Shirt,
+                    title: "Ready-to-sell product catalogue",
+                    body: "Pick clothing from the catalogue and list it as your label. No factory setup to start.",
+                  },
+                  {
+                    step: "Stock",
+                    icon: Package,
+                    title: "Inventory managed by Dukify",
+                    body: "Stock sits with Dukify. You stay on the brand, not the warehouse.",
+                  },
+                  {
+                    step: "Store",
+                    icon: Store,
+                    title: "Your brand, your storefront",
+                    body: "A store under your name, ready to share with the audience you already have.",
+                  },
+                  {
+                    step: "Ship",
+                    icon: Truck,
+                    title: "Orders packed and delivered",
+                    body: "When an order comes in, Dukify packs it and sends it out.",
+                  },
+                ].map((item, index) => {
+                  const Icon = item.icon;
+                  return (
+                    <article
+                      key={item.step}
+                      className={`flex h-full flex-col p-6 sm:p-7 ${
+                        index > 0 ? "border-t border-white/12 lg:border-t-0" : ""
+                      } ${index % 2 === 1 ? "sm:border-l sm:border-white/12" : ""} ${
+                        index >= 2 ? "sm:border-t sm:border-white/12 lg:border-t-0" : ""
+                      } ${index > 0 ? "lg:border-l lg:border-white/12" : ""}`}
+                    >
+                      <div className="flex items-center justify-between gap-3">
                         <span className="grid h-10 w-10 place-items-center rounded-full bg-[#EE8802]/15 text-[#EE8802]">
                           <Icon className="h-5 w-5" strokeWidth={1.75} />
                         </span>
-                        <span className="text-xs font-bold tracking-[0.14em] text-[#EE8802]">0{index + 1}</span>
+                        <span className="text-xs font-bold tracking-[0.16em] text-[#EE8802] uppercase">
+                          {item.step}
+                        </span>
                       </div>
-                      <h3 className="mt-6 text-lg font-bold text-white">{item.title}</h3>
+                      <h3 className="mt-5 text-lg font-bold text-white">{item.title}</h3>
                       <p className="mt-2 text-sm leading-relaxed text-white/70">{item.body}</p>
                     </article>
-                  </Reveal>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
-
-            <Link
-              to="/support"
-              className="lp-btn-primary mt-12 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-            >
-              Book a demo <ArrowRight className="h-4 w-4" />
-            </Link>
           </div>
         </section>
 
-        <section id="roles" className="py-16 sm:py-24" style={{ background: C.bg }}>
-          <Reveal>
-            <div className="lp-shell max-w-[900px] text-center">
-              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#64748B]">
-                Team access
-              </p>
-              <h2 className="mt-3 text-[clamp(2rem,4vw,3.25rem)] font-bold tracking-[-0.035em] text-[#001E55]">
-                One brand. Individual logins.
-              </h2>
-              <p className="mt-4 text-base text-[#64748B] sm:text-lg">
-                Brand owners, admins, and staff each sign in with their own account. Access follows the role and
-                permissions assigned to them.
-              </p>
-              <div className="mt-9 flex flex-wrap justify-center gap-x-6 gap-y-3">
-                {["Brand owner", "Brand admin", "Brand staff", "Platform team"].map((role) => (
-                  <span key={role} className="text-sm font-semibold text-[#001E55]">
-                    {role}
-                  </span>
-                ))}
-              </div>
+        <section id="pricing" className="py-16 sm:py-24" style={{ background: C.bg }}>
+          <div className="lp-shell">
+            <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-20">
+              <Reveal>
+                <h2 className="max-w-lg text-[clamp(2.25rem,4.6vw,3.75rem)] font-bold leading-[1.08] tracking-[-0.04em] text-[#001E55]">
+                  No upfront cost, only success based fees
+                </h2>
+              </Reveal>
+
+              <Reveal delay={60}>
+                <div>
+                  <p className="text-center text-[clamp(1.75rem,3vw,2.5rem)] font-bold tracking-[-0.03em] text-[#001E55]">
+                    Pricing
+                  </p>
+                  <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4">
+                    {[
+                      { value: "₹0", label: "Subscription Fee", featured: true },
+                      { value: "₹0", label: "Website Setup & Maintenance Cost" },
+                      { value: "0%", label: "Commission on Marketing Budget" },
+                      { value: "3%", label: "+ GST, on Delivered Orders" },
+                    ].map((item) => (
+                      <article
+                        key={item.label}
+                        className={`flex h-full min-h-[9.5rem] flex-col justify-between rounded-2xl p-5 sm:min-h-[11.5rem] sm:p-6 ${
+                          item.featured
+                            ? "bg-[#001E55] text-white"
+                            : "border border-[#E2E8F0] bg-white text-[#001E55]"
+                        }`}
+                      >
+                        <p className={`text-[clamp(2.25rem,4vw,3.25rem)] font-bold leading-none tracking-[-0.04em] ${item.featured ? "text-white" : "text-[#001E55]"}`}>
+                          {item.value}
+                        </p>
+                        <p className={`mt-6 max-w-[12rem] text-sm leading-snug sm:text-[0.95rem] ${item.featured ? "text-white/80" : "text-[#64748B]"}`}>
+                          {item.label}
+                        </p>
+                      </article>
+                    ))}
+                  </div>
+                </div>
+              </Reveal>
             </div>
-          </Reveal>
+          </div>
         </section>
 
         <section id="faq" className="py-16 sm:py-24" style={{ background: C.bg }}>
           <Reveal>
             <div className="lp-shell max-w-[820px]">
               <div className="text-center">
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#64748B]">
-                  FAQ
-                </p>
-                <h2 className="mt-3 text-[clamp(2rem,4vw,3.25rem)] font-bold tracking-[-0.035em] text-[#001E55]">
+                <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-bold tracking-[-0.035em] text-[#001E55]">
                   Frequently asked questions
                 </h2>
                 <p className="mx-auto mt-4 max-w-lg text-base text-[#64748B] sm:text-lg">
@@ -1618,10 +1623,7 @@ export function LandingPage() {
         <section id="start" className="pb-20 sm:pb-28" style={{ background: C.bg }}>
           <Reveal>
             <div className="lp-shell text-center">
-              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#64748B]">
-                Get started
-              </p>
-              <h2 className="mt-3 text-[clamp(2rem,4vw,3.25rem)] font-bold tracking-[-0.035em] text-[#001E55]">
+              <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-bold tracking-[-0.035em] text-[#001E55]">
                 Ready when you are
               </h2>
               <p className="mx-auto mt-4 max-w-xl text-base text-[#64748B] sm:text-lg">
@@ -1672,6 +1674,7 @@ export function LandingPage() {
           </div>
           <nav className="flex flex-col items-start gap-2 text-sm font-medium lg:items-end">
             <a href="#platform" className="transition hover:text-[#EE8802]">Platform</a>
+            <a href="#pricing" className="transition hover:text-[#EE8802]">Pricing</a>
             <a href="#faq" className="transition hover:text-[#EE8802]">FAQ</a>
             <Link to="/support" className="transition hover:text-[#EE8802]">Support</Link>
             <Link to="/login" className="transition hover:text-[#EE8802]">Log in</Link>

@@ -165,7 +165,7 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
             {collapsed ? (
               <img src="/logo/logo-dukify.png" alt="Dukify" className="h-9 w-9 shrink-0 object-contain" />
             ) : (
-              <img src="/logo/logo-ducku-2.png" alt="Dukify" className="h-8 w-auto max-w-[9.5rem] rounded-md bg-white object-contain object-left px-1.5" />
+              <img src="/logo/logo-ducku-light.png" alt="Dukify" className="h-8 w-auto max-w-[9.5rem] object-contain object-left" />
             )}
           </div>
           <button
