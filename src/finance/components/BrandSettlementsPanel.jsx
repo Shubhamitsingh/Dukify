@@ -15,7 +15,26 @@ export function BrandSettlementsPanel({ rows }) {
       </div>
 
       <Surface title="Settlement rows">
-        <div className="overflow-x-auto">
+        <ul className="divide-y divide-gray-100 md:hidden dark:divide-gray-800">
+          {rows.map((row) => (
+            <li key={row.id} className="px-3.5 py-3.5">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-gray-900 dark:text-white">{row.brand}</p>
+                  <p className="mt-0.5 text-xs text-gray-500">{row.id} · {row.date}</p>
+                </div>
+                <Status value={row.status} />
+              </div>
+              <dl className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1.5 text-xs">
+                <div><dt className="text-[10px] font-semibold tracking-wide text-gray-400 uppercase">Sales</dt><dd className="tabular-nums">{inr(row.sales)}</dd></div>
+                <div><dt className="text-[10px] font-semibold tracking-wide text-gray-400 uppercase">Payable</dt><dd className="tabular-nums">{inr(row.payable)}</dd></div>
+                <div><dt className="text-[10px] font-semibold tracking-wide text-gray-400 uppercase">Commission</dt><dd className="tabular-nums">{inr(row.platformCommission)}</dd></div>
+                <div><dt className="text-[10px] font-semibold tracking-wide text-gray-400 uppercase">Deductions</dt><dd className="tabular-nums">{inr(row.deductions)}</dd></div>
+              </dl>
+            </li>
+          ))}
+        </ul>
+        <div className="hidden overflow-x-auto md:block">
           <table className="min-w-full text-left text-sm">
             <thead className="bg-gray-50 text-[11px] font-semibold tracking-wide text-gray-500 uppercase dark:bg-gray-900">
               <tr>

@@ -71,7 +71,7 @@ export function Kpi({ label, value, note, tone = "slate", icon, trend, onClick }
     <Tag
       type={onClick ? "button" : undefined}
       onClick={onClick}
-      className={`flex h-full min-h-[6.75rem] flex-col rounded-xl border px-2.5 py-2.5 text-left transition sm:min-h-[7.25rem] sm:px-3 sm:py-3 ${
+      className={`flex h-full min-h-[5.25rem] flex-col rounded-xl border px-3 py-2.5 text-left transition sm:min-h-[7.25rem] sm:px-3 sm:py-3 ${
         hero
           ? palette.wash
           : "border-gray-200/80 bg-white shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-800"
@@ -90,7 +90,7 @@ export function Kpi({ label, value, note, tone = "slate", icon, trend, onClick }
           <span className="h-8 w-8 shrink-0" aria-hidden="true" />
         )}
       </div>
-      <p className={`mt-2 truncate text-base font-semibold leading-none tracking-tight tabular-nums sm:text-lg ${hero ? "text-white" : "text-gray-900 dark:text-white"}`}>
+      <p className={`mt-2 text-lg font-semibold leading-none tracking-tight tabular-nums sm:truncate sm:text-lg ${hero ? "text-white" : "text-gray-900 dark:text-white"}`}>
         {value}
       </p>
       <div className="mt-auto flex min-h-[2.5rem] flex-col justify-end gap-1 pt-2">
@@ -294,8 +294,8 @@ function RecordChrome({ title, onClose, eyebrow = "Record", align = "left" }) {
 
 export function DrawerShell({ title, onClose, children, footer, eyebrow = "Record" }) {
   return (
-    <div className="fixed inset-0 z-40 flex justify-end bg-black/20 p-3 sm:p-4">
-      <aside className="flex h-full w-full max-w-md flex-col overflow-hidden rounded-xl border border-gray-200/80 bg-[#f8fafc] shadow-2xl dark:border-gray-700 dark:bg-gray-950">
+    <div className="fixed inset-0 z-40 flex justify-end bg-black/20 sm:p-4">
+      <aside className="flex h-full w-full max-w-none flex-col overflow-hidden bg-[#f8fafc] shadow-2xl sm:max-w-md sm:rounded-xl sm:border sm:border-gray-200/80 dark:bg-gray-950 dark:sm:border-gray-700">
         <RecordChrome title={title} onClose={onClose} eyebrow={eyebrow} />
         <div className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-4">{children}</div>
         {footer ? (

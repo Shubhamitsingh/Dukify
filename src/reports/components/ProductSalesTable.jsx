@@ -15,7 +15,23 @@ export function ProductSalesTable({ rows, onSelect }) {
       title="Product sales"
       action={<TableSearch value={table.query} onChange={table.setQuery} placeholder="Search products" />}
     >
-      <div className="overflow-x-auto">
+      <ul className="divide-y divide-gray-100 md:hidden dark:divide-gray-800">
+        {table.rows.map((row) => (
+          <li key={row.product}>
+            <button type="button" className="w-full px-3.5 py-3.5 text-left" onClick={() => onSelect?.(row)}>
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-gray-900 dark:text-white">{row.product}</p>
+                  <p className="mt-0.5 truncate text-xs text-gray-500">{row.brand} · {row.sku}</p>
+                </div>
+                <p className="shrink-0 text-sm font-semibold tabular-nums">{inr(row.grossSales)}</p>
+              </div>
+              <p className="mt-1.5 text-xs text-gray-500">{row.unitsSold} units · margin {inr(row.grossMargin)}</p>
+            </button>
+          </li>
+        ))}
+      </ul>
+      <div className="hidden overflow-x-auto md:block">
         <table className="min-w-full text-left text-sm">
           <thead className="bg-gray-50 text-gray-500 dark:bg-gray-900">
             <tr>

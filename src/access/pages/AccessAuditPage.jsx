@@ -46,6 +46,26 @@ export function AccessAuditPage() {
         />
       </div>
       <Surface className="overflow-hidden p-0">
+        <ul className="divide-y divide-gray-100 md:hidden">
+          {filtered.length === 0 ? (
+            <li className="px-4 py-8 text-center text-sm text-gray-400">No audit events yet.</li>
+          ) : (
+            filtered.map((r) => (
+              <li key={r.id} className="px-3.5 py-3.5">
+                <div className="flex items-start justify-between gap-2">
+                  <p className="min-w-0 text-sm font-semibold text-gray-900">{r.action}</p>
+                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium ${r.result === "success" ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700"}`}>
+                    {r.result}
+                  </span>
+                </div>
+                <p className="mt-1 text-xs text-gray-500">{r.actorEmail || "—"}</p>
+                <p className="mt-0.5 text-xs text-gray-500">{[r.brandId, r.recordType, r.recordId].filter(Boolean).join(" · ") || "—"}</p>
+                <p className="mt-1 text-[11px] text-gray-400">{new Date(r.at).toLocaleString()}</p>
+              </li>
+            ))
+          )}
+        </ul>
+        <div className="hidden overflow-x-auto md:block">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-gray-100 bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
             <tr>
@@ -90,6 +110,7 @@ export function AccessAuditPage() {
             )}
           </tbody>
         </table>
+        </div>
       </Surface>
     </div>
   );

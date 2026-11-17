@@ -101,8 +101,8 @@ export function LoginForm({ onSuccess }) {
 
   return (
     <form className="w-full" onSubmit={submit}>
-      <img src="/logo/logo-ducku-2.png" alt="Dukify" className="mb-8 h-9 w-auto max-w-[180px] object-contain object-left" />
-      <h1 className="text-[2rem] leading-none font-bold tracking-tight text-[#001E55]">Sign in</h1>
+      <img src="/logo/logo-ducku-2.png" alt="Dukify" className="mx-auto mb-8 h-12 w-auto max-w-[220px] object-contain sm:mx-0 sm:object-left" />
+      <h1 className="text-[1.5rem] leading-none font-bold tracking-tight text-[#001E55]">Sign in</h1>
       <p className="mt-3 max-w-sm text-sm leading-relaxed text-[#64748B]">
         {demoOn
           ? "Email and password are already filled. Pick another demo account if you need a different desk."

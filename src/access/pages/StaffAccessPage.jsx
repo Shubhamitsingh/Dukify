@@ -132,6 +132,28 @@ export function StaffAccessPage() {
       />
 
       <Surface className="overflow-hidden p-0">
+        <ul className="divide-y divide-gray-100 md:hidden">
+          {visibleUsers.map((u) => (
+            <li key={u.id} className="px-3.5 py-3.5">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-gray-900">{u.name}</p>
+                  <p className="truncate text-xs text-gray-500">{u.email}</p>
+                </div>
+                <Status value={u.status === "active" ? "Active" : u.status === "invited" ? "Pending" : "Suspended"} />
+              </div>
+              <p className="mt-2 text-xs text-gray-700">{ROLE_LABELS[u.role] || u.role}</p>
+              <p className="mt-1 text-xs text-gray-500">{scopeSummary(u.scope)}</p>
+              {canManage && u.id !== principal.id && u.status !== "revoked" ? (
+                <button type="button" className="mt-2 inline-flex items-center gap-1 text-xs text-rose-600" onClick={() => onRevoke(u.id)}>
+                  <Ban className="h-3.5 w-3.5" />
+                  Revoke
+                </button>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+        <div className="hidden overflow-x-auto md:block">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-gray-100 bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
             <tr>
@@ -181,6 +203,7 @@ export function StaffAccessPage() {
             ))}
           </tbody>
         </table>
+        </div>
       </Surface>
 
       {inviteOpen ? (

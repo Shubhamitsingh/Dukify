@@ -317,6 +317,7 @@ export function LandingPage() {
   const [tab, setTab] = useState(featureTabs[0].id);
   const [openFaq, setOpenFaq] = useState(0);
   const [scrolled, setScrolled] = useState(false);
+  const [pastHero, setPastHero] = useState(false);
   const [heroLine, setHeroLine] = useState(0);
   const [heroAnim, setHeroAnim] = useState(true);
   const [storeDemo, setStoreDemo] = useState(0);
@@ -430,7 +431,10 @@ export function LandingPage() {
     const t1 = window.setTimeout(jumpTop, 0);
     const t2 = window.setTimeout(jumpTop, 50);
 
-    const onScroll = () => setScrolled(window.scrollY > 12);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 12);
+      setPastHero(window.scrollY > Math.min(window.innerHeight * 0.72, 640));
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
@@ -777,7 +781,7 @@ export function LandingPage() {
               height={HERO_POSTER.height}
               decoding="async"
               fetchPriority="high"
-              className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover"
+              className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover object-[center_18%] sm:object-center"
               style={{ opacity: heroVideoPlaying ? 0 : 1, transition: "opacity 400ms ease" }}
               aria-hidden="true"
             />
@@ -787,7 +791,7 @@ export function LandingPage() {
           {heroVideoEnabled ? (
             <video
               ref={heroVideoRef}
-              className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover"
+              className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover object-[center_18%] sm:object-center"
               style={{ opacity: heroVideoPlaying ? 1 : 0, transition: "opacity 400ms ease" }}
               muted
               playsInline
@@ -807,11 +811,11 @@ export function LandingPage() {
           />
 
           {/* Layer 3 — centered SaaS-style hero type (reference format) */}
-          <div className="lp-shell relative z-[2] flex min-h-[100svh] items-center justify-center py-28 text-center sm:py-32">
+          <div className="lp-shell relative z-[2] flex min-h-[100svh] items-end justify-center pb-28 pt-24 text-center sm:items-center sm:py-32">
             <div className="mx-auto flex w-full max-w-4xl flex-col items-center">
-              <h1 className="font-bold leading-[1.05] tracking-[-0.04em] text-white">
-                <span className="block text-[clamp(3rem,8.5vw,6.25rem)]">Start your clothing</span>
-                <span className="lp-hero-rotate mt-1 text-[clamp(2.35rem,6.5vw,4.75rem)]">
+              <h1 className="font-bold tracking-[-0.04em] text-white">
+                <span className="block text-[2.15rem] leading-[1.08] min-[420px]:text-[2.45rem] sm:text-[clamp(3rem,8.5vw,6.25rem)] sm:leading-[1.05]">Start your clothing</span>
+                <span className="lp-hero-rotate mt-1 text-[1.7rem] leading-[1.15] min-[420px]:text-[1.95rem] sm:text-[clamp(2.35rem,6.5vw,4.75rem)]">
                   <span className={`lp-hero-rotate-inner ${heroAnim ? "is-in" : "is-out"}`}>
                     {rotating.before}{" "}
                     <span style={{ color: C.accent }}>{rotating.accent}</span>
@@ -819,21 +823,21 @@ export function LandingPage() {
                 </span>
               </h1>
 
-              <p className="mt-6 max-w-xl text-[clamp(1rem,2vw,1.2rem)] font-medium leading-relaxed text-white/75">
+              <p className="mt-4 max-w-[20rem] text-[0.95rem] font-medium leading-relaxed text-white/80 sm:mt-6 sm:max-w-xl sm:text-[clamp(1rem,2vw,1.2rem)]">
                 Your workspace to pick clothing, launch a branded store, and sell to the audience you already have.
               </p>
 
-              <div className="mt-16 flex flex-wrap items-center justify-center gap-3 sm:mt-20 sm:gap-4">
+              <div className="mt-7 flex w-full max-w-sm flex-col items-stretch gap-3 sm:mt-16 sm:w-auto sm:max-w-none sm:flex-row sm:flex-wrap sm:items-center sm:justify-center sm:gap-4">
                 <Link
                   to="/login"
-                  className="inline-flex h-12 items-center justify-center rounded-full px-8 text-[0.95rem] font-bold leading-none tracking-tight text-[#001E55] transition hover:brightness-110"
+                  className="inline-flex h-12 w-full items-center justify-center rounded-full px-8 text-[0.95rem] font-bold leading-none tracking-tight text-[#001E55] transition hover:brightness-110 sm:w-auto"
                   style={{ background: C.accent }}
                 >
                   Open workspace
                 </Link>
                 <a
                   href="#platform"
-                  className="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-white/20 bg-white/5 px-6 text-[0.95rem] font-semibold leading-none tracking-tight text-white transition hover:border-white/40 hover:bg-white/10"
+                  className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full border border-white/25 bg-white/10 px-6 text-[0.95rem] font-semibold leading-none tracking-tight text-white transition hover:border-white/40 hover:bg-white/15 sm:w-auto"
                 >
                   See the platform
                   <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.25} />
@@ -1638,7 +1642,7 @@ export function LandingPage() {
       </main>
 
       {/* Sticky CTA — single persistent action */}
-      <div className="pointer-events-none fixed inset-x-0 bottom-4 z-40 flex justify-center px-4 sm:bottom-6">
+      <div className={`pointer-events-none fixed inset-x-0 bottom-4 z-40 justify-center px-4 sm:bottom-6 ${pastHero ? "flex" : "hidden"}`}>
         <div className="pointer-events-auto flex w-full max-w-xl items-center gap-3 rounded-2xl border border-[#E2E8F0] bg-[#FFFFFF]/95 px-3 py-2.5 shadow-[0_20px_60px_rgba(0,30,85,0.12)] backdrop-blur-md sm:gap-4 sm:px-4 sm:py-3">
           <img src="/logo/logo-dukify.png" alt="" className="hidden h-10 w-10 shrink-0 object-contain sm:block" />
           <div className="min-w-0 flex-1">

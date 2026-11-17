@@ -17,7 +17,30 @@ export function FinanceTransactionTable({ rows, onOpenOrder, title = "Transactio
         <h2 className="text-sm font-semibold text-gray-900 dark:text-white">{title}</h2>
         <p className="text-xs text-gray-400">{rows.length} rows</p>
       </div>
-      <div className="overflow-x-auto">
+      <ul className="divide-y divide-gray-100 md:hidden dark:divide-gray-800">
+        {rows.map((row) => (
+          <li key={row.id} className="px-3.5 py-3.5">
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">{row.id}</p>
+                <p className="mt-0.5 truncate text-xs text-gray-500">{row.brand} · {row.date}</p>
+              </div>
+              <p className="shrink-0 text-sm font-semibold tabular-nums text-gray-900 dark:text-white">{inr(row.amount)}</p>
+            </div>
+            <div className="mt-2 flex flex-wrap items-center gap-1.5">
+              <span className="inline-flex rounded-lg bg-gray-100 px-2 py-0.5 text-[11px] font-medium text-gray-700 dark:bg-gray-700 dark:text-gray-200">{row.type}</span>
+              <Status value={row.status} />
+              <span className="text-[11px] text-gray-400">{row.method}</span>
+            </div>
+            {row.orderId && row.orderId !== "—" ? (
+              <button type="button" className="mt-2 text-xs font-semibold text-sky-700" onClick={() => onOpenOrder?.(row.orderId)}>
+                Order {row.orderId}
+              </button>
+            ) : null}
+          </li>
+        ))}
+      </ul>
+      <div className="hidden overflow-x-auto md:block">
         <table className="min-w-full text-left text-sm">
           <thead className="bg-gray-50/80 text-[11px] font-semibold tracking-wide text-gray-500 uppercase dark:bg-gray-900 dark:text-gray-400">
             <tr>

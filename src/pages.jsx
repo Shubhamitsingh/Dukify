@@ -118,7 +118,7 @@ export function Dashboard() {
 
   return (
     <div className="w-full space-y-3">
-      <section className="grid w-full grid-cols-2 items-stretch gap-1.5 sm:grid-cols-3 sm:gap-2 xl:grid-cols-4 2xl:grid-cols-7">
+      <section className="grid w-full grid-cols-2 items-stretch gap-2 sm:grid-cols-3 sm:gap-2 xl:grid-cols-4 2xl:grid-cols-7">
         <Kpi
           label="Booked GMV"
           value={inr(sales)}
@@ -566,7 +566,7 @@ function PerformanceChart({ series }) {
       </div>
 
       <div className="relative">
-        <svg viewBox={`0 0 ${width} ${height}`} className="h-auto w-full" role="img" aria-label="Sales and orders performance">
+        <svg viewBox={`0 0 ${width} ${height}`} className="h-52 w-full sm:h-auto" role="img" aria-label="Sales and orders performance">
           <defs>
             <linearGradient id="ordersArea" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#34d399" stopOpacity="0.28" />
@@ -1022,8 +1022,37 @@ function OrderMixPanel({ pipeline, total }) {
 }
 
 function Table({ columns, rows, onRow }) {
+  const statusIndex = columns.findIndex((column) => column === "Status" || column === "Fulfilment");
   return (
-    <div className="overflow-x-auto">
+    <>
+      <ul className="divide-y divide-gray-100 md:hidden dark:divide-gray-800">
+        {rows.map((row, rowIndex) => (
+          <li key={`${rowIndex}-${row[0]}`}>
+            <button
+              type="button"
+              className="w-full px-3 py-3 text-left"
+              onClick={onRow ? () => onRow(rowIndex) : undefined}
+            >
+              <div className="flex items-start justify-between gap-2">
+                <p className="min-w-0 text-sm font-semibold text-gray-900 dark:text-white">{row[0]}</p>
+                {statusIndex >= 0 ? <Status value={row[statusIndex]} /> : null}
+              </div>
+              <dl className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1.5">
+                {columns.slice(1).map((column, index) => {
+                  if (index + 1 === statusIndex) return null;
+                  return (
+                    <div key={column} className="min-w-0">
+                      <dt className="text-[10px] font-semibold tracking-wide text-gray-400 uppercase">{column}</dt>
+                      <dd className="mt-0.5 truncate text-xs text-gray-800 dark:text-gray-100">{row[index + 1]}</dd>
+                    </div>
+                  );
+                })}
+              </dl>
+            </button>
+          </li>
+        ))}
+      </ul>
+      <div className="hidden overflow-x-auto md:block">
       <table className="w-full min-w-[640px] text-left text-sm">
         <thead className="border-b border-gray-100 bg-gray-50/80 text-xs font-semibold tracking-wide text-gray-500 uppercase dark:border-gray-700 dark:bg-gray-900/40">
           <tr>
@@ -1048,7 +1077,8 @@ function Table({ columns, rows, onRow }) {
           ))}
         </tbody>
       </table>
-    </div>
+      </div>
+    </>
   );
 }
 
@@ -1697,7 +1727,46 @@ export function ModulePage({ id }) {
         ) : null}
       </Toolbar>
       <Surface>
-        <div className="overflow-x-auto">
+        <ul className="divide-y divide-gray-100 md:hidden dark:divide-gray-800">
+          {rows.length === 0 ? (
+            <li className="px-4 py-10 text-center text-sm text-gray-500">No records match.</li>
+          ) : (
+            rows.map((row) => {
+              const [primaryKey, primaryLabel] = spec.columns[0];
+              return (
+                <li key={row.id}>
+                  <button
+                    type="button"
+                    className="w-full px-3.5 py-3.5 text-left"
+                    onClick={() => open(db[spec.collection].find((item) => item.id === row.id))}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-semibold tracking-wide text-gray-400 uppercase">{primaryLabel}</p>
+                        <p className="mt-0.5 truncate text-sm font-semibold text-gray-900 dark:text-white">{row[primaryKey]}</p>
+                      </div>
+                      {spec.statusKey && row[spec.statusKey] != null ? <Status value={row[spec.statusKey]} /> : null}
+                    </div>
+                    <dl className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1.5">
+                      {spec.columns.slice(1).map(([key, label]) => {
+                        if (key === spec.statusKey || key === "status") return null;
+                        return (
+                          <div key={key} className="min-w-0">
+                            <dt className="text-[10px] font-semibold tracking-wide text-gray-400 uppercase">{label}</dt>
+                            <dd className="mt-0.5 truncate text-xs text-gray-800 dark:text-gray-100">
+                              {key === "payment" ? <Status value={row[key]} /> : row[key]}
+                            </dd>
+                          </div>
+                        );
+                      })}
+                    </dl>
+                  </button>
+                </li>
+              );
+            })
+          )}
+        </ul>
+        <div className="hidden overflow-x-auto md:block">
           <table className="w-full min-w-[760px] text-left text-sm">
             <thead className="border-b border-gray-100 bg-gray-50/80 text-xs font-semibold tracking-wide text-gray-500 uppercase dark:border-gray-700 dark:bg-gray-900/40">
               <tr>
@@ -2236,7 +2305,26 @@ function CentralOrdersPanel({ compact = false, period = "today", onPeriod, brand
 function BrandOrdersTable({ matrix, onBrand, compact = false }) {
   const rows = compact ? matrix.rows.slice(0, 6) : matrix.rows;
   return (
-    <div className="w-full overflow-x-auto">
+    <>
+      <ul className="divide-y divide-gray-100 md:hidden dark:divide-gray-800">
+        {rows.map((row) => (
+          <li key={row.id}>
+            <button type="button" className="w-full px-3 py-3 text-left" onClick={() => onBrand?.(row.name)}>
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-gray-900 dark:text-white">{row.name}</p>
+                  <p className="mt-0.5 text-xs text-gray-500">{row.status}</p>
+                </div>
+                <p className="shrink-0 text-sm font-semibold tabular-nums">{money(row.sales)}</p>
+              </div>
+              <p className="mt-1.5 text-xs text-gray-500">
+                {row.period} in period · {row.pending} pending · {row.shipped} shipped · {row.delivered} delivered
+              </p>
+            </button>
+          </li>
+        ))}
+      </ul>
+      <div className="hidden w-full overflow-x-auto md:block">
       <table className="w-full table-fixed text-left text-sm">
         <colgroup>
           <col className="w-[22%]" />
@@ -2290,7 +2378,8 @@ function BrandOrdersTable({ matrix, onBrand, compact = false }) {
           </tr>
         </tbody>
       </table>
-    </div>
+      </div>
+    </>
   );
 }
 

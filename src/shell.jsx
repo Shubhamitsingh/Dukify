@@ -76,6 +76,9 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef(null);
   const bellRef = useRef(null);
+  const searchRef = useRef(null);
+  const searchBtnRef = useRef(null);
+  const searchInputRef = useRef(null);
   const openTickets = db.tickets.filter((ticket) => ticket.status === "Open").length;
   const attentionNotices = db.notices.filter((notice) => notice.status === "Failed" || notice.status === "Draft");
   const recentNotices = [...db.notices].sort((left, right) => {
@@ -84,15 +87,23 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
   }).slice(0, 5);
 
   useEffect(() => {
-    if (!profileOpen && !bellOpen) return undefined;
+    if (!profileOpen && !bellOpen && !searchOpen) return undefined;
     const onPointer = (event) => {
       if (profileRef.current && !profileRef.current.contains(event.target)) setProfileOpen(false);
       if (bellRef.current && !bellRef.current.contains(event.target)) setBellOpen(false);
+      if (
+        searchRef.current &&
+        !searchRef.current.contains(event.target) &&
+        !searchBtnRef.current?.contains(event.target)
+      ) {
+        setSearchOpen(false);
+      }
     };
     const onKey = (event) => {
       if (event.key === "Escape") {
         setProfileOpen(false);
         setBellOpen(false);
+        setSearchOpen(false);
       }
     };
     document.addEventListener("mousedown", onPointer);
@@ -101,7 +112,7 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
       document.removeEventListener("mousedown", onPointer);
       document.removeEventListener("keydown", onKey);
     };
-  }, [profileOpen, bellOpen]);
+  }, [profileOpen, bellOpen, searchOpen]);
   const openExceptions = exceptions(db).length;
   const openApprovals = approvals(db).length;
   const openNdr = (db.shipments || []).filter((row) => row.status === "NDR").length;
@@ -156,7 +167,7 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
     <div className="app-shell">
       <aside
         className={`app-rail fixed top-2 bottom-0 left-0 z-40 flex flex-col overflow-hidden transition-[width,transform] duration-200 ${
-          mobileOpen ? "translate-x-0" : "-translate-x-full"
+          mobileOpen ? "is-open translate-x-0" : "max-lg:-translate-x-[calc(100%+2rem)] lg:translate-x-0"
         } lg:translate-x-0 max-lg:top-0`}
         style={{ width }}
       >
@@ -236,8 +247,8 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
       ) : null}
 
       <div className="app-workspace transition-[padding] duration-200 max-lg:!pl-2" style={{ paddingLeft: workspacePad }}>
-        <header className="app-topbar sticky top-2 z-20 grid h-14 grid-cols-[1fr_minmax(12rem,36rem)_0.7fr] items-center gap-2 px-2.5 backdrop-blur sm:px-4">
-          <div className="flex min-w-0 items-center justify-start gap-2 pl-10 sm:pl-14">
+        <header className="app-topbar sticky top-0 z-20 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-2.5 py-2 backdrop-blur lg:top-2 lg:h-14 lg:grid-cols-[1fr_minmax(12rem,36rem)_0.7fr] lg:px-4 lg:py-0">
+          <div className="flex min-w-0 items-center justify-start gap-2">
             <button
               type="button"
               className="icon-btn inline-grid shrink-0 lg:hidden"
@@ -246,7 +257,12 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
             >
               <Menu className="h-5 w-5" />
             </button>
-            <p className="min-w-0 truncate text-base font-bold tracking-tight sm:text-lg">
+            <img
+              src="/logo/logo-ducku-2.png"
+              alt="Dukify"
+              className="h-7 w-auto max-w-[7.25rem] shrink-0 object-contain object-left lg:hidden"
+            />
+            <p className="hidden min-w-0 truncate text-sm font-bold tracking-tight sm:text-lg lg:block">
               {(() => {
                 const { when, name } = dayGreeting(principal?.name || roleLabel || "there");
                 return (
@@ -259,9 +275,17 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
             </p>
           </div>
 
-          <div className="relative w-full justify-self-center">
+          <div
+            ref={searchRef}
+            className={`relative min-w-0 ${
+              searchOpen
+                ? "max-lg:absolute max-lg:top-[calc(100%+0.35rem)] max-lg:right-2 max-lg:left-2 max-lg:z-30"
+                : "max-lg:hidden"
+            } lg:col-span-1 lg:col-start-2 lg:row-start-1`}
+          >
             <Search className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-gray-400" />
             <input
+              ref={searchInputRef}
               value={query}
               onChange={(event) => {
                 setQuery(event.target.value);
@@ -292,7 +316,25 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
             ) : null}
           </div>
 
-          <div className="flex h-11 min-w-0 items-center justify-end gap-1 sm:gap-1.5">
+          <div className="col-start-2 row-start-1 flex h-11 shrink-0 items-center justify-end gap-1 lg:col-start-3 lg:gap-1.5">
+            <button
+              ref={searchBtnRef}
+              type="button"
+              className="icon-btn lg:hidden"
+              aria-label="Search"
+              aria-expanded={searchOpen}
+              onClick={() => {
+                setBellOpen(false);
+                setProfileOpen(false);
+                setSearchOpen((open) => {
+                  const next = !open;
+                  if (next) requestAnimationFrame(() => searchInputRef.current?.focus());
+                  return next;
+                });
+              }}
+            >
+              <Search className="h-4 w-4" />
+            </button>
             <div className="relative" ref={bellRef}>
               <button
                 type="button"
@@ -318,7 +360,7 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
                 <div
                   role="dialog"
                   aria-label="Notifications"
-                  className="absolute top-11 right-0 z-30 w-[22rem] overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800"
+                  className="absolute top-11 right-0 z-30 w-[min(22rem,calc(100vw-1.25rem))] overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800"
                 >
                   <div className="flex items-center justify-between border-b border-gray-100 px-3.5 py-2.5 dark:border-gray-700">
                     <div>

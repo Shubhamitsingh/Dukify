@@ -8,7 +8,7 @@ const TABS = [
 
 export function TicketTabs({ active, onChange, counts = {} }) {
   return (
-    <div className="flex w-full gap-1 overflow-x-auto pb-0.5">
+    <div className="flex w-full min-w-0 flex-wrap gap-1.5">
       {TABS.map((tab) => {
         const Icon = tab.icon;
         const selected = active === tab.id;
@@ -18,7 +18,7 @@ export function TicketTabs({ active, onChange, counts = {} }) {
             key={tab.id}
             type="button"
             onClick={() => onChange(tab.id)}
-            className={`inline-flex shrink-0 items-center gap-2 rounded-full border px-3.5 py-2 text-xs font-semibold transition ${
+            className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs font-semibold transition ${
               selected
                 ? "border-leaf-500 bg-leaf-500 text-white shadow-sm shadow-leaf-500/25"
                 : "border-gray-200 bg-white text-gray-600 hover:border-leaf-200 hover:text-leaf-700 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300"

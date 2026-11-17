@@ -338,7 +338,42 @@ export function PricingPage() {
       ) : null}
 
       <Surface>
-        <div className="overflow-x-auto">
+        <ul className="divide-y divide-gray-100 md:hidden dark:divide-gray-800">
+          {rows.length === 0 ? (
+            <li className="px-4 py-10 text-center text-sm text-gray-500">No products match.</li>
+          ) : (
+            rows.map((row) => {
+              const thumb = Array.isArray(row.images) && row.images[0] ? row.images[0] : "";
+              return (
+                <li key={row.id} className="flex gap-3 px-3.5 py-3.5">
+                  <input type="checkbox" className="mt-1" checked={selected.has(row.id)} onChange={() => toggle(row.id)} />
+                  <button type="button" className="flex min-w-0 flex-1 gap-3 text-left" onClick={() => openEdit(row)}>
+                    {thumb ? (
+                      <img src={thumb} alt="" className="h-12 w-12 shrink-0 rounded-xl object-cover" />
+                    ) : (
+                      <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gray-100 text-[10px] text-gray-400">—</span>
+                    )}
+                    <span className="min-w-0 flex-1">
+                      <span className="flex items-start justify-between gap-2">
+                        <span className="min-w-0">
+                          <span className="block truncate text-sm font-semibold text-gray-900 dark:text-white">{row.name}</span>
+                          <span className="mt-0.5 block truncate text-xs text-gray-500">{row.sku} · {row.category}</span>
+                        </span>
+                        <Status value={row.status} />
+                      </span>
+                      <span className="mt-2 grid grid-cols-3 gap-2 text-xs">
+                        <span><span className="block text-[10px] font-semibold tracking-wide text-gray-400 uppercase">Cost</span>{inr(row.cost)}</span>
+                        <span><span className="block text-[10px] font-semibold tracking-wide text-gray-400 uppercase">Supply</span>{inr(row.supply)}</span>
+                        <span><span className="block text-[10px] font-semibold tracking-wide text-gray-400 uppercase">Retail</span>{inr(row.retail)}</span>
+                      </span>
+                    </span>
+                  </button>
+                </li>
+              );
+            })
+          )}
+        </ul>
+        <div className="hidden overflow-x-auto md:block">
           <table className="w-full min-w-[960px] text-left text-sm">
             <thead className="border-b border-gray-100 bg-gray-50/80 text-xs font-semibold tracking-wide text-gray-500 uppercase dark:border-gray-700 dark:bg-gray-900/40">
               <tr>
