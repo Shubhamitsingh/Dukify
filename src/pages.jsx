@@ -30,7 +30,8 @@ import {
   sampleToday,
 } from "./orderDesk";
 import { blanks, partnerMoney, related } from "./local";
-import { navGroups } from "./shell";
+import { navGroups } from "./adminNav";
+import { deskAccentByPath } from "./deskAccents";
 import { useStore } from "./store";
 import { useAccess } from "./access";
 import { PERMISSIONS } from "./access/permissions";
@@ -60,13 +61,8 @@ function exportModuleXlsx(filename, sheetName, columns, rows) {
   XLSX.writeFile(book, filename);
 }
 
-function moduleEyebrow(id) {
-  const group = navGroups.find((entry) => entry.items.some((item) => item.to === `/${id}`));
-  return group?.label || "Workspace";
-}
-
 // Same soft mix family as the order-mix ring — avoid dark navy / deep browns.
-const brandPalette = ["#ec4899", "#38bdf8", "#34d399", "#fbbf24", "#818cf8", "#fb7185", "#2dd4bf", "#a78bfa"];
+const brandPalette = ["#001E55", "#38bdf8", "#34d399", "#fbbf24", "#818cf8", "#fb7185", "#2dd4bf", "#a78bfa"];
 
 function brandStats(db) {
   return db.brands
@@ -87,7 +83,7 @@ function brandStats(db) {
 
 export function Dashboard() {
   const { db } = useStore();
-  const { can, canSeeAllBrandTotals, roleLabel, scope } = useAccess();
+  const { can } = useAccess();
   const navigate = useNavigate();
   const brands = brandStats(db);
   const snap = commerceSnapshot(db);
@@ -97,12 +93,6 @@ export function Dashboard() {
   const showSupply = can(PERMISSIONS.SUPPLIER_COST_VIEW);
   const margin = showMargin ? snap.grossMarginOnPaid : null;
   const supply = showSupply ? snap.supplyOnPaid : null;
-  const scopeNote =
-    canSeeAllBrandTotals
-      ? "All brands in your access"
-      : scope.brandIds?.length
-        ? `${scope.brandIds.length} assigned brand(s)`
-        : "Scoped workspace";
   const low = db.inventory.filter((row) => row.available <= (Number(row.reorderAt) || 11));
   const pending = db.orders.filter((order) =>
     ["Confirmed", "Packing", "Ready to ship", "Payment failed", "New", "Processing"].includes(order.fulfilment) ||
@@ -127,23 +117,13 @@ export function Dashboard() {
   const refunded = db.orders.filter((order) => order.payment === "Refunded").length;
 
   return (
-    <div className="w-full space-y-5">
-      <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-gray-100 bg-white px-4 py-2.5 text-xs text-gray-500 shadow-sm">
-        <span>
-          Overview for <span className="font-semibold text-gray-800">{roleLabel}</span> · {scopeNote}
-        </span>
-        {!canSeeAllBrandTotals ? (
-          <span className="rounded-md bg-amber-50 px-2 py-0.5 font-medium text-amber-800">
-            Totals exclude brands outside your scope
-          </span>
-        ) : null}
-      </div>
-      <section className="grid w-full grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-2.5 xl:grid-cols-4 2xl:grid-cols-7">
+    <div className="w-full space-y-3">
+      <section className="grid w-full grid-cols-2 items-stretch gap-1.5 sm:grid-cols-3 sm:gap-2 xl:grid-cols-4 2xl:grid-cols-7">
         <Kpi
           label="Booked GMV"
           value={inr(sales)}
           note={snap.labels.bookedSalesNote}
-          tone="hero"
+          tone="pink"
           icon={<IndianRupee className="h-4 w-4" />}
           trend={{ up: true, label: `${paidOrders.length} paid/COD` }}
           onClick={() => navigate("/reports")}
@@ -210,7 +190,7 @@ export function Dashboard() {
 
       <SalesTrendSection orders={db.orders} pipeline={pipeline} />
 
-      <section className="grid gap-3 md:grid-cols-3">
+      <section className="grid gap-2 md:grid-cols-3">
         <DeliveryRateCard pipeline={pipeline} total={db.orders.length} />
         <MoneyCompareCard
           sales={sales}
@@ -220,7 +200,7 @@ export function Dashboard() {
         <PaymentMixCard orders={db.orders} />
       </section>
 
-      <section className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-2.5">
+      <section className="grid grid-cols-2 gap-1.5 sm:grid-cols-4 sm:gap-2">
         <Kpi
           label="Pending work"
           value={pending}
@@ -259,7 +239,7 @@ export function Dashboard() {
         <CentralOrdersPanel compact />
       </section>
 
-      <div className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
+      <div className="grid gap-2 xl:grid-cols-[1.2fr_0.8fr]">
         <Surface title="Recent orders" action={<button type="button" className="btn-soft" onClick={() => navigate("/orders")}>View all</button>}>
           <Table
             columns={["Order", "Brand", "Product", "Value", "Fulfilment"]}
@@ -287,9 +267,9 @@ export function Dashboard() {
         </Surface>
       </div>
 
-      <div className="grid w-full gap-4 xl:grid-cols-2">
+      <div className="grid w-full gap-2 xl:grid-cols-2">
         <Surface title="Brand performance" action={<span className="text-xs text-gray-500">Share of sample sales</span>}>
-          <ul className="space-y-3.5 p-4">
+          <ul className="space-y-2.5 p-3">
             {(() => {
               const totalSales = brands.reduce((bag, brand) => bag + brand.sales, 0) || 1;
               return brands.map((brand) => {
@@ -332,20 +312,21 @@ export function Dashboard() {
       </div>
 
       <section>
-        <p className="mb-3 text-[11px] font-semibold tracking-[0.14em] text-gray-400 uppercase">Every desk</p>
-        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 xl:grid-cols-7">
+        <p className="mb-2 text-[11px] font-semibold tracking-[0.14em] text-gray-400 uppercase">Every desk</p>
+        <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4 xl:grid-cols-7">
           {navGroups.flatMap((group) => group.items).filter((item) => item.to !== "/dashboard").map((item) => {
             const signal = deskSignal(db, item.to);
             const Icon = item.icon;
+            const accent = deskAccentByPath[item.to] || "bg-leaf-50 text-leaf-700 dark:bg-leaf-950/40 dark:text-leaf-300";
             return (
               <button
                 key={item.to}
                 type="button"
                 onClick={() => navigate(item.to)}
-                className="rounded-2xl border border-gray-200/80 bg-white px-3 py-3 text-left shadow-[var(--app-shadow)] transition hover:-translate-y-0.5 hover:border-pink-200 dark:border-gray-700 dark:bg-gray-800"
+                className="rounded-xl border border-gray-200/80 bg-white px-3 py-3 text-left shadow-[var(--app-shadow)] transition hover:-translate-y-0.5 hover:border-leaf-200 dark:border-gray-700 dark:bg-gray-800"
               >
                 <span className="flex items-center justify-between gap-2">
-                  <span className="grid h-8 w-8 place-items-center rounded-xl bg-pink-50 text-pink-600 dark:bg-pink-950/40 dark:text-pink-300">
+                  <span className={`grid h-8 w-8 place-items-center rounded-xl ${accent}`}>
                     <Icon className="h-3.5 w-3.5" />
                   </span>
                   <span className={`text-sm font-semibold tabular-nums ${signal.problem ? "text-rose-600" : "text-gray-900 dark:text-white"}`}>{signal.value}</span>
@@ -538,7 +519,7 @@ function PerformanceChart({ series }) {
       barH: Math.max(day.sales > 0 ? 6 : 3, salesH),
       lineY: pad.top + plotH - ordersH,
       // Always bold by sales strength — not by hover
-      fill: day.sales <= 0 ? "#e5e7eb" : salesRatio >= 0.75 ? "#f59e0b" : salesRatio >= 0.4 ? "#fb923c" : "#fdba74",
+      fill: day.sales <= 0 ? "#E2E8F0" : salesRatio >= 0.75 ? "#001E55" : salesRatio >= 0.4 ? "#16356E" : "#A9C0E0",
     };
   });
 
@@ -553,13 +534,13 @@ function PerformanceChart({ series }) {
   const tipY = activePoint ? Math.max(2, activePoint.barY - tipH - 8) : 0;
 
   return (
-    <div className="px-3.5 pt-3 pb-2.5">
-      <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+    <div className="px-3 pt-2.5 pb-2">
+      <div className="mb-1.5 flex flex-wrap items-center justify-between gap-2">
         <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
           <h2 className="text-sm font-semibold text-gray-900 dark:text-white">Performance</h2>
           <div className="flex flex-wrap items-center gap-2.5 text-[11px] text-gray-500">
             <span className="inline-flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-[#f59e0b]" />
+              <span className="h-2 w-2 rounded-full bg-[#001E55]" />
               Sales
             </span>
             <span className="inline-flex items-center gap-1.5">
@@ -710,8 +691,8 @@ function DeliveryRateCard({ pipeline, total }) {
 
   return (
     <Surface title="Fulfilment gauge">
-      <div className="flex h-full flex-col gap-3 p-4 pt-2">
-        <div className="flex flex-1 flex-col items-center justify-center gap-3">
+      <div className="flex h-full flex-col gap-2 p-3 pt-1.5">
+        <div className="flex flex-1 flex-col items-center justify-center gap-2">
           <svg viewBox="0 0 140 86" className="h-auto w-full max-w-[210px]" role="img" aria-label="Delivered percentage">
             <path d="M 16 78 A 54 54 0 0 1 124 78" fill="none" className="stroke-gray-200 dark:stroke-gray-700" strokeWidth="12" strokeLinecap="round" />
             <path
@@ -729,7 +710,7 @@ function DeliveryRateCard({ pipeline, total }) {
               Delivered
             </text>
           </svg>
-          <ul className="grid w-full grid-cols-3 gap-2 border-t border-gray-100 pt-3 dark:border-gray-800">
+          <ul className="grid w-full grid-cols-3 gap-1.5 border-t border-gray-100 pt-2 dark:border-gray-800">
             {stats.map((stat) => (
               <li key={stat.label} className="min-w-0 text-center">
                 <p className="text-sm font-semibold tabular-nums text-gray-900 dark:text-gray-100">{stat.value}</p>
@@ -752,7 +733,7 @@ function DeliveryRateCard({ pipeline, total }) {
 function MoneyCompareCard({ sales, margin, supply }) {
   const peak = Math.max(sales || 0, margin || 0, supply || 0, 1);
   const rings = [
-    { label: "Sales", value: sales ?? 0, color: "#ec4899", radius: 46 },
+    { label: "Sales", value: sales ?? 0, color: "#001E55", radius: 46 },
     supply == null ? null : { label: "Supply", value: supply, color: "#38bdf8", radius: 34 },
     margin == null ? null : { label: "Margin", value: margin, color: "#34d399", radius: 22 },
   ].filter(Boolean);
@@ -760,8 +741,8 @@ function MoneyCompareCard({ sales, margin, supply }) {
 
   return (
     <Surface title="Sales / Margin / Supply">
-      <div className="flex h-full flex-col gap-3 p-4 pt-2">
-        <div className="flex flex-1 items-center justify-center gap-4">
+      <div className="flex h-full flex-col gap-2 p-3 pt-1.5">
+        <div className="flex flex-1 items-center justify-center gap-3">
           <div className="relative shrink-0">
             <svg viewBox="0 0 120 120" className="h-36 w-36" role="img" aria-label="Sales margin supply compare">
               {rings.map((ring) => {
@@ -832,8 +813,8 @@ function PaymentMixCard({ orders }) {
 
   return (
     <Surface title="Payment mix">
-      <div className="flex h-full flex-col gap-3 p-4 pt-2">
-        <div className="flex flex-1 items-center justify-center gap-4">
+      <div className="flex h-full flex-col gap-2 p-3 pt-1.5">
+        <div className="flex flex-1 items-center justify-center gap-3">
           <div className="relative shrink-0">
             <svg viewBox="0 0 100 100" className="h-36 w-36" role="img" aria-label="Payment mix donut">
               <g transform="rotate(-90 50 50)">
@@ -892,7 +873,7 @@ function SalesTrendSection({ orders, pipeline }) {
 
   return (
     <section className="w-full">
-      <div className="grid w-full gap-3 xl:grid-cols-[1.45fr_0.9fr]">
+      <div className="grid w-full gap-2 xl:grid-cols-[1.45fr_0.9fr]">
         <Surface className="overflow-visible">
           <PerformanceChart series={series} />
         </Surface>
@@ -907,7 +888,7 @@ function SalesTrendSection({ orders, pipeline }) {
 
 const orderMixColors = {
   Delivered: "#34d399",
-  Packing: "#ec4899",
+  Packing: "#001E55",
   Shipped: "#38bdf8",
   "Ready to ship": "#fbbf24",
   Returned: "#fb7185",
@@ -1055,7 +1036,7 @@ function Table({ columns, rows, onRow }) {
           {rows.map((row, rowIndex) => (
             <tr
               key={row.join("-")}
-              className={`border-b border-gray-50 last:border-0 dark:border-gray-700 ${onRow ? "cursor-pointer transition hover:bg-pink-50/40 dark:hover:bg-gray-700/40" : ""}`}
+              className={`border-b border-gray-50 last:border-0 dark:border-gray-700 ${onRow ? "cursor-pointer transition hover:bg-leaf-50/40 dark:hover:bg-gray-700/40" : ""}`}
               onClick={onRow ? () => onRow(rowIndex) : undefined}
             >
               {row.map((cell, index) => (
@@ -1623,14 +1604,13 @@ export function ModulePage({ id }) {
   return (
     <div>
       <PageHead
-        eyebrow={moduleEyebrow(id)}
         title={spec.title}
         description={spec.description}
         action={
           <div className="flex flex-wrap items-center gap-2">
             <SoftButton
               onClick={() =>
-                exportModuleCsv(`pahachan-${id}.csv`, spec.columns, rows)
+                exportModuleCsv(`dukify-${id}.csv`, spec.columns, rows)
               }
             >
               <Download className="h-3.5 w-3.5" />
@@ -1638,7 +1618,7 @@ export function ModulePage({ id }) {
             </SoftButton>
             <SoftButton
               onClick={() =>
-                exportModuleXlsx(`pahachan-${id}.xlsx`, spec.title, spec.columns, rows)
+                exportModuleXlsx(`dukify-${id}.xlsx`, spec.title, spec.columns, rows)
               }
             >
               <Download className="h-3.5 w-3.5" />
@@ -1737,7 +1717,7 @@ export function ModulePage({ id }) {
                 rows.map((row) => (
                   <tr
                     key={row.id}
-                    className="cursor-pointer border-b border-gray-50 transition hover:bg-pink-50/40 dark:border-gray-700 dark:hover:bg-gray-700/40"
+                    className="cursor-pointer border-b border-gray-50 transition hover:bg-leaf-50/40 dark:border-gray-700 dark:hover:bg-gray-700/40"
                     onClick={() => open(db[spec.collection].find((item) => item.id === row.id))}
                   >
                     {spec.columns.map(([key, label]) => (
@@ -1847,7 +1827,6 @@ function WebsiteCreateDrawer({ brands, websites, onClose, onCreate }) {
   return (
     <ModalShell
       title="Add website record"
-      eyebrow="Websites & domains"
       align="left"
       size="md"
       onClose={onClose}
@@ -1943,10 +1922,10 @@ function RecordDrawer({ title, draft, creating, collection, statusKey, statuses,
     >
       <form id="record-drawer-form" className="space-y-3" onSubmit={onSave}>
         {brandPerf ? (
-          <section className="rounded-2xl border border-gray-200/80 bg-white p-3 shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-900">
+          <section className="rounded-xl border border-gray-200/80 bg-white p-3 shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-900">
             <div className="mb-2 flex items-center justify-between gap-2">
               <p className="text-[11px] font-semibold tracking-[0.14em] text-gray-400 uppercase">Order performance</p>
-              <button type="button" className="text-xs font-semibold text-pink-700" onClick={() => navigate(`/orders?brand=${encodeURIComponent(draft.name)}`)}>
+              <button type="button" className="text-xs font-semibold text-leaf-700" onClick={() => navigate(`/orders?brand=${encodeURIComponent(draft.name)}`)}>
                 Open brand orders
               </button>
             </div>
@@ -1991,7 +1970,7 @@ function RecordDrawer({ title, draft, creating, collection, statusKey, statuses,
           </section>
         ) : null}
 
-        <section className={`rounded-2xl border border-gray-200/80 bg-white shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-900 ${creating ? "p-4" : "p-3"}`}>
+        <section className={`rounded-xl border border-gray-200/80 bg-white shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-900 ${creating ? "p-4" : "p-3"}`}>
           <div className={creating ? "mb-4 flex items-end justify-between gap-3" : "mb-3"}>
             <div>
               <p className="text-[11px] font-semibold tracking-[0.14em] text-gray-400 uppercase">Details</p>
@@ -2052,7 +2031,7 @@ function RecordDrawer({ title, draft, creating, collection, statusKey, statuses,
         </section>
 
         {items.length ? (
-          <section className="rounded-2xl border border-gray-200/80 bg-white p-3 shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-900">
+          <section className="rounded-xl border border-gray-200/80 bg-white p-3 shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-900">
             <p className="mb-3 text-[11px] font-semibold tracking-[0.14em] text-gray-400 uppercase">Line items</p>
             <ul className="space-y-1.5 text-sm">
               {items.map((item, index) => (
@@ -2071,7 +2050,7 @@ function RecordDrawer({ title, draft, creating, collection, statusKey, statuses,
         ) : null}
 
         {statuses ? (
-          <section className={`rounded-2xl border border-gray-200/80 bg-white shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-900 ${creating ? "p-4" : "p-3"}`}>
+          <section className={`rounded-xl border border-gray-200/80 bg-white shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-900 ${creating ? "p-4" : "p-3"}`}>
             <p className="mb-3 text-[11px] font-semibold tracking-[0.14em] text-gray-400 uppercase">Status</p>
             <label className="block text-sm">
               <span className="mb-1.5 block text-xs font-semibold text-gray-600 dark:text-gray-300">Publish state</span>
@@ -2090,7 +2069,7 @@ function RecordDrawer({ title, draft, creating, collection, statusKey, statuses,
         {links.map((group) => (
           <section
             key={group.title}
-            className="rounded-2xl border border-gray-200/80 bg-white p-3 shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-900"
+            className="rounded-xl border border-gray-200/80 bg-white p-3 shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-900"
           >
             <p className="mb-3 text-[11px] font-semibold tracking-[0.14em] text-gray-400 uppercase">{group.title}</p>
             <div className="space-y-1.5">
@@ -2098,7 +2077,7 @@ function RecordDrawer({ title, draft, creating, collection, statusKey, statuses,
                 <button
                   key={item.id}
                   type="button"
-                  className="block w-full rounded-xl border border-gray-100 bg-gray-50 px-2.5 py-2 text-left text-sm hover:border-pink-200 hover:bg-pink-50/50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700/50"
+                  className="block w-full rounded-xl border border-gray-100 bg-gray-50 px-2.5 py-2 text-left text-sm hover:border-leaf-200 hover:bg-leaf-50/50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700/50"
                   onClick={() => navigate(`${group.path}?record=${item.id}`)}
                 >
                   <span className="font-medium">{item.id}</span>
@@ -2131,11 +2110,11 @@ function StatStrip({ items, activeLabel, onSelect }) {
             key={label}
             type={clickable ? "button" : undefined}
             onClick={clickable ? () => onSelect(filterValue ?? label) : undefined}
-            className={`rounded-2xl border px-3.5 py-3 text-left shadow-[var(--app-shadow)] transition dark:bg-gray-800 ${
+            className={`rounded-xl border px-3.5 py-3 text-left shadow-[var(--app-shadow)] transition dark:bg-gray-800 ${
               active
-                ? "border-pink-300 bg-pink-50/70 dark:border-pink-800 dark:bg-pink-950/30"
+                ? "border-leaf-300 bg-leaf-50/70 dark:border-leaf-800 dark:bg-leaf-950/30"
                 : "border-gray-200/80 bg-white dark:border-gray-700"
-            } ${clickable ? "hover:-translate-y-0.5 hover:border-pink-200" : ""}`}
+            } ${clickable ? "hover:-translate-y-0.5 hover:border-leaf-200" : ""}`}
           >
             <p className="text-xs font-medium text-gray-500">{label}</p>
             <p
@@ -2200,7 +2179,7 @@ function CentralOrdersPanel({ compact = false, period = "today", onPeriod, brand
       </div>
       <div className={`grid gap-2.5 ${compact ? "grid-cols-2 md:grid-cols-4" : "grid-cols-2 md:grid-cols-4 xl:grid-cols-8"}`}>
         {showCards.map(([label, value, tone]) => (
-          <div key={label} className="rounded-2xl border border-gray-200/80 bg-white px-3 py-2.5 shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-800">
+          <div key={label} className="rounded-xl border border-gray-200/80 bg-white px-3 py-2.5 shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-800">
             <p className="text-[11px] font-medium text-gray-500">{label}</p>
             <p className={`mt-1 text-base font-semibold tabular-nums ${tone === "rose" ? "text-rose-600" : tone === "amber" ? "text-amber-700" : "text-gray-900 dark:text-white"}`}>
               {value}
@@ -2285,7 +2264,7 @@ function BrandOrdersTable({ matrix, onBrand, compact = false }) {
           {rows.map((row) => (
             <tr key={row.id} className="border-b border-gray-50 last:border-0 dark:border-gray-700">
               <td className="px-3 py-2.5">
-                <button type="button" className="truncate text-left font-medium hover:text-pink-700" onClick={() => onBrand?.(row.name)}>
+                <button type="button" className="truncate text-left font-medium hover:text-leaf-700" onClick={() => onBrand?.(row.name)}>
                   {row.name}
                 </button>
                 <span className="mt-0.5 block truncate text-xs text-gray-500">{row.status}</span>
@@ -2346,7 +2325,7 @@ function DeskExtras({ id, period = "all", onPeriod, brandFilter, onBrand, status
             <ul className="divide-y divide-gray-100 dark:divide-gray-700">
               {pending.map((brand) => (
                 <li key={brand.id}>
-                  <button type="button" className="flex w-full items-center justify-between gap-3 px-4 py-2.5 text-left transition hover:bg-pink-50/40 dark:hover:bg-gray-700/40" onClick={() => navigate(`/brands?record=${brand.id}`)}>
+                  <button type="button" className="flex w-full items-center justify-between gap-3 px-4 py-2.5 text-left transition hover:bg-leaf-50/40 dark:hover:bg-gray-700/40" onClick={() => navigate(`/brands?record=${brand.id}`)}>
                     <span>
                       <span className="block text-sm font-medium">{brand.name}</span>
                       <span className="text-xs text-gray-500">{brand.partner} · {brand.category}</span>

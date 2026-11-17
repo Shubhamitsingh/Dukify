@@ -3,13 +3,13 @@ import { usePartner } from "../store";
 import { PageHead, Surface } from "../ui";
 
 const copy = {
-  start: ["Getting started", "How a brand partner uses Pahachan without running a warehouse."],
+  start: ["Getting started", "How a brand partner uses Dukify without running a warehouse."],
   setup: ["Brand setup guide", "Storefront, catalogue selection, and the first publish."],
   marketing: ["Marketing tutorials", "Promotions that stay inside central price rules."],
   selling: ["Product selling guides", "How to read supply price, MRP, and estimated margin."],
   growth: ["Business growth tips", "What to watch after the store is live."],
   videos: ["Training videos", "Written stand-ins for the training films."],
-  announcements: ["Platform announcements", "Notes from Pahachan that every partner should read."],
+  announcements: ["Platform announcements", "Notes from Dukify that every partner should read."],
 };
 
 export default function AcademyPage({ section }) {

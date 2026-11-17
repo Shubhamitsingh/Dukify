@@ -9,7 +9,7 @@ const copy = {
   campaigns: ["Promotional campaigns", "Campaigns are brand content. They do not move warehouse stock."],
   featured: ["Featured products", "The same featured flag used by the storefront."],
   social: ["Social campaigns", "These are plans. No ad account is connected in the demo."],
-  assets: ["Marketing assets", "Preview the creative brief. Catalogue photography stays owned by Pahachan."],
+  assets: ["Marketing assets", "Preview the creative brief. Catalogue photography stays owned by Dukify."],
   referral: ["Referral", "Share the demo code. Redemptions are not tracked against a live programme."],
   promotions: ["Sales promotions", "Active storefront offers for this brand."],
 };

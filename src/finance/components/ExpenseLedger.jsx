@@ -40,7 +40,7 @@ export function ExpenseLedger() {
   const exportCsv = () => {
     const header = "id,head,amount,month,note";
     const lines = rows.map((row) => [row.id, row.head, row.amount, row.month, csvEscape(row.note)].join(","));
-    downloadBlob("pahachan-expenses.csv", [header, ...lines].join("\n"), "text/csv;charset=utf-8");
+    downloadBlob("dukify-expenses.csv", [header, ...lines].join("\n"), "text/csv;charset=utf-8");
   };
 
   const exportXlsx = () => {
@@ -48,7 +48,7 @@ export function ExpenseLedger() {
     const sheet = XLSX.utils.aoa_to_sheet(data);
     const book = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(book, sheet, "Expenses");
-    XLSX.writeFile(book, "pahachan-expenses.xlsx");
+    XLSX.writeFile(book, "dukify-expenses.xlsx");
   };
 
   const openCreate = () => {
@@ -83,7 +83,7 @@ export function ExpenseLedger() {
     <div className="space-y-3">
       <div className="grid gap-2 sm:grid-cols-3 xl:grid-cols-6">
         {Object.entries(byCategory).map(([label, value]) => (
-          <div key={label} className="rounded-2xl border border-gray-200/80 bg-white px-3 py-3 dark:border-gray-700 dark:bg-gray-800">
+          <div key={label} className="rounded-xl border border-gray-200/80 bg-white px-3 py-3 dark:border-gray-700 dark:bg-gray-800">
             <p className="text-[11px] font-semibold text-gray-400 uppercase">{label}</p>
             <p className="mt-1 text-sm font-semibold tabular-nums">{inr(value)}</p>
           </div>

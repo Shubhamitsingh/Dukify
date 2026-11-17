@@ -5,7 +5,7 @@ export function TicketInformationPanel({ ticket, agents, onPatch }) {
   if (!ticket) return null;
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-900">
+    <div className="overflow-hidden rounded-xl border border-gray-200/80 bg-white shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-900">
       <div className="border-b border-sky-100 bg-gradient-to-r from-sky-50 to-transparent px-4 py-3 dark:border-sky-900/40 dark:from-sky-950/20">
         <p className="text-[11px] font-semibold tracking-[0.12em] text-sky-700 uppercase dark:text-sky-300">Ticket properties</p>
         <p className="mt-1 font-mono text-sm font-semibold text-gray-900 dark:text-white">{ticket.id}</p>
@@ -13,7 +13,7 @@ export function TicketInformationPanel({ ticket, agents, onPatch }) {
 
       <div className="space-y-4 p-4">
         <div className="flex items-center gap-3">
-          <span className="grid h-10 w-10 place-items-center rounded-2xl bg-slate-700 text-xs font-semibold text-white dark:bg-slate-200 dark:text-slate-900">
+          <span className="grid h-10 w-10 place-items-center rounded-xl bg-slate-700 text-xs font-semibold text-white dark:bg-slate-200 dark:text-slate-900">
             {initials(ticket.requesterName)}
           </span>
           <div className="min-w-0">

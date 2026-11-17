@@ -19,9 +19,8 @@ export default function OrderDetail() {
   return (
     <div>
       <PageHead
-        eyebrow="Orders"
         title={order.id}
-        description="Fulfilment is updated by Pahachan. This page does not advance warehouse steps."
+        description="Fulfilment is updated by Dukify. This page does not advance warehouse steps."
         action={<Link className="btn-soft" to="/brand/orders/all">All orders</Link>}
       />
       <div className="mb-4 flex flex-wrap gap-2">
@@ -46,7 +45,7 @@ export default function OrderDetail() {
         <Surface title="Fulfilment progress" padded className="mb-4">
           <ol className="grid gap-2 sm:grid-cols-3 lg:grid-cols-6">
             {steps.map((step, index) => (
-              <li key={step} className={`rounded-xl px-3 py-2 text-xs font-semibold ${index <= active ? "bg-pink-50 text-pink-800" : "bg-gray-50 text-gray-400"}`}>
+              <li key={step} className={`rounded-xl px-3 py-2 text-xs font-semibold ${index <= active ? "bg-leaf-50 text-leaf-800" : "bg-gray-50 text-gray-400"}`}>
                 {index + 1}. {step}
               </li>
             ))}

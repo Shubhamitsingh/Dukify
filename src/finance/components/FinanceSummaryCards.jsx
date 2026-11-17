@@ -24,7 +24,7 @@ export function FinanceSummaryCards({ summary }) {
       {CARDS.map((card) => (
         <div
           key={card.key}
-          className="rounded-2xl border border-gray-200/80 bg-white p-4 shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-800"
+          className="rounded-xl border border-gray-200/80 bg-white p-4 shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-800"
         >
           <div className="flex items-center gap-2">
             <span className={`h-1.5 w-1.5 rounded-full ${TONES[card.tone]}`} />

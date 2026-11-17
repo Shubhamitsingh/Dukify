@@ -121,7 +121,7 @@ export const INTEGRATION_PROVIDERS = [
       { key: "accessKeyId", label: "Access key ID", type: "text", required: true, placeholder: "AKIA…" },
       { key: "secretAccessKey", label: "Secret access key", type: "password", required: true, placeholder: "Secret" },
       { key: "region", label: "Region", type: "text", required: true, placeholder: "ap-south-1" },
-      { key: "fromEmail", label: "From email", type: "text", required: true, placeholder: "ops@pahachan.example" },
+      { key: "fromEmail", label: "From email", type: "text", required: true, placeholder: "ops@dukify.example" },
     ],
   },
   {

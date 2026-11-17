@@ -20,8 +20,8 @@ export function TicketTabs({ active, onChange, counts = {} }) {
             onClick={() => onChange(tab.id)}
             className={`inline-flex shrink-0 items-center gap-2 rounded-full border px-3.5 py-2 text-xs font-semibold transition ${
               selected
-                ? "border-pink-500 bg-pink-500 text-white shadow-sm shadow-pink-500/25"
-                : "border-gray-200 bg-white text-gray-600 hover:border-pink-200 hover:text-pink-700 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300"
+                ? "border-leaf-500 bg-leaf-500 text-white shadow-sm shadow-leaf-500/25"
+                : "border-gray-200 bg-white text-gray-600 hover:border-leaf-200 hover:text-leaf-700 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300"
             }`}
           >
             <Icon className="h-3.5 w-3.5" />

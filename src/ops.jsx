@@ -27,7 +27,7 @@ function downloadNdrCsv(rows) {
   const lines = rows.map((row) =>
     columns.map(([key]) => csvEscape(key === "charge" ? inr(row.charge) : row[key] ?? "")).join(","),
   );
-  downloadBlob("pahachan-ndr.csv", [header, ...lines].join("\n"), "text/csv;charset=utf-8");
+  downloadBlob("dukify-ndr.csv", [header, ...lines].join("\n"), "text/csv;charset=utf-8");
 }
 
 function downloadNdrXlsx(rows) {
@@ -38,7 +38,7 @@ function downloadNdrXlsx(rows) {
   const sheet = XLSX.utils.aoa_to_sheet(data);
   const book = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(book, sheet, "NDR");
-  XLSX.writeFile(book, "pahachan-ndr.xlsx");
+  XLSX.writeFile(book, "dukify-ndr.xlsx");
 }
 
 export function NdrPage() {
@@ -65,7 +65,6 @@ export function NdrPage() {
   return (
     <div className="space-y-4">
       <PageHead
-        eyebrow="Orders"
         title="NDR desk"
         description="Non-delivery reports only. Courier could not deliver — follow up, reschedule, or mark RTO / delivered from here."
         action={
@@ -96,7 +95,7 @@ export function NdrPage() {
         />
       </div>
 
-      <div className="rounded-2xl border border-amber-200/80 bg-amber-50/70 px-4 py-3 text-sm text-amber-950 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-100">
+      <div className="rounded-xl border border-amber-200/80 bg-amber-50/70 px-4 py-3 text-sm text-amber-950 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-100">
         <p className="font-semibold">What is NDR?</p>
         <p className="mt-1 text-xs leading-5 text-amber-900/80 dark:text-amber-100/80">
           NDR means the courier tried delivery but it failed (customer not available, refused, wrong address). This desk shows only those stuck shipments so any admin can act without searching the full shipping list.
@@ -178,7 +177,6 @@ export function ExceptionsPage() {
   return (
     <div className="space-y-4">
       <PageHead
-        eyebrow="Command"
         title="Exceptions"
         description="Open issues from the local sample. Fix the linked record to clear one."
         action={
@@ -213,7 +211,7 @@ export function ExceptionsPage() {
               <li key={row.id}>
                 <button
                   type="button"
-                  className="flex w-full items-center gap-3 px-4 py-3 text-left transition hover:bg-pink-50/40 dark:hover:bg-gray-700/40"
+                  className="flex w-full items-center gap-3 px-4 py-3 text-left transition hover:bg-leaf-50/40 dark:hover:bg-gray-700/40"
                   onClick={() => navigate(row.to)}
                 >
                   <span className="w-[5.5rem] shrink-0 truncate rounded-lg bg-gray-50 px-2 py-1 text-center text-[10px] font-semibold tracking-wide text-gray-500 uppercase dark:bg-gray-900">
@@ -258,7 +256,6 @@ export function ApprovalsPage() {
   return (
     <div className="space-y-4">
       <PageHead
-        eyebrow="Command"
         title="Approvals"
         description="Work waiting on Super Admin in this browser session. Approve or reject writes the same status used on the source page."
       />
@@ -266,9 +263,9 @@ export function ApprovalsPage() {
         <button
           type="button"
           onClick={() => setKind("All")}
-          className={`rounded-2xl border p-3.5 text-left shadow-[var(--app-shadow)] transition ${
+          className={`rounded-xl border p-3.5 text-left shadow-[var(--app-shadow)] transition ${
             kind === "All"
-              ? "border-pink-500 bg-pink-50 dark:bg-pink-950/40"
+              ? "border-leaf-500 bg-leaf-50 dark:bg-leaf-950/40"
               : "border-gray-200/80 bg-white hover:-translate-y-0.5 dark:border-gray-700 dark:bg-gray-800"
           }`}
         >
@@ -280,9 +277,9 @@ export function ApprovalsPage() {
             key={label}
             type="button"
             onClick={() => setKind(kind === label ? "All" : label)}
-            className={`rounded-2xl border p-3.5 text-left shadow-[var(--app-shadow)] transition ${
+            className={`rounded-xl border p-3.5 text-left shadow-[var(--app-shadow)] transition ${
               kind === label
-                ? "border-pink-500 bg-pink-50 dark:bg-pink-950/40"
+                ? "border-leaf-500 bg-leaf-50 dark:bg-leaf-950/40"
                 : "border-gray-200/80 bg-white hover:-translate-y-0.5 dark:border-gray-700 dark:bg-gray-800"
             }`}
           >
@@ -341,7 +338,6 @@ export function QualityPage() {
   return (
     <div className="space-y-4">
       <PageHead
-        eyebrow="Supply"
         title="Quality"
         description="Inbound goods and returns. Pass on an inbound inspection marks that purchase Received and adds stock in this session."
       />
@@ -406,14 +402,14 @@ export function DataTools({ className = "" }) {
     URL.revokeObjectURL(url);
   };
 
-  const exportJson = () => download("pahachan-local-session.json", JSON.stringify(db, null, 2), "application/json");
+  const exportJson = () => download("dukify-local-session.json", JSON.stringify(db, null, 2), "application/json");
 
   const exportOrders = () => {
     const header = "id,brand,product,sku,qty,value,supply,payment,fulfilment,date";
     const lines = db.orders.map((order) =>
       [order.id, order.brand, order.product, order.sku, order.qty, order.value, order.supply, order.payment, order.fulfilment, order.date].join(","),
     );
-    download("pahachan-orders.csv", [header, ...lines].join("\n"), "text/csv");
+    download("dukify-orders.csv", [header, ...lines].join("\n"), "text/csv");
   };
 
   const importJson = (event) => {
@@ -424,7 +420,7 @@ export function DataTools({ className = "" }) {
       try {
         const parsed = JSON.parse(String(reader.result));
         if (!parsed || !Array.isArray(parsed.orders) || !Array.isArray(parsed.products)) {
-          window.alert("That file is not a Pahachan local session.");
+          window.alert("That file is not a Dukify local session.");
           return;
         }
         load(parsed);

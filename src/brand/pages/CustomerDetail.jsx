@@ -13,7 +13,7 @@ export default function CustomerDetail() {
 
   return (
     <div>
-      <PageHead eyebrow="Customers" title={customer.name} description={`${customer.email} · ${customer.phone}`} action={<Link className="btn-soft" to="/brand/customers/all">All customers</Link>} />
+      <PageHead  title={customer.name} description={`${customer.email} · ${customer.phone}`} action={<Link className="btn-soft" to="/brand/customers/all">All customers</Link>} />
       <div className="mb-4 grid gap-3 sm:grid-cols-3">
         <Surface padded><p className="text-xs text-gray-500">Orders</p><p className="text-xl font-semibold">{orders.length}</p></Surface>
         <Surface padded><p className="text-xs text-gray-500">Spending</p><p className="text-xl font-semibold">{inr(spend)}</p></Surface>

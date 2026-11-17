@@ -206,7 +206,7 @@ export function AlertsSection({ value, onSave }) {
               role="switch"
               aria-checked={Boolean(form.draft[key])}
               onClick={() => form.toggle(key)}
-              className={`relative h-7 w-12 rounded-full transition ${form.draft[key] ? "bg-pink-500" : "bg-gray-200 dark:bg-gray-600"}`}
+              className={`relative h-7 w-12 rounded-full transition ${form.draft[key] ? "bg-leaf-500" : "bg-gray-200 dark:bg-gray-600"}`}
             >
               <span
                 className={`absolute top-0.5 left-0.5 h-6 w-6 rounded-full bg-white shadow transition ${
@@ -239,7 +239,7 @@ export function DataSection() {
   const [ok, setOk] = useState("");
 
   const exportJson = () => {
-    download("pahachan-session.json", JSON.stringify(db, null, 2), "application/json");
+    download("dukify-session.json", JSON.stringify(db, null, 2), "application/json");
     setOk("Exported session JSON.");
     setError("");
   };
@@ -249,7 +249,7 @@ export function DataSection() {
     const lines = (db.orders || []).map((row) =>
       [row.id, row.brand, row.product, row.sku, row.qty, row.value, row.payment, row.fulfilment, row.date].join(","),
     );
-    download("pahachan-orders.csv", [header, ...lines].join("\n"), "text/csv");
+    download("dukify-orders.csv", [header, ...lines].join("\n"), "text/csv");
     setOk("Exported orders CSV.");
     setError("");
   };

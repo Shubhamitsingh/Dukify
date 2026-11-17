@@ -44,7 +44,7 @@ export function OrderFilters({
   if (filters.query.trim()) activeChips.push(["query", `Search: ${filters.query.trim()}`]);
 
   return (
-    <div className="space-y-3 rounded-2xl border border-gray-200/80 bg-white p-3 shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-800">
+    <div className="space-y-3 rounded-xl border border-gray-200/80 bg-white p-3 shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-800">
       <div className="flex flex-col gap-2 lg:flex-row lg:items-end">
         <label className="min-w-0 flex-1">
           <span className="mb-1 block text-[11px] font-medium text-gray-500">Search</span>
@@ -139,7 +139,7 @@ export function OrderFilters({
             <button
               key={key}
               type="button"
-              className="rounded-lg bg-pink-50 px-2 py-1 text-[11px] font-semibold text-pink-700 dark:bg-pink-950/40 dark:text-pink-200"
+              className="rounded-lg bg-leaf-50 px-2 py-1 text-[11px] font-semibold text-leaf-700 dark:bg-leaf-950/40 dark:text-leaf-200"
               onClick={() =>
                 onChange({
                   ...filters,
@@ -155,7 +155,7 @@ export function OrderFilters({
           <p className="text-xs text-gray-500">
             <span className="font-semibold text-gray-800 dark:text-gray-200">{resultCount}</span> orders
           </p>
-          <button type="button" className="text-xs font-semibold text-pink-700" onClick={onClear}>
+          <button type="button" className="text-xs font-semibold text-leaf-700" onClick={onClear}>
             Clear all filters
           </button>
         </div>

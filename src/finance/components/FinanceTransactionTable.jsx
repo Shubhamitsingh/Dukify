@@ -4,7 +4,7 @@ import { Status } from "../../ui";
 export function FinanceTransactionTable({ rows, onOpenOrder, title = "Transactions" }) {
   if (!rows.length) {
     return (
-      <div className="rounded-2xl border border-dashed border-gray-200 bg-white px-4 py-14 text-center dark:border-gray-700 dark:bg-gray-800">
+      <div className="rounded-xl border border-dashed border-gray-200 bg-white px-4 py-14 text-center dark:border-gray-700 dark:bg-gray-800">
         <p className="text-sm font-semibold text-gray-900 dark:text-white">No transactions found</p>
         <p className="mt-1 text-xs text-gray-500">Try clearing filters or switching tabs.</p>
       </div>
@@ -12,7 +12,7 @@ export function FinanceTransactionTable({ rows, onOpenOrder, title = "Transactio
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-800">
+    <div className="overflow-hidden rounded-xl border border-gray-200/80 bg-white shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-800">
       <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3 dark:border-gray-700">
         <h2 className="text-sm font-semibold text-gray-900 dark:text-white">{title}</h2>
         <p className="text-xs text-gray-400">{rows.length} rows</p>

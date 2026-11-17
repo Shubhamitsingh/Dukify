@@ -18,7 +18,7 @@ export function OrdersTable({
 
   if (!rows.length) {
     return (
-      <div className="rounded-2xl border border-dashed border-gray-200 bg-white px-4 py-16 text-center dark:border-gray-700 dark:bg-gray-800">
+      <div className="rounded-xl border border-dashed border-gray-200 bg-white px-4 py-16 text-center dark:border-gray-700 dark:bg-gray-800">
         <p className="text-sm font-semibold text-gray-900 dark:text-white">No orders match these filters</p>
         <p className="mt-1 text-xs text-gray-500">Clear filters or widen the date range.</p>
       </div>
@@ -26,7 +26,7 @@ export function OrdersTable({
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-800">
+    <div className="overflow-hidden rounded-xl border border-gray-200/80 bg-white shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-800">
       <div className="overflow-x-auto">
         <table className="min-w-full text-left text-sm">
           <thead className="bg-gray-50 text-[11px] font-semibold tracking-wide text-gray-500 uppercase dark:bg-gray-900 dark:text-gray-400">
@@ -52,12 +52,12 @@ export function OrdersTable({
           </thead>
           <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
             {pageRows.map((order) => (
-              <tr key={order.id} className="hover:bg-pink-50/30 dark:hover:bg-gray-700/30">
+              <tr key={order.id} className="hover:bg-leaf-50/30 dark:hover:bg-gray-700/30">
                 <td className="px-3 py-2.5">
                   <input type="checkbox" checked={selected.has(order.id)} onChange={() => onToggle(order.id)} />
                 </td>
                 <td className="px-3 py-2.5">
-                  <button type="button" className="font-semibold text-pink-700 hover:underline" onClick={() => onOpen(order.id)}>
+                  <button type="button" className="font-semibold text-leaf-700 hover:underline" onClick={() => onOpen(order.id)}>
                     {order.id}
                   </button>
                   {order.needsAttention ? (

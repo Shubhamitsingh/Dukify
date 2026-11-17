@@ -8,7 +8,7 @@ const copy = {
   product: ["Product updates", "Availability notes from the central catalogue."],
   payment: ["Payment updates", "Settlement windows and payout notes."],
   store: ["Store updates", "Drafts and publish reminders."],
-  announcement: ["Platform announcements", "Messages from Pahachan."],
+  announcement: ["Platform announcements", "Messages from Dukify."],
 };
 
 export default function NotificationsPage({ section }) {
@@ -27,7 +27,7 @@ export default function NotificationsPage({ section }) {
         {rows.length === 0 ? <Empty title="No notices" body="This filter has no notifications for the brand." /> : (
           <ul className="divide-y divide-gray-100 dark:divide-gray-800">
             {rows.map((note) => (
-              <li key={note.id} className={`flex flex-col gap-2 px-3 py-3 sm:flex-row sm:items-start sm:justify-between sm:gap-3 sm:px-4 ${note.read ? "" : "bg-pink-50/60 dark:bg-pink-950/20"}`}>
+              <li key={note.id} className={`flex flex-col gap-2 px-3 py-3 sm:flex-row sm:items-start sm:justify-between sm:gap-3 sm:px-4 ${note.read ? "" : "bg-leaf-50/60 dark:bg-leaf-950/20"}`}>
                 <div className="min-w-0">
                   <p className="text-sm font-medium">{note.title}</p>
                   <p className="text-xs text-gray-500">{note.body}</p>

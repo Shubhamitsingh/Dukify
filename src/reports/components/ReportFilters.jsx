@@ -9,7 +9,7 @@ export function ReportFilters({ filters, brands, orderCount, onChange, onReset }
     Boolean(filters.customTo);
 
   return (
-    <div className="rounded-2xl border border-gray-200/80 bg-white p-3 shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-800">
+    <div className="rounded-xl border border-gray-200/80 bg-white p-3 shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-800">
       <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
         <label>
           <span className="mb-1 block text-[11px] font-medium text-gray-500">Date range</span>
@@ -51,7 +51,7 @@ export function ReportFilters({ filters, brands, orderCount, onChange, onReset }
         </p>
         <button
           type="button"
-          className="text-xs font-semibold text-pink-700 hover:text-pink-800 disabled:cursor-not-allowed disabled:opacity-40"
+          className="text-xs font-semibold text-leaf-700 hover:text-leaf-800 disabled:cursor-not-allowed disabled:opacity-40"
           disabled={!dirty}
           onClick={onReset}
         >

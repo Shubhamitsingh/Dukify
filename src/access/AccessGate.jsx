@@ -8,7 +8,7 @@ export function AccessDenied({ reason = "You do not have permission to open this
   const { roleLabel, principal } = useAccess();
   return (
     <div className="mx-auto flex max-w-lg flex-col items-center px-6 py-24 text-center">
-      <div className="grid h-14 w-14 place-items-center rounded-2xl bg-rose-50 text-rose-600">
+      <div className="grid h-14 w-14 place-items-center rounded-xl bg-rose-50 text-rose-600">
         <ShieldOff className="h-7 w-7" />
       </div>
       <h1 className="mt-5 text-xl font-semibold text-gray-900">Access denied</h1>
@@ -27,7 +27,7 @@ export function NoAssignedBrands() {
   const { principal, roleLabel } = useAccess();
   return (
     <div className="mx-auto flex max-w-lg flex-col items-center px-6 py-24 text-center">
-      <div className="grid h-14 w-14 place-items-center rounded-2xl bg-amber-50 text-amber-700">
+      <div className="grid h-14 w-14 place-items-center rounded-xl bg-amber-50 text-amber-700">
         <Building2 className="h-7 w-7" />
       </div>
       <h1 className="mt-5 text-xl font-semibold text-gray-900">No brands assigned</h1>

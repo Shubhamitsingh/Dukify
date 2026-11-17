@@ -48,7 +48,7 @@ export default function Settings() {
             <div><dt className="text-xs text-gray-500">State</dt><dd>{brand.state}</dd></div>
             <div><dt className="text-xs text-gray-500">Partner since</dt><dd>{brand.since}</dd></div>
           </dl>
-          <p className="mt-3 text-xs text-gray-500">Legal name and GSTIN are locked in this demo. Ask Pahachan support to change them.</p>
+          <p className="mt-3 text-xs text-gray-500">Legal name and GSTIN are locked in this demo. Ask Dukify support to change them.</p>
         </Surface>
       ) : null}
       {section === "store" ? (
@@ -61,7 +61,7 @@ export default function Settings() {
       ) : null}
       {section === "security" ? (
         <Surface title="Account security" padded>
-          <p className="text-sm">Last demo sign-in on this browser. Two-factor authentication is controlled by Pahachan.</p>
+          <p className="text-sm">Last demo sign-in on this browser. Two-factor authentication is controlled by Dukify.</p>
           <button type="button" className="btn-primary mt-3" disabled={partner.twoFa} onClick={partner.requestTwoFa}>{partner.twoFa ? "2FA request noted" : "Request 2FA"}</button>
           <button type="button" className="btn-soft mt-3 ml-2" onClick={partner.resetDemo}>Reset demo data</button>
         </Surface>
@@ -100,7 +100,7 @@ export default function Settings() {
                 <button className="btn-primary self-end" type="submit">Add</button>
               </form>
             </>
-          ) : <p className="text-sm text-gray-600">Team seats are not enabled for {brand.name}. Pahachan can turn them on later.</p>}
+          ) : <p className="text-sm text-gray-600">Team seats are not enabled for {brand.name}. Dukify can turn them on later.</p>}
         </Surface>
       ) : null}
       {section === "preferences" ? (
@@ -141,7 +141,7 @@ export default function Settings() {
       ) : null}
       {confirmBank ? <Modal title="Update settlement account?" body="This demo stores the account in the browser. It does not verify the IFSC or send a payout." confirmLabel="Save demo account" onClose={() => setConfirmBank(false)} onConfirm={() => { partner.saveBank(bank); setConfirmBank(false); }} /> : null}
       {removeId ? <Modal title="Remove teammate?" body="They will disappear from this demo team list. No email is sent." danger confirmLabel="Remove" onClose={() => setRemoveId(null)} onConfirm={() => { partner.removeMember(removeId); setRemoveId(null); }} /> : null}
-      {doc ? <Drawer title={doc.name} onClose={() => setDoc(null)}><p className="text-sm text-gray-600">Demo copy of {doc.name} for {brand.legalName}. Status {doc.status}. The original file stays with Pahachan.</p></Drawer> : null}
+      {doc ? <Drawer title={doc.name} onClose={() => setDoc(null)}><p className="text-sm text-gray-600">Demo copy of {doc.name} for {brand.legalName}. Status {doc.status}. The original file stays with Dukify.</p></Drawer> : null}
       </div>
   );
 }

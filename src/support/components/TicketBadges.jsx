@@ -52,7 +52,7 @@ export function RequesterTypeBadge({ value }) {
     <span
       className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold ring-1 ring-inset ${
         brand
-          ? "bg-pink-50 text-pink-800 ring-pink-200 dark:bg-pink-950/40 dark:text-pink-200"
+          ? "bg-leaf-50 text-leaf-800 ring-leaf-200 dark:bg-leaf-950/40 dark:text-leaf-200"
           : "bg-indigo-50 text-indigo-800 ring-indigo-200 dark:bg-indigo-950/40 dark:text-indigo-200"
       }`}
     >

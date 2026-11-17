@@ -34,7 +34,6 @@ export function AccessAuditPage() {
   return (
     <div className="space-y-5">
       <PageHead
-        eyebrow="Access"
         title="Audit log"
         description={`Sensitive access events for your scope. Viewer: ${roleLabel}. Demo events are stored in this browser until Supabase audit is connected.`}
       />

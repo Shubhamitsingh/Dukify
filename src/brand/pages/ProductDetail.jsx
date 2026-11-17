@@ -22,14 +22,13 @@ export default function ProductDetail() {
   return (
     <div>
       <PageHead
-        eyebrow="Catalogue"
         title={product.name}
         description={product.description}
         action={<Link className="btn-soft" to="/brand/products/browse">Back to catalogue</Link>}
       />
       <div className="grid gap-4 md:grid-cols-[240px_1fr] lg:grid-cols-[280px_1fr]">
         <Surface padded>
-          <div className="mb-4 h-36 rounded-2xl sm:h-40" style={{ background: product.color }} />
+          <div className="mb-4 h-36 rounded-xl sm:h-40" style={{ background: product.color }} />
           <Swatch color={product.color} label={product.name} />
           <dl className="mt-4 space-y-2 text-sm">
             <div className="flex justify-between gap-3"><dt className="text-gray-500">SKU</dt><dd>{product.sku}</dd></div>

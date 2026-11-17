@@ -13,7 +13,7 @@ export function SettingsChrome({ active, onChange, children }) {
                   onClick={() => onChange(item.id)}
                   className={`w-full rounded-xl px-3 py-2.5 text-left text-sm font-medium transition ${
                     active === item.id
-                      ? "bg-pink-500 text-white shadow-sm shadow-pink-500/25"
+                      ? "bg-leaf-500 text-white shadow-sm shadow-leaf-500/25"
                       : "text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800"
                   }`}
                 >
@@ -41,7 +41,7 @@ export function SettingsChrome({ active, onChange, children }) {
 
 export function SettingsPanel({ title, dirty, onSave, onReset, error, ok, children, actions = true }) {
   return (
-    <section className="rounded-2xl border border-gray-200/80 bg-white shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-800">
+    <section className="rounded-xl border border-gray-200/80 bg-white shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-800">
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-gray-100 px-4 py-3 dark:border-gray-700">
         <div className="flex items-center gap-2">
           <h2 className="text-sm font-semibold text-gray-900 dark:text-white">{title}</h2>

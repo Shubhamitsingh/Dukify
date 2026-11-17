@@ -57,7 +57,7 @@ export function SortTh({ label, column, sortKey, sortDir, onSort, align = "left"
       <button
         type="button"
         className={`inline-flex items-center gap-1 text-[11px] font-semibold tracking-wide uppercase ${
-          active ? "text-pink-700" : "text-gray-500"
+          active ? "text-leaf-700" : "text-gray-500"
         }`}
         onClick={() => onSort(column)}
       >

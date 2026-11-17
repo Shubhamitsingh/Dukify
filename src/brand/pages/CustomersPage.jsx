@@ -30,7 +30,7 @@ export default function CustomersPage({ section }) {
   const table = useTable(rows);
   const [title, description] = copy[section];
   const columns = [
-    { key: "name", label: "Customer", render: (row) => <button type="button" className="font-medium text-pink-700" onClick={() => navigate(`/brand/customers/item/${row.id}`)}>{row.name}</button> },
+    { key: "name", label: "Customer", render: (row) => <button type="button" className="font-medium text-leaf-700" onClick={() => navigate(`/brand/customers/item/${row.id}`)}>{row.name}</button> },
     { key: "email", label: "Email" },
     { key: "phone", label: "Phone" },
     { key: "orderCount", label: "Total orders" },

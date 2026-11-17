@@ -13,7 +13,6 @@ export function AgentsPage() {
   return (
     <div className="space-y-4">
       <PageHead
-        eyebrow="Support Management"
         title="Support Agents"
         description="Workload and availability for the support desk."
         action={
@@ -44,7 +43,7 @@ export function AgentsPage() {
                 <tr key={agent.id} className="border-t border-gray-50 dark:border-gray-700">
                   <td className="px-3 py-3">
                     <div className="flex items-center gap-2.5">
-                      <span className="grid h-9 w-9 place-items-center rounded-full bg-pink-500 text-xs font-semibold text-white">
+                      <span className="grid h-9 w-9 place-items-center rounded-full bg-leaf-500 text-xs font-semibold text-white">
                         {agent.avatar || agent.name.slice(0, 2).toUpperCase()}
                       </span>
                       <span className="font-medium text-gray-900 dark:text-white">{agent.name}</span>
@@ -91,7 +90,6 @@ export function AgentsPage() {
       {creating ? (
         <ModalShell
           title="Add support agent"
-          eyebrow="Support Management"
           size="sm"
           onClose={() => setCreating(false)}
           footer={

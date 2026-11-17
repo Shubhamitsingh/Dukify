@@ -98,9 +98,9 @@ export function IntegrationDrawer({
       }
     >
       <form id="integration-config-form" className="space-y-4" onSubmit={save}>
-        <section className="rounded-2xl border border-gray-200/80 bg-white p-3 dark:border-gray-700 dark:bg-gray-900">
+        <section className="rounded-xl border border-gray-200/80 bg-white p-3 dark:border-gray-700 dark:bg-gray-900">
           <div className="flex items-start gap-3">
-            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-gray-100 bg-white p-2 dark:border-gray-700 dark:bg-gray-800">
+            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-gray-100 bg-white p-2 dark:border-gray-700 dark:bg-gray-800">
               <IntegrationLogo providerId={provider.id} name={provider.name} className="h-8 w-8" />
             </span>
             <div className="min-w-0 flex-1">
@@ -116,7 +116,7 @@ export function IntegrationDrawer({
                 href={provider.docsUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-pink-700 hover:text-pink-800"
+                className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-leaf-700 hover:text-leaf-800"
               >
                 Documentation
                 <ExternalLink className="h-3.5 w-3.5" />
@@ -162,7 +162,7 @@ export function IntegrationDrawer({
                   {masked ? (
                     <button
                       type="button"
-                      className="text-[11px] font-semibold text-pink-700"
+                      className="text-[11px] font-semibold text-leaf-700"
                       onClick={() => setReveal((current) => ({ ...current, [field.key]: !current[field.key] }))}
                     >
                       {showMasked ? "Replace" : "Keep masked"}

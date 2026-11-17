@@ -42,7 +42,7 @@ export default function Orders() {
   return (
     <div>
       <PageHead title={section === "all" ? "All orders" : section === "refunds" ? "Refund status" : `${orderSectionStatus[section] || "Orders"}`} description="Monitor orders placed on your store. You cannot mark central fulfilment steps complete." />
-      <div className="mb-4 flex flex-col gap-2 rounded-2xl border border-gray-200/80 bg-white p-3 sm:flex-row sm:flex-wrap dark:border-gray-700 dark:bg-gray-800">
+      <div className="mb-4 flex flex-col gap-2 rounded-xl border border-gray-200/80 bg-white p-3 sm:flex-row sm:flex-wrap dark:border-gray-700 dark:bg-gray-800">
         <input className="toolbar-field flex-1" placeholder="Search order, customer, product" value={query} onChange={(event) => setQuery(event.target.value)} />
         <select className="toolbar-field" value={payment} onChange={(event) => setPayment(event.target.value)}>
           {["All", "Paid", "Pending", "Refunded", "Failed"].map((item) => <option key={item}>{item}</option>)}
@@ -55,7 +55,7 @@ export default function Orders() {
           <Table
             table={table}
             columns={[
-              { key: "id", label: "Order ID", render: (row) => <button type="button" className="font-semibold text-pink-700" onClick={() => navigate(`/brand/orders/item/${row.id}`)}>{row.id}</button> },
+              { key: "id", label: "Order ID", render: (row) => <button type="button" className="font-semibold text-leaf-700" onClick={() => navigate(`/brand/orders/item/${row.id}`)}>{row.id}</button> },
               { key: "date", label: "Order date", render: (row) => formatDate(row.date) },
               { key: "customer", label: "Customer" },
               { key: "product", label: "Product" },

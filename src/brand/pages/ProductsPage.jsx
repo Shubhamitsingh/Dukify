@@ -5,7 +5,7 @@ import { Empty, Field, PageHead, Status, Surface, Swatch, Table, useTable } from
 import { formatDate, inr } from "../lib/metrics";
 
 const copy = {
-  browse: ["Browse products", "The catalogue belongs to Pahachan. Select styles your brand is allowed to sell."],
+  browse: ["Browse products", "The catalogue belongs to Dukify. Select styles your brand is allowed to sell."],
   selected: ["My selected products", "These approved styles are listed on your storefront."],
   details: ["Product details", "Open a style to see specifications, images, and variants from the central record."],
   variants: ["Product variants", "Sizes and stock splits are read-only. Inventory is not edited here."],

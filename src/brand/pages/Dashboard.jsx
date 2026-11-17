@@ -44,7 +44,7 @@ import { menu, pathFor } from "../nav";
 const copy = {
   overview: ["Business overview", "How your brand is performing in the selected window."],
   sales: ["Sales overview", "Sales are summed from this brand's orders. Cancelled orders are left out of the sales total."],
-  orders: ["Order overview", "You can follow fulfilment. Packing, shipping, and delivery stay with Pahachan."],
+  orders: ["Order overview", "You can follow fulfilment. Packing, shipping, and delivery stay with Dukify."],
   revenue: ["Revenue overview", "Estimated earnings are not the final payout. Central settlement rules still apply."],
   activity: ["Recent activity", "Orders, notices, and tickets for this brand only."],
 };
@@ -217,7 +217,7 @@ export default function Dashboard({ section }) {
             label="Sales"
             value={inr(salesInRange)}
             note={`${summary.bounds.label} · excl. cancelled`}
-            tone="hero"
+            tone="pink"
             icon={<IndianRupee className="h-4 w-4" />}
             trend={delta(summary.current.sales, summary.prior.sales)}
             onClick={() => navigate("/brand/analytics/sales")}
@@ -337,12 +337,12 @@ export default function Dashboard({ section }) {
             ].map(([label, value, tone]) => (
               <div
                 key={label}
-                className="rounded-2xl border border-gray-200/80 bg-white px-3 py-2.5 shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-800"
+                className="rounded-xl border border-gray-200/80 bg-white px-3 py-2.5 shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-800"
               >
                 <p className="text-[11px] font-medium text-gray-500">{label}</p>
                 <p
                   className={`mt-1 text-base font-semibold tabular-nums ${
-                    tone === "amber" ? "text-amber-700" : tone === "pink" ? "text-pink-700" : "text-gray-900 dark:text-white"
+                    tone === "amber" ? "text-amber-700" : tone === "pink" ? "text-leaf-700" : "text-gray-900 dark:text-white"
                   }`}
                 >
                   {value}
@@ -362,10 +362,10 @@ export default function Dashboard({ section }) {
                   key={item.id}
                   type="button"
                   onClick={() => navigate(item.to)}
-                  className="rounded-2xl border border-gray-200/80 bg-white px-3 py-3 text-left shadow-[var(--app-shadow)] transition hover:-translate-y-0.5 hover:border-pink-200 dark:border-gray-700 dark:bg-gray-800"
+                  className="rounded-xl border border-gray-200/80 bg-white px-3 py-3 text-left shadow-[var(--app-shadow)] transition hover:-translate-y-0.5 hover:border-leaf-200 dark:border-gray-700 dark:bg-gray-800"
                 >
                   <span className="flex items-center justify-between gap-2">
-                    <span className="grid h-8 w-8 place-items-center rounded-xl bg-pink-50 text-pink-600 dark:bg-pink-950/40 dark:text-pink-300">
+                    <span className="grid h-8 w-8 place-items-center rounded-xl bg-leaf-50 text-leaf-600 dark:bg-leaf-950/40 dark:text-leaf-300">
                       <Icon className="h-3.5 w-3.5" />
                     </span>
                     <span className={`text-sm font-semibold tabular-nums ${item.problem ? "text-rose-600" : "text-gray-900 dark:text-white"}`}>
@@ -472,7 +472,6 @@ export default function Dashboard({ section }) {
   return (
     <div>
       <PageHead
-        eyebrow="Dashboard"
         title={title}
         description={description}
         action={
@@ -493,7 +492,7 @@ export default function Dashboard({ section }) {
         <Kpi label="Total sales" value={inr(summary.current.sales)} trend={delta(summary.current.sales, summary.prior.sales)} note="excludes cancelled" tone="emerald" icon={<IndianRupee className="h-4 w-4" />} onClick={() => navigate("/brand/analytics/sales")} />
         <Kpi label="Estimated earnings" value={inr(summary.current.earnings)} trend={delta(summary.current.earnings, summary.prior.earnings)} note="before final settlement" tone="amber" icon={<Wallet className="h-4 w-4" />} onClick={() => navigate("/brand/earnings/overview")} />
         {section === "orders" ? (
-          <Kpi label="Pending orders" value={pending} note="open with Pahachan now" tone="rose" icon={<Package className="h-4 w-4" />} onClick={() => navigate("/brand/orders/processing")} />
+          <Kpi label="Pending orders" value={pending} note="open with Dukify now" tone="rose" icon={<Package className="h-4 w-4" />} onClick={() => navigate("/brand/orders/processing")} />
         ) : null}
       </div>
       {(section === "sales" || section === "revenue") && (
@@ -539,7 +538,7 @@ export default function Dashboard({ section }) {
               ))}
             </ul>
           </Surface>
-          <Surface title="Recent orders" action={<button type="button" className="text-xs font-semibold text-pink-700" onClick={() => navigate("/brand/orders/all")}>View all</button>}>
+          <Surface title="Recent orders" action={<button type="button" className="text-xs font-semibold text-leaf-700" onClick={() => navigate("/brand/orders/all")}>View all</button>}>
             <ul className="divide-y divide-gray-100 dark:divide-gray-800">
               {recent.map((order) => {
                 const customer = partner.customers.find((item) => item.id === order.customerId);
@@ -575,7 +574,7 @@ export default function Dashboard({ section }) {
             <p className="text-sm leading-6 text-gray-600 dark:text-gray-300">
               Partner supply price stays visible. Central purchase cost does not. Estimated earning for an order is gross margin, minus this brand&apos;s{" "}
               {Math.round(partner.brand.commissionRate * 100)}% commission, {Math.round(partner.brand.gatewayRate * 1000) / 10}% gateway deduction, and{" "}
-              {inr(partner.brand.shippingShare)} shipping share once the order has shipped. Refunded and returned orders contribute zero. Pahachan approves what is actually paid.
+              {inr(partner.brand.shippingShare)} shipping share once the order has shipped. Refunded and returned orders contribute zero. Dukify approves what is actually paid.
             </p>
           </Surface>
         </>
@@ -589,7 +588,7 @@ function ActivityPage({ feed, unread, openTickets, pending, navigate }) {
   const rows = filter === "all" ? feed : feed.filter((item) => item.kind === filter);
   const kindMeta = {
     order: { label: "Order", icon: ShoppingBag, tone: "bg-sky-50 text-sky-700 dark:bg-sky-950/40 dark:text-sky-300" },
-    notice: { label: "Notice", icon: Bell, tone: "bg-pink-50 text-pink-700 dark:bg-pink-950/40 dark:text-pink-300" },
+    notice: { label: "Notice", icon: Bell, tone: "bg-leaf-50 text-leaf-700 dark:bg-leaf-950/40 dark:text-leaf-300" },
     ticket: { label: "Ticket", icon: LifeBuoy, tone: "bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300" },
   };
   const filters = [
@@ -602,7 +601,6 @@ function ActivityPage({ feed, unread, openTickets, pending, navigate }) {
   return (
     <div className="space-y-4">
       <PageHead
-        eyebrow="Dashboard"
         title="Recent activity"
         description="A single feed of orders, notices, and support tickets for this brand. Tap a row to open the related desk."
         action={
@@ -646,7 +644,7 @@ function ActivityPage({ feed, unread, openTickets, pending, navigate }) {
                   <button
                     type="button"
                     className={`flex w-full items-start gap-3 px-3 py-3.5 text-left transition hover:bg-gray-50 sm:px-4 dark:hover:bg-gray-800/60 ${
-                      item.unread ? "bg-pink-50/40 dark:bg-pink-950/15" : ""
+                      item.unread ? "bg-leaf-50/40 dark:bg-leaf-950/15" : ""
                     }`}
                     onClick={() => navigate(item.to)}
                   >

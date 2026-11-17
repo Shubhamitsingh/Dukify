@@ -29,8 +29,8 @@ export default function Support() {
     <div>
       <PageHead title="Support centre" description={`Tickets opened here belong to ${brand.name}.`} />
       {(section === "help" || section === "contact") && (
-        <Surface title="Contact Pahachan" className="mb-4" padded>
-          <p className="text-sm">Platform support reads tickets for products, pricing, orders, payments, and technical issues. Email support@pahachan.test · +91 22 4000 2200. This demo does not send the email.</p>
+        <Surface title="Contact Dukify" className="mb-4" padded>
+          <p className="text-sm">Platform support reads tickets for products, pricing, orders, payments, and technical issues. Email support@dukify.test · +91 22 4000 2200. This demo does not send the email.</p>
         </Surface>
       )}
       {(section === "help" || section === "create") && (

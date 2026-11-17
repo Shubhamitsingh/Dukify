@@ -60,7 +60,7 @@ export function ProductSalesTable({ rows, onSelect }) {
               table.rows.map((row) => (
                 <tr
                   key={row.product}
-                  className="cursor-pointer border-b border-gray-50 last:border-0 hover:bg-pink-50/40 dark:border-gray-700 dark:hover:bg-gray-700/40"
+                  className="cursor-pointer border-b border-gray-50 last:border-0 hover:bg-leaf-50/40 dark:border-gray-700 dark:hover:bg-gray-700/40"
                   onClick={() => onSelect?.(row)}
                 >
                   <td className="px-3 py-3">

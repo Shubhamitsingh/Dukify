@@ -15,7 +15,7 @@ export function TicketDetailPage() {
 
   if (!ticket) {
     return (
-      <div className="space-y-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-900">
+      <div className="space-y-4 rounded-xl border border-gray-200 bg-white p-6 shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-900">
         <p className="text-sm font-semibold text-gray-900 dark:text-white">Ticket not found</p>
         <p className="text-sm text-gray-500">This ticket is not in the current session.</p>
         <SoftButton onClick={() => navigate("/support")}>Back to inbox</SoftButton>
@@ -25,7 +25,7 @@ export function TicketDetailPage() {
 
   return (
     <div className="space-y-4">
-      <div className="overflow-hidden rounded-2xl border border-sky-200 bg-white shadow-[var(--app-shadow)] dark:border-sky-900/60 dark:bg-gray-900">
+      <div className="overflow-hidden rounded-xl border border-sky-200 bg-white shadow-[var(--app-shadow)] dark:border-sky-900/60 dark:bg-gray-900">
         <div className="flex flex-col gap-4 border-b border-sky-100 p-4 dark:border-sky-900/40 sm:flex-row sm:items-center sm:justify-between sm:p-5">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
@@ -45,7 +45,7 @@ export function TicketDetailPage() {
               <TicketPriorityBadge value={ticket.priority} compact />
             </div>
             <div className="mt-3 flex items-start gap-3">
-              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-sky-600 text-white shadow-sm shadow-sky-600/20">
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-sky-600 text-white shadow-sm shadow-sky-600/20">
                 <Headphones className="h-4 w-4" />
               </span>
               <div className="min-w-0">

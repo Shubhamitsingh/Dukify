@@ -44,17 +44,17 @@ export function TicketFilters({ filters, agents, categories, resultCount, onChan
             type="button"
             className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-2 text-xs font-semibold ${
               open || dirty
-                ? "border-pink-300 bg-pink-50 text-pink-800 dark:border-pink-800 dark:bg-pink-950/30 dark:text-pink-200"
+                ? "border-leaf-300 bg-leaf-50 text-leaf-800 dark:border-leaf-800 dark:bg-leaf-950/30 dark:text-leaf-200"
                 : "border-gray-200 bg-white text-gray-600 dark:border-gray-700 dark:bg-gray-900"
             }`}
             onClick={() => setOpen((value) => !value)}
           >
             <SlidersHorizontal className="h-3.5 w-3.5" />
             Filters
-            {dirty ? <span className="rounded-full bg-pink-500 px-1.5 text-[10px] text-white">{activeChips.length}</span> : null}
+            {dirty ? <span className="rounded-full bg-leaf-500 px-1.5 text-[10px] text-white">{activeChips.length}</span> : null}
           </button>
           {dirty ? (
-            <button type="button" className="inline-flex items-center gap-1 rounded-full px-2 py-2 text-xs font-semibold text-pink-700" onClick={onClear}>
+            <button type="button" className="inline-flex items-center gap-1 rounded-full px-2 py-2 text-xs font-semibold text-leaf-700" onClick={onClear}>
               <X className="h-3.5 w-3.5" />
               Clear
             </button>
@@ -84,7 +84,7 @@ export function TicketFilters({ filters, agents, categories, resultCount, onChan
       ) : null}
 
       {open ? (
-        <div className="grid gap-2 rounded-2xl border border-dashed border-pink-200/80 bg-pink-50/40 p-3 sm:grid-cols-2 xl:grid-cols-4 dark:border-pink-900/50 dark:bg-pink-950/10">
+        <div className="grid gap-2 rounded-xl border border-dashed border-leaf-200/80 bg-leaf-50/40 p-3 sm:grid-cols-2 xl:grid-cols-4 dark:border-leaf-900/50 dark:bg-leaf-950/10">
           <select className="input-field" value={filters.type} onChange={set("type")}>
             <option value="All">All requester types</option>
             <option value="brand">Brand</option>

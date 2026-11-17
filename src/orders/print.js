@@ -126,7 +126,7 @@ export function printOrderDocument(order, type = "packing-slip") {
   <div class="row">
     <div>
       <h1>${isLabel ? "Shipping address label" : "Packing slip"}</h1>
-      <div class="muted">Pahachan central fulfillment · mock print</div>
+      <div class="muted">Dukify central fulfillment · mock print</div>
       <div style="margin-top:10px">
         <span class="badge">${escapeHtml(order.id)}</span>
         <span class="badge">${escapeHtml(order.brand || "")}</span>

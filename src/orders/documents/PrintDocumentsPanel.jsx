@@ -5,7 +5,7 @@ export function PrintDocumentsPanel({ order, onOpen }) {
   const state = getShipmentPrintState(order);
 
   return (
-    <section className="rounded-2xl border border-gray-200/80 bg-white p-3 dark:border-gray-700 dark:bg-gray-900">
+    <section className="rounded-xl border border-gray-200/80 bg-white p-3 dark:border-gray-700 dark:bg-gray-900">
       <p className="mb-2 text-[11px] font-semibold tracking-[0.14em] text-gray-400 uppercase">Print documents</p>
       <div className="grid gap-2 sm:grid-cols-2">
         {DOCUMENT_TYPES.map((doc) => {

@@ -7,10 +7,10 @@ import { formatDate, inr, quoteOrder } from "../lib/metrics";
 
 const copy = {
   all: ["All orders", "Every order placed on this brand. Fulfilment progress is read-only."],
-  new: ["New orders", "Orders Pahachan has not confirmed yet."],
+  new: ["New orders", "Orders Dukify has not confirmed yet."],
   confirmed: ["Confirmed orders", "Accepted into the central queue."],
   processing: ["Processing orders", "Picking is happening in the central warehouse."],
-  packed: ["Packed orders", "Packed by Pahachan. You cannot mark this step yourself."],
+  packed: ["Packed orders", "Packed by Dukify. You cannot mark this step yourself."],
   shipped: ["Shipped orders", "Handed to the platform courier."],
   delivered: ["Delivered orders", "Closed deliveries for this brand."],
   cancelled: ["Cancelled orders", "These orders are excluded from sales totals."],
@@ -48,7 +48,7 @@ export default function OrdersPage({ section }) {
   const table = useTable(rows);
   const [title, description] = copy[section];
   const columns = [
-    { key: "id", label: "Order ID", render: (row) => <button type="button" className="font-medium text-pink-700" onClick={() => navigate(`/brand/orders/item/${row.id}`)}>{row.id}</button> },
+    { key: "id", label: "Order ID", render: (row) => <button type="button" className="font-medium text-leaf-700" onClick={() => navigate(`/brand/orders/item/${row.id}`)}>{row.id}</button> },
     { key: "date", label: "Order date", render: (row) => formatDate(row.date) },
     { key: "customer", label: "Customer" },
     { key: "product", label: "Product" },
@@ -56,7 +56,7 @@ export default function OrdersPage({ section }) {
     { key: "amount", label: "Order amount", render: (row) => inr(row.amount) },
     { key: "paymentStatus", label: "Payment", render: (row) => <Status value={row.paymentStatus} /> },
     { key: "status", label: "Order status", render: (row) => <Status value={row.status} /> },
-    { key: "view", label: "View", sort: false, render: (row) => <button type="button" className="text-xs font-semibold text-pink-700" onClick={() => navigate(`/brand/orders/item/${row.id}`)}>Details</button> },
+    { key: "view", label: "View", sort: false, render: (row) => <button type="button" className="text-xs font-semibold text-leaf-700" onClick={() => navigate(`/brand/orders/item/${row.id}`)}>Details</button> },
   ];
 
   return (

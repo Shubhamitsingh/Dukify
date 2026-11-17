@@ -379,7 +379,7 @@ export function validateCatalogueRows(rows, existingProducts = []) {
       warnings.push({ row: row.__row, sku: row.sku, message: "Supply price is below cost." });
     }
     if (!row.retail && row.retail !== 0) warnings.push({ row: row.__row, sku: row.sku, message: "Retail price is missing." });
-    if (!row.supply && row.supply !== 0) warnings.push({ row: row.__row, sku: row.sku, message: "Supply price is missing (Pahachan field)." });
+    if (!row.supply && row.supply !== 0) warnings.push({ row: row.__row, sku: row.sku, message: "Supply price is missing (Dukify field)." });
     const existing = existingProducts.find((item) => item.sku === row.sku);
     if (existing) warnings.push({ row: row.__row, sku: row.sku, message: `Will update existing product ${existing.id}.` });
   });

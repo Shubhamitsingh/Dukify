@@ -18,7 +18,6 @@ export function CategoriesPage() {
   return (
     <div className="space-y-4">
       <PageHead
-        eyebrow="Support Management"
         title="Ticket Categories"
         description="Separate category sets for brand and customer requests."
         action={
@@ -39,7 +38,7 @@ export function CategoriesPage() {
             key={id}
             type="button"
             className={`rounded-full px-3 py-1.5 text-xs font-semibold ${
-              scopeFilter === id ? "bg-pink-500 text-white" : "border border-gray-200 bg-white text-gray-600 dark:border-gray-700 dark:bg-gray-800"
+              scopeFilter === id ? "bg-leaf-500 text-white" : "border border-gray-200 bg-white text-gray-600 dark:border-gray-700 dark:bg-gray-800"
             }`}
             onClick={() => setScopeFilter(id)}
           >
@@ -97,7 +96,6 @@ export function CategoriesPage() {
       {creating ? (
         <ModalShell
           title="Add category"
-          eyebrow="Support Management"
           size="sm"
           onClose={() => setCreating(false)}
           footer={

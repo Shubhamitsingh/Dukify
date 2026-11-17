@@ -40,7 +40,6 @@ export function ReportsPage() {
   return (
     <div className="space-y-4">
       <PageHead
-        eyebrow="Platform"
         title="Reports"
         description="Brand, product and margin summaries from the same local order records. Filters apply to every section below."
         action={

@@ -92,7 +92,7 @@ export function IntegrationsPage() {
       />
 
       {visible.length === 0 ? (
-        <div className="rounded-2xl border border-gray-200/80 bg-white px-4 py-10 text-center text-sm text-gray-500 shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-800">
+        <div className="rounded-xl border border-gray-200/80 bg-white px-4 py-10 text-center text-sm text-gray-500 shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-800">
           No integrations match this search.
         </div>
       ) : (

@@ -123,7 +123,7 @@ export function TicketsPage({ initialTab = "all" }) {
         })
         .join(","),
     );
-    downloadBlob(`pahachan-tickets-${tab}.csv`, [header.join(","), ...lines].join("\n"), "text/csv;charset=utf-8");
+    downloadBlob(`dukify-tickets-${tab}.csv`, [header.join(","), ...lines].join("\n"), "text/csv;charset=utf-8");
   };
 
   return (
@@ -152,7 +152,7 @@ export function TicketsPage({ initialTab = "all" }) {
         }}
       />
 
-      <div className="space-y-3 rounded-2xl border border-sky-200/80 bg-white p-3 shadow-[var(--app-shadow)] dark:border-sky-900/60 dark:bg-gray-900 sm:p-4">
+      <div className="space-y-3 rounded-xl border border-sky-200/80 bg-white p-3 shadow-[var(--app-shadow)] dark:border-sky-900/60 dark:bg-gray-900 sm:p-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <TicketTabs
             active={tab}

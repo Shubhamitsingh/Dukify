@@ -119,7 +119,6 @@ export function StaffAccessPage() {
   return (
     <div className="space-y-5">
       <PageHead
-        eyebrow="Access"
         title="Staff & access"
         description={`Invite users, assign one of the six roles, and set permissions plus brand scope. Signed in as ${roleLabel}.`}
         action={
@@ -235,7 +234,7 @@ export function StaffAccessPage() {
                         type="button"
                         className={`rounded-lg border px-2.5 py-1 text-xs ${
                           form.permissionSets.includes(s.id)
-                            ? "border-pink-500 bg-pink-50 text-pink-800"
+                            ? "border-leaf-500 bg-leaf-50 text-leaf-800"
                             : "border-gray-200 text-gray-600"
                         }`}
                         onClick={() => toggleSet(s.id)}
@@ -267,7 +266,7 @@ export function StaffAccessPage() {
                         type="button"
                         className={`rounded-lg border px-2.5 py-1 text-xs ${
                           form.brandIds.includes(b.id)
-                            ? "border-pink-500 bg-pink-50 text-pink-800"
+                            ? "border-leaf-500 bg-leaf-50 text-leaf-800"
                             : "border-gray-200 text-gray-600"
                         }`}
                         onClick={() => toggleBrand(b.id)}
@@ -301,7 +300,7 @@ export function StaffAccessPage() {
             <div className="flex justify-end gap-2 pt-2">
               <SoftButton onClick={() => setInviteOpen(false)}>Cancel</SoftButton>
               <SoftButton
-                className="border-pink-200 bg-pink-50 text-pink-800 hover:bg-pink-100"
+                className="border-leaf-200 bg-leaf-50 text-leaf-800 hover:bg-leaf-100"
                 onClick={submitInvite}
                 disabled={!form.email}
               >

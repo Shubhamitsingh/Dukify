@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { LandingPage } from "./LandingPage";
+import { PublicSupportPage } from "./demoRequests";
 import { Login } from "./login";
 import { BrandApp, BrandStoreProvider } from "./brand";
 import { SuperAdminApp } from "./SuperAdminApp";
@@ -20,6 +21,7 @@ export default function App({ session, dark, onLogin, onLogout, onToggleDark }) 
     return (
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/support" element={<PublicSupportPage />} />
         <Route path="/login" element={<Login onSuccess={handleLogin} />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

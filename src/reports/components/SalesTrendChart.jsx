@@ -85,7 +85,7 @@ export function SalesTrendChart({ series }) {
       barY: pad.top + plotH - Math.max(day.sales > 0 ? 5 : 2, salesH),
       barH: Math.max(day.sales > 0 ? 5 : 2, salesH),
       lineY: pad.top + plotH - ordersH,
-      fill: day.sales <= 0 ? "#e5e7eb" : salesRatio >= 0.75 ? "#ec4899" : salesRatio >= 0.4 ? "#f472b6" : "#fbcfe8",
+      fill: day.sales <= 0 ? "#E2E8F0" : salesRatio >= 0.75 ? "#001E55" : salesRatio >= 0.4 ? "#EE8802" : "#FFF4E5",
     };
   });
 
@@ -100,7 +100,7 @@ export function SalesTrendChart({ series }) {
       action={
         <div className="flex flex-wrap items-center gap-3 text-[11px] text-gray-500">
           <span className="inline-flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-pink-500" />
+            <span className="h-2 w-2 rounded-full bg-leaf-500" />
             Sales
           </span>
           <span className="inline-flex items-center gap-1.5">

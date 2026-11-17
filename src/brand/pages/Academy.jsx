@@ -13,7 +13,7 @@ export default function Academy() {
 
   return (
     <div>
-      <PageHead title="Brand growth and academy" description="Short lessons for selling on Pahachan. Completion is saved in this browser." />
+      <PageHead title="Brand growth and academy" description="Short lessons for selling on Dukify. Completion is saved in this browser." />
       <div className="grid gap-3">
         {rows.map((lesson) => (
           <Surface key={lesson.id} padded>

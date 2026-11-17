@@ -7,6 +7,7 @@ import { PricingPage } from "./pricing";
 import { ReportsPage } from "./reports";
 import { AgentsPage, CategoriesPage, TicketDetailPage, TicketsPage } from "./support";
 import { Shell } from "./shell";
+import { DemoRequestsPage } from "./demoRequests";
 import { RequireAccess } from "./access";
 import { AccessStoreBridge } from "./access/AccessStoreBridge";
 import { StaffAccessPage } from "./access/pages/StaffAccessPage";
@@ -65,6 +66,8 @@ function SuperAdminRoutes() {
       <Route path="/websites" element={<Gate><ModulePage id="websites" /></Gate>} />
       <Route path="/products" element={<Gate><ModulePage id="products" /></Gate>} />
       <Route path="/support" element={<Gate><TicketsPage initialTab="all" /></Gate>} />
+      <Route path="/support/demos" element={<Gate><DemoRequestsPage /></Gate>} />
+      <Route path="/demo-requests" element={<Navigate to="/support/demos" replace />} />
       <Route path="/support/brand" element={<Gate><TicketsPage initialTab="brand" /></Gate>} />
       <Route path="/support/customer" element={<Gate><TicketsPage initialTab="customer" /></Gate>} />
       <Route path="/support/ticket/:id" element={<Gate><TicketDetailPage /></Gate>} />

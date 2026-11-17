@@ -253,7 +253,7 @@ export function StoreProvider({ children }) {
       addRequest: (request) => {
         setState((current) => ({
           ...current,
-          requests: [...current.requests, { ...request, id: `req-${Date.now()}`, brandId: brand.id, status: "Sent to Pahachan" }],
+          requests: [...current.requests, { ...request, id: `req-${Date.now()}`, brandId: brand.id, status: "Sent to Dukify" }],
         }));
         setFlash("Catalogue request sent as a demo record.");
       },
@@ -305,7 +305,7 @@ export function StoreProvider({ children }) {
       completeLesson: (id) => setState((current) => ({ ...current, lessons: { ...current.lessons, [id]: true } })),
       requestTwoFa: () => {
         setState((current) => ({ ...current, twoFa: { ...current.twoFa, [brand.id]: true } }));
-        setFlash("Demo request noted. Pahachan security would enable 2FA in production.");
+        setFlash("Demo request noted. Dukify security would enable 2FA in production.");
       },
       resetDemo: () => {
         localStorage.removeItem(KEY);

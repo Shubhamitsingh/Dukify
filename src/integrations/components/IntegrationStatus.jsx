@@ -1,5 +1,5 @@
 const tone = {
-  Connected: "bg-pink-50 text-pink-800 ring-1 ring-pink-100 dark:bg-pink-950/40 dark:text-pink-300 dark:ring-pink-900/50",
+  Connected: "bg-leaf-50 text-leaf-800 ring-1 ring-leaf-100 dark:bg-leaf-950/40 dark:text-leaf-300 dark:ring-leaf-900/50",
   "Not Connected": "bg-rose-50 text-rose-700 ring-1 ring-rose-100 dark:bg-rose-950/40 dark:text-rose-300 dark:ring-rose-900/40",
   Error: "bg-rose-50 text-rose-800 ring-1 ring-rose-100 dark:bg-rose-950/40 dark:text-rose-300",
   Testing: "bg-amber-50 text-amber-800 ring-1 ring-amber-100 dark:bg-amber-950/40 dark:text-amber-300",

@@ -58,7 +58,7 @@ export const products = catalogue.map((row, index) => {
     stock,
     addedOn,
     approval: index >= 28 ? "Pending approval" : "Approved",
-    description: `${name} is part of the central Pahachan fashion catalogue. Fabric, imagery, and variants are maintained by the platform.`,
+    description: `${name} is part of the central Dukify fashion catalogue. Fabric, imagery, and variants are maintained by the platform.`,
     specs: { fabric, care, origin: "Central catalogue", occasion: category === "Ethnic sets" || category === "Sarees" ? "Festive" : "Everyday" },
     variants: sizes.map((size, sizeIndex) => ({
       id: `${id}-${size}`,
@@ -86,7 +86,7 @@ const brandSeed = [
     gatewayRate: 0.018,
     shippingShare: 49,
     maxDiscount: 0.2,
-    domain: "brandk.pahachan.store",
+    domain: "brandk.dukify.store",
     since: "2025-06-12",
     focus: "Contemporary ethnic",
     about: "Brand K designs contemporary ethnic wear for city wardrobes, with a rose and ivory palette.",
@@ -113,7 +113,7 @@ const brandSeed = [
     gatewayRate: 0.018,
     shippingShare: 59,
     maxDiscount: 0.15,
-    domain: "auraloom.pahachan.store",
+    domain: "auraloom.dukify.store",
     since: "2025-08-02",
     focus: "Handloom colour",
     about: "Aura Loom works with festive colour and handloom silhouettes.",
@@ -140,7 +140,7 @@ const brandSeed = [
     gatewayRate: 0.02,
     shippingShare: 39,
     maxDiscount: 0.18,
-    domain: "niva.pahachan.store",
+    domain: "niva.dukify.store",
     since: "2025-11-19",
     focus: "Everyday dresses",
     about: "Niva Studio edits easy dresses and shirts for warm-weather wardrobes.",
@@ -167,7 +167,7 @@ const brandSeed = [
     gatewayRate: 0.018,
     shippingShare: 69,
     maxDiscount: 0.12,
-    domain: "lumen.pahachan.store",
+    domain: "lumen.dukify.store",
     since: "2026-01-09",
     focus: "Tailored denim",
     about: "House of Lumen keeps a sharp denim and shirt edit.",
@@ -194,7 +194,7 @@ const brandSeed = [
     gatewayRate: 0.018,
     shippingShare: 49,
     maxDiscount: 0.15,
-    domain: "mogra.pahachan.store",
+    domain: "mogra.dukify.store",
     since: "2026-09-01",
     focus: "Accessories and festive sets",
     about: "Mogra Label is preparing a festive accessories and ethnic edit.",
@@ -306,7 +306,7 @@ function buildBrandOrders(brand, plan) {
       discount: item.discount,
       status: item.status,
       paymentStatus: item.payment,
-      courier: ["Shipped", "Delivered", "Return requested"].includes(item.status) ? "Pahachan Logistics" : "",
+      courier: ["Shipped", "Delivered", "Return requested"].includes(item.status) ? "Dukify Logistics" : "",
       awb: ["Shipped", "Delivered", "Return requested"].includes(item.status) ? `AWB${item.id.replace(/\D/g, "")}` : "",
       note: item.note || "",
     };
@@ -353,7 +353,7 @@ const brandKPlan = [
   payment: row[2],
   qty: row[3],
   discount: row[4],
-  note: row[0] === "Return requested" ? "Customer asked for a size exchange. Fulfilment is with Pahachan." : "",
+  note: row[0] === "Return requested" ? "Customer asked for a size exchange. Fulfilment is with Dukify." : "",
 }));
 
 const otherPlans = {
@@ -425,11 +425,11 @@ export const traffic = brands.flatMap((brand) => {
 
 const noticeTemplates = [
   ["order", "New order received", "A customer placed an order on your storefront."],
-  ["order", "Shipment update", "Pahachan marked an order as shipped. Tracking is now available."],
+  ["order", "Shipment update", "Dukify marked an order as shipped. Tracking is now available."],
   ["product", "Catalogue availability", "A selected product is low on central stock."],
   ["payment", "Settlement window", "November earnings are waiting for central settlement approval."],
   ["store", "Storefront draft", "Your homepage draft has unpublished banner changes."],
-  ["announcement", "Platform note", "Festive dispatch cut-off is 18 Nov 2026. Fulfilment stays with Pahachan."],
+  ["announcement", "Platform note", "Festive dispatch cut-off is 18 Nov 2026. Fulfilment stays with Dukify."],
 ];
 
 export const notifications = brands.flatMap((brand, brandIndex) =>
@@ -454,7 +454,7 @@ export const tickets = [
     status: "Open",
     priority: "Medium",
     createdAt: "2026-11-09T11:20:00",
-    replies: [{ at: "2026-11-09T15:00:00", from: "Pahachan Support", text: "The return is in the central queue. We will update the refund status here." }],
+    replies: [{ at: "2026-11-09T15:00:00", from: "Dukify Support", text: "The return is in the central queue. We will update the refund status here." }],
   },
   {
     id: "TCK-1033",
@@ -465,7 +465,7 @@ export const tickets = [
     status: "Resolved",
     priority: "Low",
     createdAt: "2026-10-22T09:10:00",
-    replies: [{ at: "2026-10-22T12:40:00", from: "Pahachan Support", text: "MRP on the catalogue record is final. You can price at or below it." }],
+    replies: [{ at: "2026-10-22T12:40:00", from: "Dukify Support", text: "MRP on the catalogue record is final. You can price at or below it." }],
   },
   {
     id: "TCK-1018",
@@ -501,7 +501,7 @@ export const assets = [
 ];
 
 export const lessons = [
-  { id: "ls-1", group: "start", title: "How a Pahachan brand store works", minutes: 6, body: "You sell through your own storefront. Pahachan owns the catalogue source, suppliers, warehouses, packing, shipping, and returns. Your work is brand, price within the allowed band, marketing, and customer relationships." },
+  { id: "ls-1", group: "start", title: "How a Dukify brand store works", minutes: 6, body: "You sell through your own storefront. Dukify owns the catalogue source, suppliers, warehouses, packing, shipping, and returns. Your work is brand, price within the allowed band, marketing, and customer relationships." },
   { id: "ls-2", group: "setup", title: "Publish the first storefront", minutes: 8, body: "Add a logo, colours, hero banner, featured products, and footer. Save a draft, preview desktop and mobile, then publish. Checkout, tax, and couriers stay locked." },
   { id: "ls-3", group: "marketing", title: "Plan a promotion inside the rules", minutes: 7, body: "Coupons cannot drop a product below its supply price or exceed your brand discount cap. Central pricing approval still applies." },
   { id: "ls-4", group: "selling", title: "Read a product before you list it", minutes: 5, body: "Check approval, stock, variants, MRP, and supply price. Estimated gross margin is retail minus supply. It is not the final settlement." },
@@ -512,8 +512,8 @@ export const lessons = [
 
 export const faqs = [
   { q: "Can I update inventory myself?", a: "No. Stock is a central record. You can read availability and request a catalogue change." },
-  { q: "Why is estimated earnings different from the settlement?", a: "Estimated earnings deduct the demo commission, gateway, and shipping share. Refunds remove the earning. Pahachan approves the final settlement." },
-  { q: "Who ships the order?", a: "Pahachan fulfilment ships it. You can track status, AWB, and delivery. You cannot mark those steps done." },
+  { q: "Why is estimated earnings different from the settlement?", a: "Estimated earnings deduct the demo commission, gateway, and shipping share. Refunds remove the earning. Dukify approves the final settlement." },
+  { q: "Who ships the order?", a: "Dukify fulfilment ships it. You can track status, AWB, and delivery. You cannot mark those steps done." },
   { q: "Can I see another brand's customers?", a: "No. The portal only loads the signed-in brand. The demo switcher is a development tool and is not a production permission." },
 ];
 
@@ -533,7 +533,7 @@ export function defaultStorefront(brand) {
     heroTitle: `${brand.name} — new season`,
     heroText: brand.about,
     about: brand.about,
-    footer: `© 2026 ${brand.legalName}. Fulfilled by Pahachan.`,
+    footer: `© 2026 ${brand.legalName}. Fulfilled by Dukify.`,
     domain: brand.domain,
     banners: [
       { id: "b1", title: "Festive edit", subtitle: "Selected styles, limited dispatch window" },

@@ -9,7 +9,7 @@ const copy = {
   create: ["Create a ticket", "Raise a problem for this brand. Super Admin Support can see it in this browser demo."],
   tickets: ["My tickets", "Open and resolved requests for this brand only."],
   faq: ["Frequently asked questions", "Short answers for the questions partners ask first."],
-  contact: ["Contact platform support", "Pahachan support reads tickets raised from this portal."],
+  contact: ["Contact platform support", "Dukify support reads tickets raised from this portal."],
 };
 
 const TOPICS = ["Orders", "Products", "Pricing", "Payments", "Technical", "Account", "Platform", "Other"];
@@ -67,7 +67,7 @@ export default function SupportPage({ section }) {
       {section === "contact" ? (
         <Surface padded>
           <p className="text-sm text-gray-600 dark:text-gray-300">
-            Email support@pahachan.test · Desk hours 10:00–19:00 IST. Use a ticket so the request stays attached to {partner.brand.name}.
+            Email support@dukify.test · Desk hours 10:00–19:00 IST. Use a ticket so the request stays attached to {partner.brand.name}.
           </p>
         </Surface>
       ) : null}
@@ -99,7 +99,7 @@ export default function SupportPage({ section }) {
                 className="input-field min-h-28"
                 value={form.message}
                 onChange={(event) => setForm({ ...form, message: event.target.value })}
-                placeholder="What broke, which order/product, and what you need from Pahachan."
+                placeholder="What broke, which order/product, and what you need from Dukify."
               />
             </Field>
             <p className="text-xs text-gray-500">This ticket is tagged to {partner.brand.name}. Demo only — stored in this browser.</p>

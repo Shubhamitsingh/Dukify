@@ -93,7 +93,7 @@ export function FinancePage() {
             onClear={() => setFilters(DEFAULT_FILTERS)}
           />
         ) : (
-          <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-gray-200/80 bg-white px-3 py-3 shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-800">
+          <div className="flex flex-wrap items-center gap-3 rounded-xl border border-gray-200/80 bg-white px-3 py-3 shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-800">
             <label className="min-w-[180px]">
               <span className="mb-1 block text-[11px] font-medium text-gray-500">Brand (summary cards)</span>
               <select

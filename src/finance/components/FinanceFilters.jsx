@@ -10,7 +10,7 @@ export function FinanceFilters({ filters, brands, onChange, resultCount, onClear
     filters.period !== "all";
 
   return (
-    <div className="rounded-2xl border border-gray-200/80 bg-white p-3 shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-800">
+    <div className="rounded-xl border border-gray-200/80 bg-white p-3 shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-800">
       <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-6">
         <label className="md:col-span-2 xl:col-span-2">
           <span className="mb-1 block text-[11px] font-medium text-gray-500">Search</span>
@@ -65,7 +65,7 @@ export function FinanceFilters({ filters, brands, onChange, resultCount, onClear
           Showing <span className="font-semibold text-gray-800 dark:text-gray-200">{resultCount}</span> transactions
         </p>
         {active ? (
-          <button type="button" className="text-xs font-semibold text-pink-700 hover:text-pink-800" onClick={onClear}>
+          <button type="button" className="text-xs font-semibold text-leaf-700 hover:text-leaf-800" onClick={onClear}>
             Clear filters
           </button>
         ) : null}

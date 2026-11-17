@@ -13,7 +13,7 @@ const copy = {
   pending: ["Pending settlements", "Delivered and paid orders from 1 Nov 2026 onward. Waiting on central approval."],
   completed: ["Completed settlements", "Delivered and paid orders dated before 1 Nov 2026 in this demo rule."],
   history: ["Settlement history", "Monthly roll-up of the completed demo settlements."],
-  payment: ["Payment details", "The masked account Pahachan would pay. Editing it is a demo change in this browser."],
+  payment: ["Payment details", "The masked account Dukify would pay. Editing it is a demo change in this browser."],
 };
 
 export default function EarningsPage({ section }) {

@@ -12,7 +12,7 @@ function sheetFromObjects(rows, columns) {
   return [columns.map(([, label]) => label), ...rows.map((row) => columns.map(([key]) => row[key] ?? ""))];
 }
 
-export function exportReportsCsv({ summary, brands, products, margins, filename = "pahachan-reports.csv" }) {
+export function exportReportsCsv({ summary, brands, products, margins, filename = "dukify-reports.csv" }) {
   const lines = [
     "Section,Metric,Value",
     `Summary,Total Brands,${summary.totalBrands}`,
@@ -53,7 +53,7 @@ export function exportReportsCsv({ summary, brands, products, margins, filename 
   downloadBlob(filename, lines.join("\n"), "text/csv;charset=utf-8");
 }
 
-export function exportReportsXlsx({ summary, brands, products, margins, filename = "pahachan-reports.xlsx" }) {
+export function exportReportsXlsx({ summary, brands, products, margins, filename = "dukify-reports.xlsx" }) {
   const book = XLSX.utils.book_new();
 
   const summarySheet = XLSX.utils.aoa_to_sheet([

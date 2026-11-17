@@ -13,7 +13,7 @@ function copyText(value) {
 
 function Section({ title, children }) {
   return (
-    <section className="rounded-2xl border border-gray-200/80 bg-white p-3 dark:border-gray-700 dark:bg-gray-900">
+    <section className="rounded-xl border border-gray-200/80 bg-white p-3 dark:border-gray-700 dark:bg-gray-900">
       <p className="mb-2 text-[11px] font-semibold tracking-[0.14em] text-gray-400 uppercase">{title}</p>
       {children}
     </section>

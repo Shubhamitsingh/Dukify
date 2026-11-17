@@ -23,6 +23,82 @@ export function readBrandRaisedTickets() {
   }
 }
 
+export const DEMO_TICKET_BRIDGE_KEY = "dukify-demo-tickets";
+
+export function readDemoTickets() {
+  try {
+    const raw = localStorage.getItem(DEMO_TICKET_BRIDGE_KEY);
+    const list = raw ? JSON.parse(raw) : [];
+    return Array.isArray(list) ? list : [];
+  } catch {
+    return [];
+  }
+}
+
+export function pushDemoTicket(ticket) {
+  if (!ticket?.id) return;
+  const list = readDemoTickets().filter((row) => row.id !== ticket.id);
+  localStorage.setItem(DEMO_TICKET_BRIDGE_KEY, JSON.stringify([ticket, ...list].slice(0, 120)));
+}
+
+/** Landing “Book a demo” → Super Admin support inbox. */
+export function demoRequestToTicket(entry) {
+  const now = entry.createdAt || new Date().toISOString();
+  const id = `TKT-D${String(Date.now()).slice(-6)}`;
+  const requesterName = entry.name || "Demo request";
+  const lines = [
+    `Phone: ${entry.phone || "—"}`,
+    `Email: ${entry.email || "—"}`,
+    entry.brand ? `Brand or Instagram: ${entry.brand}` : "",
+    entry.note || "Asked for a demo call from the landing page.",
+  ].filter(Boolean);
+  const body = lines.join("\n");
+
+  return {
+    id,
+    requesterType: "customer",
+    requesterName,
+    brandId: null,
+    brandName: null,
+    customerName: requesterName,
+    customerEmail: entry.email || null,
+    customerPhone: entry.phone || null,
+    subject: `Demo call · ${requesterName}`,
+    description: body,
+    category: "Demo call",
+    priority: "Medium",
+    status: "Open",
+    assignedTo: null,
+    assignedName: null,
+    relatedOrderId: null,
+    relatedProduct: null,
+    createdAt: now,
+    updatedAt: now,
+    from: requesterName,
+    topic: "Demo call",
+    updated: "Just now",
+    messages: [
+      {
+        id: `MSG-${Date.now()}`,
+        authorType: "customer",
+        authorName: requesterName,
+        body,
+        at: now,
+        internal: false,
+        attachments: [],
+      },
+    ],
+    activityLogs: [
+      {
+        id: `ACT-${Date.now()}`,
+        text: "Demo call requested from the landing page",
+        at: now,
+        actor: requesterName,
+      },
+    ],
+  };
+}
+
 export function pushBrandRaisedTicket(ticket) {
   if (!ticket?.id) return;
   const list = readBrandRaisedTickets().filter((row) => row.id !== ticket.id);

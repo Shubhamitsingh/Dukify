@@ -76,7 +76,7 @@ export default function Products() {
         }[section] || "Products"}
         description="Styles come from the central catalogue. You choose what to sell and set a retail price inside the allowed band. Purchase cost stays hidden."
       />
-      <div className="mb-4 flex flex-col gap-2 rounded-2xl border border-gray-200/80 bg-white p-3 sm:flex-row sm:flex-wrap dark:border-gray-700 dark:bg-gray-800">
+      <div className="mb-4 flex flex-col gap-2 rounded-xl border border-gray-200/80 bg-white p-3 sm:flex-row sm:flex-wrap dark:border-gray-700 dark:bg-gray-800">
         <input className="toolbar-field flex-1" placeholder="Search name or SKU" value={query} onChange={(event) => setQuery(event.target.value)} />
         <select className="toolbar-field" value={category} onChange={(event) => setCategory(event.target.value)}>
           {categories.map((item) => <option key={item}>{item}</option>)}
@@ -131,7 +131,7 @@ export default function Products() {
       <Surface title="Request a catalogue change" className="mt-4" padded>
         <div className="grid gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
           <input className="input-field" placeholder="Style or colourway" value={request.name} onChange={(event) => setRequest({ ...request, name: event.target.value })} />
-          <input className="input-field" placeholder="What should Pahachan review?" value={request.note} onChange={(event) => setRequest({ ...request, note: event.target.value })} />
+          <input className="input-field" placeholder="What should Dukify review?" value={request.note} onChange={(event) => setRequest({ ...request, note: event.target.value })} />
           <button
             type="button"
             className="btn-primary"

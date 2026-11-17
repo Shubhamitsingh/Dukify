@@ -123,7 +123,7 @@ export default function Marketing() {
       {asset ? (
         <Drawer title={asset.name} onClose={() => setAsset(null)}>
           <p className="text-sm text-gray-600">{asset.note}</p>
-          <div className="mt-4 grid h-40 place-items-center rounded-2xl text-sm font-semibold text-white" style={{ background: brand.color }}>{brand.name}</div>
+          <div className="mt-4 grid h-40 place-items-center rounded-xl text-sm font-semibold text-white" style={{ background: brand.color }}>{brand.name}</div>
         </Drawer>
       ) : null}
     </div>

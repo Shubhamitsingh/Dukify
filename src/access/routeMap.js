@@ -43,6 +43,7 @@ export const ROUTE_PERMISSIONS = {
   "/access/permissions": { anyOf: [PERMISSIONS.PERMISSIONS_ASSIGN, PERMISSIONS.USERS_VIEW] },
   "/access/audit": { anyOf: [PERMISSIONS.AUDIT_VIEW] },
   "/support": { anyOf: [PERMISSIONS.SUPPORT_VIEW] },
+  "/support/demos": { anyOf: [PERMISSIONS.SUPPORT_VIEW] },
   "/support/brand": { anyOf: [PERMISSIONS.SUPPORT_VIEW] },
   "/support/customer": { anyOf: [PERMISSIONS.SUPPORT_VIEW] },
   "/support/agents": { anyOf: [PERMISSIONS.SUPPORT_MANAGE] },

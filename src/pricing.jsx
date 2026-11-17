@@ -255,15 +255,14 @@ export function PricingPage() {
   return (
     <div>
       <PageHead
-        eyebrow="Catalogue"
         title="Pricing and catalogue"
         description="Company cost, partner supply and retail. Import Shopify-style CSV or Excel into this browser session only — refresh resets unless you export."
         action={
           <div className="flex flex-wrap gap-2">
-            <SoftButton onClick={() => downloadBlob("pahachan-catalogue-template.csv", sampleTemplateCsv(), "text/csv;charset=utf-8")}>
+            <SoftButton onClick={() => downloadBlob("dukify-catalogue-template.csv", sampleTemplateCsv(), "text/csv;charset=utf-8")}>
               Download template
             </SoftButton>
-            <SoftButton onClick={() => downloadBlob("pahachan-pricing-export.csv", exportProductsCsv(products), "text/csv;charset=utf-8")}>
+            <SoftButton onClick={() => downloadBlob("dukify-pricing-export.csv", exportProductsCsv(products), "text/csv;charset=utf-8")}>
               Export CSV
             </SoftButton>
             <button
@@ -311,8 +310,8 @@ export function PricingPage() {
       </Toolbar>
 
       {selected.size ? (
-        <div className="mb-4 flex flex-wrap items-center gap-2 rounded-2xl border border-pink-100 bg-pink-50/70 px-3 py-2.5 text-sm shadow-[var(--app-shadow)] dark:border-pink-900/40 dark:bg-pink-950/20">
-          <span className="text-xs font-semibold text-pink-900 dark:text-pink-200">{selected.size} selected</span>
+        <div className="mb-4 flex flex-wrap items-center gap-2 rounded-xl border border-leaf-100 bg-leaf-50/70 px-3 py-2.5 text-sm shadow-[var(--app-shadow)] dark:border-leaf-900/40 dark:bg-leaf-950/20">
+          <span className="text-xs font-semibold text-leaf-900 dark:text-leaf-200">{selected.size} selected</span>
           <select
             className="input-field py-1.5 text-xs sm:w-36"
             defaultValue=""
@@ -367,7 +366,7 @@ export function PricingPage() {
                   return (
                     <tr
                       key={row.id}
-                      className="cursor-pointer border-b border-gray-50 transition hover:bg-pink-50/40 dark:border-gray-700 dark:hover:bg-gray-700/40"
+                      className="cursor-pointer border-b border-gray-50 transition hover:bg-leaf-50/40 dark:border-gray-700 dark:hover:bg-gray-700/40"
                       onClick={() => openEdit(row)}
                     >
                       <td className="px-3 py-3" onClick={(event) => event.stopPropagation()}>
@@ -411,7 +410,7 @@ export function PricingPage() {
         >
           <form id="pricing-edit-form" className="space-y-3" onSubmit={saveEdit}>
             {Array.isArray(draft.images) && draft.images[0] ? (
-              <img src={draft.images[0]} alt="" className="h-28 w-full rounded-2xl object-cover" />
+              <img src={draft.images[0]} alt="" className="h-28 w-full rounded-xl object-cover" />
             ) : null}
             {[
               ["name", "Name"],
@@ -482,7 +481,7 @@ export function PricingPage() {
           <div className="flex h-full w-full max-w-2xl flex-col border-l border-gray-200 bg-white shadow-2xl dark:border-gray-700 dark:bg-gray-900">
             <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3.5 dark:border-gray-800">
               <div>
-                <p className="text-[11px] font-semibold tracking-[0.16em] text-pink-600 uppercase">Catalogue</p>
+                <p className="text-[11px] font-semibold tracking-[0.16em] text-leaf-600 uppercase">Catalogue</p>
                 <p className="text-sm font-semibold text-gray-900 dark:text-white">Import catalogue</p>
                 <p className="text-xs text-gray-500">Shopify-compatible CSV / Excel · session only</p>
               </div>
@@ -503,7 +502,7 @@ export function PricingPage() {
                 <span
                   key={label}
                   className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${
-                    index === step ? "bg-pink-100 text-pink-900" : index < step ? "bg-emerald-50 text-emerald-800" : "bg-gray-100 text-gray-500"
+                    index === step ? "bg-leaf-100 text-leaf-900" : index < step ? "bg-emerald-50 text-emerald-800" : "bg-gray-100 text-gray-500"
                   }`}
                 >
                   {index + 1}. {label}
@@ -515,7 +514,7 @@ export function PricingPage() {
               {step === 0 ? (
                 <div className="space-y-4">
                   <p className="text-sm text-gray-600">
-                    Upload a Shopify product export or the Pahachan template. Optional image files map by filename, SKU, or row.
+                    Upload a Shopify product export or the Dukify template. Optional image files map by filename, SKU, or row.
                   </p>
                   <input
                     ref={fileRef}

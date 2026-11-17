@@ -65,12 +65,12 @@ function exportRows(rows, format) {
     const sheet = XLSX.utils.aoa_to_sheet(data);
     const book = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(book, sheet, "Orders");
-    XLSX.writeFile(book, "pahachan-orders.xlsx");
+    XLSX.writeFile(book, "dukify-orders.xlsx");
     return;
   }
   const header = columns.map(([, label]) => label).join(",");
   const lines = rows.map((row) => columns.map(([key]) => csvEscape(row[key])).join(","));
-  downloadBlob("pahachan-orders.csv", [header, ...lines].join("\n"), "text/csv;charset=utf-8");
+  downloadBlob("dukify-orders.csv", [header, ...lines].join("\n"), "text/csv;charset=utf-8");
 }
 
 export function OrdersPage() {

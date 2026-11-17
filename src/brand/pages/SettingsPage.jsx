@@ -6,14 +6,14 @@ import { Drawer, Field, Modal, PageHead, Status, Surface } from "../ui";
 const copy = {
   profile: ["Brand profile", "The public name and story customers see."],
   business: ["Business information", "Legal entity details used on invoices. GST edits are demo-only."],
-  contact: ["Contact information", "Who Pahachan should call for this brand."],
+  contact: ["Contact information", "Who Dukify should call for this brand."],
   store: ["Store information", "City, focus, and the published domain."],
   security: ["Account security", "This browser session. Two-factor authentication is requested, not switched on locally."],
   password: ["Password", "Updates the demo password stored in this browser."],
   team: ["Team members", "Seats appear only when the brand has team access enabled."],
   preferences: ["Notification preferences", "Which notice types this demo login wants to emphasise."],
   bank: ["Bank and settlement details", "The account is masked. Confirm before replacing it."],
-  legal: ["Legal documents", "Verified files held by Pahachan. This demo shows the record, not the file."],
+  legal: ["Legal documents", "Verified files held by Dukify. This demo shows the record, not the file."],
 };
 
 export default function SettingsPage({ section }) {
@@ -140,7 +140,7 @@ export default function SettingsPage({ section }) {
               </div>
               <button type="button" className="btn-primary mt-3" onClick={() => setMemberError(partner.addMember(member))}>Add teammate</button>
             </>
-          ) : <p className="text-sm text-gray-600">Team access is not enabled for {brand.name}. Pahachan turns this on per agreement.</p>}
+          ) : <p className="text-sm text-gray-600">Team access is not enabled for {brand.name}. Dukify turns this on per agreement.</p>}
         </Surface>
       ) : null}
       {section === "preferences" ? (
@@ -181,7 +181,7 @@ export default function SettingsPage({ section }) {
       ) : null}
       {confirmBank ? <Modal title="Replace settlement account?" body="This demo stores the new account in the browser. It does not notify a bank." confirmLabel="Save" onClose={() => setConfirmBank(false)} onConfirm={() => { partner.saveBank(bank); setConfirmBank(false); }} /> : null}
       {removeId ? <Modal title="Remove teammate?" body="They disappear from this demo team list." danger confirmLabel="Remove" onClose={() => setRemoveId(null)} onConfirm={() => { partner.removeMember(removeId); setRemoveId(null); }} /> : null}
-      {doc ? <Drawer title={doc.name} onClose={() => setDoc(null)}><p className="text-sm">Status {doc.status}. The signed file stays with Pahachan records. This panel is the demo index entry only.</p></Drawer> : null}
+      {doc ? <Drawer title={doc.name} onClose={() => setDoc(null)}><p className="text-sm">Status {doc.status}. The signed file stays with Dukify records. This panel is the demo index entry only.</p></Drawer> : null}
     </div>
   );
 }

@@ -1,136 +1,25 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
-  Activity,
-  AlertTriangle,
-  BarChart3,
   Bell,
   ChevronDown,
-  ClipboardCheck,
-  Box,
-  Boxes,
-  ClipboardList,
-  CreditCard,
-  Factory,
-  Globe,
-  GraduationCap,
-  IdCard,
-  IndianRupee,
-  Landmark,
-  LayoutDashboard,
-  LifeBuoy,
   LogOut,
   Mail,
   Megaphone,
   Menu,
   MessageSquare,
   Moon,
-  Package,
-  PackageCheck,
-  PackageX,
   PanelLeft,
-  ScanLine,
   Search,
   Settings,
-  Shield,
-  Stamp,
-  Store,
   Sun,
-  Tags,
-  Truck,
-  Undo2,
-  Unplug,
   UserRound,
-  Users,
-  Wallet,
-  Warehouse,
   X,
 } from "lucide-react";
 import { useStore } from "./store";
 import { useAccess } from "./access";
 import { approvals, exceptions } from "./work";
-
-export const navGroups = [
-  {
-    label: "Command",
-    items: [
-      { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-      { to: "/approvals", label: "Approvals", icon: ClipboardCheck },
-      { to: "/exceptions", label: "Exceptions", icon: AlertTriangle },
-      { to: "/brands", label: "Brands", icon: Store },
-      { to: "/partners", label: "Partners", icon: Users },
-      { to: "/websites", label: "Websites", icon: Globe },
-    ],
-  },
-  {
-    label: "Catalogue",
-    items: [
-      { to: "/products", label: "Products", icon: Package },
-      { to: "/categories", label: "Categories", icon: Tags },
-      { to: "/pricing", label: "Pricing", icon: IndianRupee },
-    ],
-  },
-  {
-    label: "Supply",
-    items: [
-      { to: "/suppliers", label: "Suppliers", icon: Factory },
-      { to: "/purchasing", label: "Purchasing", icon: ClipboardList },
-      { to: "/warehouses", label: "Warehouses", icon: Warehouse },
-      { to: "/inventory", label: "Inventory", icon: Boxes },
-      { to: "/quality", label: "Quality", icon: ScanLine },
-    ],
-  },
-  {
-    label: "Orders",
-    items: [
-      { to: "/orders", label: "Orders", icon: ClipboardList },
-      { to: "/fulfilment", label: "Fulfilment", icon: PackageCheck },
-      { to: "/shipping", label: "Shipping", icon: Truck },
-      { to: "/ndr", label: "NDR desk", icon: PackageX },
-      { to: "/private-label", label: "Private label", icon: Stamp },
-      { to: "/packaging", label: "Packaging", icon: Box },
-      { to: "/returns", label: "Returns", icon: Undo2 },
-    ],
-  },
-  {
-    label: "Commercial",
-    items: [
-      { to: "/customers", label: "Customers", icon: UserRound },
-      { to: "/payments", label: "Payments", icon: CreditCard },
-      { to: "/finance", label: "Finance", icon: Landmark },
-      { to: "/settlements", label: "Settlements", icon: Wallet },
-      { to: "/marketing", label: "Marketing", icon: Megaphone },
-    ],
-  },
-  {
-    label: "Partner success",
-    items: [
-      { to: "/academy", label: "Academy", icon: GraduationCap },
-      { to: "/notifications", label: "Notifications", icon: Bell },
-    ],
-  },
-  {
-    label: "Support Management",
-    items: [
-      { to: "/support", label: "All Tickets", icon: LifeBuoy, badge: "tickets" },
-      { to: "/support/brand", label: "Brand Tickets", icon: Store },
-      { to: "/support/customer", label: "Customer Tickets", icon: UserRound },
-      { to: "/support/agents", label: "Support Agents", icon: MessageSquare },
-      { to: "/support/categories", label: "Categories", icon: Tags },
-    ],
-  },
-  {
-    label: "Platform",
-    items: [
-      { to: "/reports", label: "Reports", icon: BarChart3 },
-      { to: "/access/staff", label: "Staff & access", icon: IdCard },
-      { to: "/access/permissions", label: "Roles & permissions", icon: Shield },
-      { to: "/access/audit", label: "Audit log", icon: Activity },
-      { to: "/settings", label: "Settings", icon: Settings },
-      { to: "/integrations", label: "Integrations", icon: Unplug },
-    ],
-  },
-];
+import { navGroups } from "./adminNav";
 
 function isSupportNavActive(to, pathname) {
   if (to === "/support") {
@@ -181,9 +70,6 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [openGroups, setOpenGroups] = useState(() =>
-    Object.fromEntries(navGroups.map((group) => [group.label, true])),
-  );
   const [query, setQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const [bellOpen, setBellOpen] = useState(false);
@@ -262,28 +148,24 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
     return [...pages, ...brands, ...partners, ...products, ...orders, ...shipments, ...tickets].slice(0, 8);
   }, [canPath, db.brands, db.orders, db.partners, db.products, db.shipments, db.tickets, query, visibleNavGroups]);
 
-  const width = collapsed ? 72 : 256;
-  const railGap = 14;
-  const workspacePad = width + railGap * 2;
+  const width = collapsed ? 64 : 220;
+  const railGap = 0;
+  const workspacePad = width + 8;
 
   return (
     <div className="app-shell">
       <aside
-        className={`app-rail fixed z-40 flex flex-col overflow-hidden transition-[width,transform,top,bottom,left] duration-200 max-lg:inset-y-0 max-lg:left-0 ${
+        className={`app-rail fixed top-2 bottom-0 left-0 z-40 flex flex-col overflow-hidden transition-[width,transform] duration-200 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:top-3.5 lg:bottom-3.5 lg:left-3.5 lg:translate-x-0`}
+        } lg:translate-x-0 max-lg:top-0`}
         style={{ width }}
       >
-        <div className="flex h-[4.25rem] shrink-0 items-center gap-1 px-3">
+        <div className="flex h-14 shrink-0 items-center gap-1 px-2.5">
           <div className="flex min-w-0 flex-1 items-center gap-2.5 overflow-hidden">
-            <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-pink-500 to-rose-600 text-xs font-semibold text-white shadow-sm shadow-pink-500/30">
-              P
-            </div>
-            {collapsed ? null : (
-              <div className="min-w-0">
-                <span className="block truncate text-sm font-semibold whitespace-nowrap">Pahachan</span>
-                <span className="block truncate text-[11px] text-gray-500">{roleLabel || "Admin"}</span>
-              </div>
+            {collapsed ? (
+              <img src="/logo/logo-dukify.png" alt="Dukify" className="h-9 w-9 shrink-0 object-contain" />
+            ) : (
+              <img src="/logo/logo-ducku-2.png" alt="Dukify" className="h-8 w-auto max-w-[9.5rem] rounded-md bg-white object-contain object-left px-1.5" />
             )}
           </div>
           <button
@@ -305,75 +187,40 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
           </button>
         </div>
         <nav className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden py-2 pb-3">
-          {visibleNavGroups.map((group) => {
-            const groupActive = group.items.some((item) =>
-              item.to.startsWith("/support")
-                ? isSupportNavActive(item.to, location.pathname)
-                : location.pathname === item.to || location.pathname.startsWith(`${item.to}/`),
-            );
-            const expanded = collapsed || openGroups[group.label] || groupActive;
+          {visibleNavGroups.flatMap((group) => group.items).map((item) => {
+            const Icon = item.icon;
+            const badge =
+              item.badge === "tickets" || item.to === "/support"
+                ? openTickets
+                : item.to === "/exceptions"
+                  ? openExceptions
+                  : item.to === "/approvals"
+                    ? openApprovals
+                    : item.to === "/ndr"
+                      ? openNdr
+                      : 0;
             return (
-              <div key={group.label} className="mb-2.5">
-                {collapsed ? null : (
-                  <button
-                    type="button"
-                    className="flex w-full items-center justify-between px-4 pt-2.5 pb-1.5 text-left"
-                    onClick={() =>
-                      setOpenGroups((current) => ({ ...current, [group.label]: !current[group.label] }))
-                    }
-                    aria-expanded={expanded}
-                  >
-                    <span
-                      className={`text-[10px] font-semibold tracking-[0.14em] uppercase ${
-                        groupActive ? "text-pink-600 dark:text-pink-400" : "text-gray-400 dark:text-gray-500"
-                      }`}
-                    >
-                      {group.label}
-                    </span>
-                    <ChevronDown
-                      className={`h-3.5 w-3.5 text-gray-400 transition ${expanded ? "rotate-0" : "-rotate-90"}`}
-                    />
-                  </button>
-                )}
-                {expanded
-                  ? group.items.map((item) => {
-                      const Icon = item.icon;
-                      const badge =
-                        item.badge === "tickets" || item.to === "/support"
-                          ? openTickets
-                          : item.to === "/exceptions"
-                            ? openExceptions
-                            : item.to === "/approvals"
-                              ? openApprovals
-                              : item.to === "/ndr"
-                                ? openNdr
-                                : 0;
-                      return (
-                        <NavLink
-                          key={item.to}
-                          to={item.to}
-                          title={item.label}
-                          end={item.to === "/support"}
-                          onClick={() => setMobileOpen(false)}
-                          className={({ isActive }) => {
-                            const supportActive = item.to.startsWith("/support")
-                              ? isSupportNavActive(item.to, location.pathname)
-                              : isActive;
-                            return `nav-link ${supportActive ? "nav-link-active" : ""}`;
-                          }}
-                        >
-                          <Icon className="h-4 w-4 shrink-0" />
-                          {collapsed ? null : <span className="min-w-0 truncate">{item.label}</span>}
-                          {!collapsed && badge > 0 ? (
-                            <span className="ml-auto shrink-0 rounded-full bg-rose-500 px-1.5 py-0.5 text-[10px] font-semibold text-white">
-                              {badge}
-                            </span>
-                          ) : null}
-                        </NavLink>
-                      );
-                    })
-                  : null}
-              </div>
+              <NavLink
+                key={item.to}
+                to={item.to}
+                title={item.label}
+                end={item.to === "/support"}
+                onClick={() => setMobileOpen(false)}
+                className={({ isActive }) => {
+                  const supportActive = item.to.startsWith("/support")
+                    ? isSupportNavActive(item.to, location.pathname)
+                    : isActive;
+                  return `nav-link ${supportActive ? "nav-link-active" : ""}`;
+                }}
+              >
+                <Icon className="h-4 w-4 shrink-0" />
+                {collapsed ? null : <span className="min-w-0 truncate">{item.label}</span>}
+                {!collapsed && badge > 0 ? (
+                  <span className="ml-auto shrink-0 rounded-full bg-[#EE8802] px-1.5 py-0.5 text-[10px] font-semibold text-[#001E55]">
+                    {badge}
+                  </span>
+                ) : null}
+              </NavLink>
             );
           })}
         </nav>
@@ -388,9 +235,9 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
         />
       ) : null}
 
-      <div className="app-workspace transition-[padding] duration-200 max-lg:!pl-3" style={{ paddingLeft: workspacePad }}>
-        <header className="app-topbar sticky top-3.5 z-20 grid h-[4.25rem] grid-cols-[1.2fr_minmax(12rem,28rem)_0.8fr] items-center gap-3 px-3 backdrop-blur sm:px-5">
-          <div className="flex min-w-0 items-center justify-start gap-2">
+      <div className="app-workspace transition-[padding] duration-200 max-lg:!pl-2" style={{ paddingLeft: workspacePad }}>
+        <header className="app-topbar sticky top-2 z-20 grid h-14 grid-cols-[1fr_minmax(12rem,36rem)_0.7fr] items-center gap-2 px-2.5 backdrop-blur sm:px-4">
+          <div className="flex min-w-0 items-center justify-start gap-2 pl-10 sm:pl-14">
             <button
               type="button"
               className="icon-btn inline-grid shrink-0 lg:hidden"
@@ -404,10 +251,8 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
                 const { when, name } = dayGreeting(principal?.name || roleLabel || "there");
                 return (
                   <>
-                    <span className="text-gray-600 dark:text-gray-300">{when}, </span>
-                    <span className="bg-gradient-to-r from-pink-600 to-rose-500 bg-clip-text text-transparent">
-                      {name}
-                    </span>
+                    <span className="text-gray-900 dark:text-white">{when}, </span>
+                    <span className="font-semibold text-gray-900 dark:text-white">{name}</span>
                   </>
                 );
               })()}
@@ -427,7 +272,7 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
               className="search-pill"
             />
             {searchOpen && results.length > 0 ? (
-              <div className="absolute top-full right-0 left-0 z-30 mt-2 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl dark:border-gray-700 dark:bg-gray-800">
+              <div className="absolute top-full right-0 left-0 z-30 mt-2 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xl dark:border-gray-700 dark:bg-gray-800">
                 {results.map((result) => (
                   <button
                     key={`${result.kind}-${result.label}`}
@@ -486,7 +331,7 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
                     </div>
                     <button
                       type="button"
-                      className="text-xs font-medium text-pink-600 hover:text-pink-700"
+                      className="text-xs font-medium text-leaf-600 hover:text-leaf-700"
                       onClick={() => {
                         setBellOpen(false);
                         navigate("/notifications");
@@ -555,7 +400,7 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
                   <div className="border-t border-gray-100 px-3.5 py-2 dark:border-gray-700">
                     <button
                       type="button"
-                      className="w-full rounded-lg py-2 text-center text-sm font-medium text-pink-600 hover:bg-pink-50 dark:text-pink-400 dark:hover:bg-pink-950/20"
+                      className="w-full rounded-lg py-2 text-center text-sm font-medium text-leaf-600 hover:bg-leaf-50 dark:text-leaf-400 dark:hover:bg-leaf-950/20"
                       onClick={() => {
                         setBellOpen(false);
                         navigate("/notifications");
@@ -579,7 +424,7 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
             <div className="relative" ref={profileRef}>
               <button
                 type="button"
-                className="flex h-11 items-center gap-2.5 rounded-full border border-gray-200/80 bg-white py-1 pr-2.5 pl-1 shadow-[0_1px_2px_rgba(17,24,39,0.04)] transition hover:border-pink-200 hover:bg-pink-50/40 dark:border-gray-700 dark:bg-gray-900 dark:hover:border-pink-900/50 dark:hover:bg-pink-950/20"
+                className="flex h-11 items-center gap-2.5 rounded-full border border-gray-200/80 bg-white py-1 pr-2.5 pl-1 shadow-[0_1px_2px_rgba(17,24,39,0.04)] transition hover:border-leaf-200 hover:bg-leaf-50/40 dark:border-gray-700 dark:bg-gray-900 dark:hover:border-leaf-900/50 dark:hover:bg-leaf-950/20"
                 onClick={() => {
                   setProfileOpen((value) => !value);
                   setBellOpen(false);
@@ -588,8 +433,8 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
                 aria-haspopup="menu"
                 aria-label="Account menu"
               >
-                <span className="grid h-9 w-9 place-items-center rounded-full bg-gradient-to-br from-pink-500 to-rose-600 text-[13px] font-semibold text-white shadow-sm shadow-pink-500/25 ring-2 ring-white dark:ring-gray-900">
-                  P
+                <span className="grid h-8 w-8 place-items-center rounded-full bg-leaf-50 text-[12px] font-semibold tracking-tight text-leaf-700 ring-1 ring-leaf-100 dark:bg-leaf-950/40 dark:text-leaf-300 dark:ring-leaf-900/50">
+                  {(principal?.name || "P").slice(0, 1).toUpperCase()}
                 </span>
                 <span className="hidden text-left sm:block">
                   <span className="block text-[13px] leading-4 font-semibold text-gray-900 dark:text-white">{principal?.name || "User"}</span>
@@ -600,11 +445,11 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
               {profileOpen ? (
                 <div
                   role="menu"
-                  className="absolute top-12 right-0 z-30 w-64 overflow-hidden rounded-2xl border border-gray-200 bg-white py-1 shadow-xl dark:border-gray-700 dark:bg-gray-800"
+                  className="absolute top-12 right-0 z-30 w-64 overflow-hidden rounded-xl border border-gray-200 bg-white py-1 shadow-xl dark:border-gray-700 dark:bg-gray-800"
                 >
                   <div className="flex items-center gap-3 border-b border-gray-100 px-3.5 py-3 dark:border-gray-700">
-                    <span className="grid h-10 w-10 place-items-center rounded-full bg-gradient-to-br from-pink-500 to-rose-600 text-sm font-semibold text-white shadow-sm shadow-pink-500/25">
-                      P
+                    <span className="grid h-9 w-9 place-items-center rounded-full bg-leaf-50 text-[13px] font-semibold tracking-tight text-leaf-700 ring-1 ring-leaf-100 dark:bg-leaf-950/40 dark:text-leaf-300 dark:ring-leaf-900/50">
+                      {(principal?.name || "P").slice(0, 1).toUpperCase()}
                     </span>
                     <div className="min-w-0">
                       <p className="truncate text-sm font-semibold text-gray-900 dark:text-white">{principal?.name || "User"}</p>

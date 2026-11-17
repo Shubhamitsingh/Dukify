@@ -15,7 +15,7 @@ export function IntegrationCard({ provider, configured, enabled, onConfigure, on
   };
 
   return (
-    <article className="flex h-full flex-col rounded-2xl border border-gray-200/90 bg-white p-5 shadow-[0_1px_2px_rgba(17,24,39,0.04),0_8px_20px_rgba(17,24,39,0.04)] transition hover:shadow-[0_1px_2px_rgba(17,24,39,0.05),0_12px_28px_rgba(17,24,39,0.08)] dark:border-gray-700 dark:bg-gray-800">
+    <article className="flex h-full flex-col rounded-xl border border-gray-200/90 bg-white p-5 shadow-[0_1px_2px_rgba(17,24,39,0.04),0_8px_20px_rgba(17,24,39,0.04)] transition hover:shadow-[0_1px_2px_rgba(17,24,39,0.05),0_12px_28px_rgba(17,24,39,0.08)] dark:border-gray-700 dark:bg-gray-800">
       <div className="flex items-start justify-between gap-3">
         <div className="grid h-12 w-12 place-items-center rounded-xl border border-gray-100 bg-white p-2 dark:border-gray-700 dark:bg-gray-900">
           <IntegrationLogo providerId={provider.id} name={provider.name} className="h-8 w-8" />
@@ -28,7 +28,7 @@ export function IntegrationCard({ provider, configured, enabled, onConfigure, on
           aria-label={`${enabled ? "Turn off" : "Turn on"} ${provider.name}`}
           onClick={handleToggle}
           className={`relative h-7 w-12 shrink-0 rounded-full transition ${
-            enabled ? "bg-pink-500" : "bg-gray-200 dark:bg-gray-600"
+            enabled ? "bg-leaf-500" : "bg-gray-200 dark:bg-gray-600"
           }`}
         >
           <span
@@ -46,7 +46,7 @@ export function IntegrationCard({ provider, configured, enabled, onConfigure, on
         {configured ? (
           <span
             className={`text-xs font-semibold ${
-              enabled ? "text-pink-600 dark:text-pink-400" : "text-gray-400"
+              enabled ? "text-leaf-600 dark:text-leaf-400" : "text-gray-400"
             }`}
           >
             Connected

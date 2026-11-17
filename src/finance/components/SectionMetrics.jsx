@@ -2,7 +2,7 @@ import { inr } from "../../data";
 
 export function SectionMetrics({ title, items }) {
   return (
-    <div className="rounded-2xl border border-gray-200/80 bg-white p-3 shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-800">
+    <div className="rounded-xl border border-gray-200/80 bg-white p-3 shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-800">
       {title ? <p className="mb-2.5 text-[11px] font-semibold tracking-[0.12em] text-gray-400 uppercase">{title}</p> : null}
       <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
         {items.map((item) => (

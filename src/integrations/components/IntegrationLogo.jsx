@@ -22,7 +22,7 @@ export function IntegrationLogo({ providerId, name, className = "h-12 w-12" }) {
       {src ? (
         <img src={src} alt={name || ""} className="h-full w-full object-contain" loading="lazy" />
       ) : (
-        <span className="text-sm font-bold text-pink-600">{(name || "?").slice(0, 2)}</span>
+        <span className="text-sm font-bold text-leaf-600">{(name || "?").slice(0, 2)}</span>
       )}
     </span>
   );

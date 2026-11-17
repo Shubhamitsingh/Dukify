@@ -71,12 +71,11 @@ export function PermissionEditorPage() {
   return (
     <div className="space-y-5">
       <PageHead
-        eyebrow="Access"
         title="Roles & permissions"
         description={`Role is the relationship. Permissions are actions. Scope is which brands or records. Editor: ${roleLabel}.`}
         action={
           can(PERMISSIONS.PERMISSIONS_ASSIGN) ? (
-            <SoftButton className="border-pink-200 bg-pink-50 text-pink-800" onClick={save} disabled={!selected}>
+            <SoftButton className="border-leaf-200 bg-leaf-50 text-leaf-800" onClick={save} disabled={!selected}>
               Save grants
             </SoftButton>
           ) : null
@@ -92,7 +91,7 @@ export function PermissionEditorPage() {
                 <button
                   type="button"
                   className={`w-full rounded-lg px-2.5 py-2 text-left text-sm ${
-                    selectedId === u.id ? "bg-pink-50 text-pink-900" : "hover:bg-gray-50"
+                    selectedId === u.id ? "bg-leaf-50 text-leaf-900" : "hover:bg-gray-50"
                   }`}
                   onClick={() => onSelect(u.id)}
                 >
@@ -143,7 +142,7 @@ export function PermissionEditorPage() {
                             <button
                               key={b.id}
                               type="button"
-                              className={`rounded border px-2 py-0.5 ${on ? "border-pink-400 bg-pink-50" : "border-gray-200"}`}
+                              className={`rounded border px-2 py-0.5 ${on ? "border-leaf-400 bg-leaf-50" : "border-gray-200"}`}
                               onClick={() =>
                                 setDraftScope({
                                   ...scope,

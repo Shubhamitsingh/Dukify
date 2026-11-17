@@ -4,7 +4,7 @@ export function TicketActivityTimeline({ logs }) {
   const rows = [...(logs || [])].sort((a, b) => new Date(b.at) - new Date(a.at));
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-sky-200/80 bg-white shadow-[var(--app-shadow)] dark:border-sky-900/60 dark:bg-gray-900">
+    <div className="overflow-hidden rounded-xl border border-sky-200/80 bg-white shadow-[var(--app-shadow)] dark:border-sky-900/60 dark:bg-gray-900">
       <div className="border-b border-sky-100 px-4 py-3 dark:border-sky-900/40">
         <p className="text-[11px] font-semibold tracking-[0.12em] text-sky-700 uppercase dark:text-sky-300">Activity trail</p>
       </div>

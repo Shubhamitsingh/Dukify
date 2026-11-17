@@ -43,7 +43,7 @@ export function TicketConversation({ ticket, onReply }) {
   };
 
   return (
-    <div className={`flex min-h-[32rem] flex-col overflow-hidden rounded-2xl border shadow-[var(--app-shadow)] ${CHAT.shell} ${CHAT.canvas}`}>
+    <div className={`flex min-h-[32rem] flex-col overflow-hidden rounded-xl border shadow-[var(--app-shadow)] ${CHAT.shell} ${CHAT.canvas}`}>
       <div className={`border-b px-4 py-3 ${CHAT.header}`}>
         <div className="flex flex-wrap items-center justify-between gap-2">
           <p className={`text-[11px] font-semibold tracking-[0.12em] uppercase ${CHAT.label}`}>Conversation desk</p>
@@ -80,7 +80,7 @@ export function TicketConversation({ ticket, onReply }) {
                 <span className={`mt-1 grid h-8 w-8 shrink-0 place-items-center rounded-full text-[10px] font-semibold ${avatar}`}>
                   {initials(message.authorName)}
                 </span>
-                <div className={`max-w-[min(100%,28rem)] rounded-2xl px-3.5 py-2.5 text-sm shadow-sm ${bubble}`}>
+                <div className={`max-w-[min(100%,28rem)] rounded-xl px-3.5 py-2.5 text-sm shadow-sm ${bubble}`}>
                   <div
                     className={`mb-1 flex flex-wrap items-center gap-2 text-[11px] ${
                       staff && !message.internal ? "text-sky-50/90" : "opacity-70"
@@ -132,7 +132,7 @@ export function TicketConversation({ ticket, onReply }) {
           </button>
         </div>
         <textarea
-          className={`input-field min-h-24 !rounded-2xl ${
+          className={`input-field min-h-24 !rounded-xl ${
             internal
               ? "!border-amber-300 focus:!border-amber-500 focus:!ring-amber-500/20"
               : "!border-sky-200 focus:!border-sky-500 focus:!ring-sky-500/20"

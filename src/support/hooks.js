@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useStore } from "../store";
-import { readBrandRaisedTickets } from "./bridge";
+import { readBrandRaisedTickets, readDemoTickets } from "./bridge";
 import { supportAgentsSeed, ticketCategoriesSeed, ticketsSeed } from "./data/seed";
 import { buildActivity, buildMessage, nextTicketId } from "./model";
 
@@ -14,12 +14,11 @@ function needsSupportHydration(db) {
   return !rich;
 }
 
-function mergeBrandRaised(tickets) {
-  const raised = readBrandRaisedTickets();
-  if (!raised.length) return tickets;
+function mergeBridged(tickets, extra) {
+  if (!extra.length) return tickets || [];
   const ids = new Set((tickets || []).map((row) => row.id));
-  const missing = raised.filter((row) => row?.id && !ids.has(row.id));
-  if (!missing.length) return tickets;
+  const missing = extra.filter((row) => row?.id && !ids.has(row.id));
+  if (!missing.length) return tickets || [];
   return [...missing, ...(tickets || [])];
 }
 
@@ -29,7 +28,7 @@ export function useSupportActions() {
   useEffect(() => {
     const hydrate = needsSupportHydration(db);
     const baseTickets = hydrate ? structuredClone(ticketsSeed) : db.tickets || [];
-    const mergedTickets = mergeBrandRaised(baseTickets);
+    const mergedTickets = mergeBridged(mergeBridged(baseTickets, readBrandRaisedTickets()), readDemoTickets());
     const ticketsChanged = hydrate || mergedTickets.length !== (db.tickets || []).length;
     const agentsMissing = !(db.supportAgents || []).length;
     const categoriesMissing = !(db.ticketCategories || []).length;

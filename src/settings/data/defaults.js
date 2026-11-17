@@ -10,10 +10,10 @@ export const SETTINGS_SECTIONS = [
 
 export const DEFAULT_SETTINGS = {
   company: {
-    name: "Pahachan",
-    supportEmail: "ops@pahachan.example",
+    name: "Dukify",
+    supportEmail: "ops@dukify.example",
     phone: "+91 98000 00000",
-    website: "https://pahachan.example",
+    website: "https://dukify.example",
     address: "Sector 44, Industrial Area",
     city: "Gurugram",
     state: "Haryana",
@@ -28,8 +28,8 @@ export const DEFAULT_SETTINGS = {
     language: "en-IN",
   },
   commerce: {
-    invoicePrefix: "PHN",
-    invoiceFormat: "PHN-{YYYY}-{####}",
+    invoicePrefix: "DUK",
+    invoiceFormat: "DUK-{YYYY}-{####}",
     returnWindowDays: 7,
     taxNote: "GST as per company ledger",
   },
@@ -47,14 +47,21 @@ export function normalizeSettings(raw) {
 
   // Current nested shape
   if (raw.company && typeof raw.company === "object") {
+    const company = { ...DEFAULT_SETTINGS.company, ...pick(raw.company, DEFAULT_SETTINGS.company) };
+    const commerce = {
+      ...DEFAULT_SETTINGS.commerce,
+      ...pick(raw.commerce || {}, DEFAULT_SETTINGS.commerce),
+      returnWindowDays: Number((raw.commerce || {}).returnWindowDays ?? DEFAULT_SETTINGS.commerce.returnWindowDays) || 7,
+    };
+    if (company.name === "Pahachan") company.name = "Dukify";
+    if (company.supportEmail === "ops@pahachan.example") company.supportEmail = "ops@dukify.example";
+    if (company.website === "https://pahachan.example") company.website = "https://dukify.example";
+    if (commerce.invoicePrefix === "PHN") commerce.invoicePrefix = "DUK";
+    if (commerce.invoiceFormat === "PHN-{YYYY}-{####}") commerce.invoiceFormat = "DUK-{YYYY}-{####}";
     return {
-      company: { ...DEFAULT_SETTINGS.company, ...pick(raw.company, DEFAULT_SETTINGS.company) },
+      company,
       preferences: { ...DEFAULT_SETTINGS.preferences, ...pick(raw.preferences || {}, DEFAULT_SETTINGS.preferences) },
-      commerce: {
-        ...DEFAULT_SETTINGS.commerce,
-        ...pick(raw.commerce || {}, DEFAULT_SETTINGS.commerce),
-        returnWindowDays: Number((raw.commerce || {}).returnWindowDays ?? DEFAULT_SETTINGS.commerce.returnWindowDays) || 7,
-      },
+      commerce,
       alerts: {
         ...DEFAULT_SETTINGS.alerts,
         ...(raw.alerts || pick(raw.notifications || {}, DEFAULT_SETTINGS.alerts)),

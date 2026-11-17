@@ -19,12 +19,11 @@ export default function Login({ onLogin }) {
 
   return (
     <div className="app-shell grid min-h-screen place-items-center px-4 py-8 sm:px-6">
-      <form onSubmit={submit} className="w-full max-w-md rounded-2xl border border-gray-200/80 bg-white p-5 shadow-[var(--app-shadow)] sm:p-6 dark:border-gray-700 dark:bg-gray-800">
+      <form onSubmit={submit} className="w-full max-w-md rounded-xl border border-gray-200/80 bg-white p-5 shadow-[var(--app-shadow)] sm:p-6 dark:border-gray-700 dark:bg-gray-800">
         <div className="mb-5 flex items-center gap-3">
-          <div className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-pink-500 to-rose-600 text-sm font-semibold text-white">P</div>
           <div>
-            <p className="text-[11px] font-semibold tracking-[0.16em] text-pink-600 uppercase">Pahachan</p>
-            <h1 className="text-lg font-semibold tracking-tight sm:text-xl">Brand Partner</h1>
+            <img src="/logo/logo-ducku-2.png" alt="Dukify" className="h-8 w-auto" />
+            <h1 className="mt-1 text-lg font-semibold tracking-tight sm:text-xl">Brand Partner</h1>
           </div>
         </div>
         <p className="mb-4 text-sm leading-5 text-gray-500">Sign in to the demo portal. Default partner is Brand K. Password for every seeded brand is demo1234 until you change it.</p>

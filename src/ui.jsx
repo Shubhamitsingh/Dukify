@@ -1,9 +1,9 @@
 export function PageHead({ title, description, action, eyebrow }) {
   return (
-    <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+    <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
       <div className="min-w-0">
         {eyebrow ? (
-          <p className="mb-1 text-[11px] font-semibold tracking-[0.16em] text-pink-600 uppercase dark:text-pink-300">
+          <p className="mb-1 text-[11px] font-semibold tracking-[0.16em] text-leaf-600 uppercase dark:text-leaf-300">
             {eyebrow}
           </p>
         ) : null}
@@ -22,43 +22,43 @@ export function PageHead({ title, description, action, eyebrow }) {
 const toneMap = {
   emerald: {
     dot: "bg-emerald-500",
-    icon: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300",
+    icon: "text-emerald-600 dark:text-emerald-300",
     wash: "",
   },
   sky: {
     dot: "bg-sky-500",
-    icon: "bg-sky-50 text-sky-700 dark:bg-sky-950/40 dark:text-sky-300",
+    icon: "text-sky-600 dark:text-sky-300",
     wash: "",
   },
   amber: {
     dot: "bg-amber-500",
-    icon: "bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300",
+    icon: "text-amber-600 dark:text-amber-300",
     wash: "",
   },
   rose: {
     dot: "bg-rose-500",
-    icon: "bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300",
+    icon: "text-rose-600 dark:text-rose-300",
     wash: "",
   },
   pink: {
-    dot: "bg-pink-500",
-    icon: "bg-pink-50 text-pink-700 dark:bg-pink-950/40 dark:text-pink-300",
+    dot: "bg-leaf-500",
+    icon: "text-leaf-600 dark:text-leaf-300",
     wash: "",
   },
   slate: {
     dot: "bg-gray-300",
-    icon: "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300",
+    icon: "text-gray-500 dark:text-gray-300",
     wash: "",
   },
   violet: {
     dot: "bg-violet-500",
-    icon: "bg-violet-50 text-violet-700 dark:bg-violet-950/40 dark:text-violet-300",
+    icon: "text-violet-600 dark:text-violet-300",
     wash: "",
   },
   hero: {
     dot: "bg-white/80",
-    icon: "bg-white/15 text-white",
-    wash: "border-transparent bg-gradient-to-br from-rose-600 via-pink-500 to-fuchsia-500 text-white shadow-md shadow-pink-500/20",
+    icon: "text-white",
+    wash: "border-transparent bg-gradient-to-br from-leaf-700 via-leaf-500 to-leaf-400 text-white shadow-md shadow-leaf-500/20",
   },
 };
 
@@ -71,47 +71,53 @@ export function Kpi({ label, value, note, tone = "slate", icon, trend, onClick }
     <Tag
       type={onClick ? "button" : undefined}
       onClick={onClick}
-      className={`rounded-2xl border px-2.5 py-2.5 text-left transition sm:px-3 sm:py-3 ${
+      className={`flex h-full min-h-[6.75rem] flex-col rounded-xl border px-2.5 py-2.5 text-left transition sm:min-h-[7.25rem] sm:px-3 sm:py-3 ${
         hero
           ? palette.wash
           : "border-gray-200/80 bg-white shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-800"
       } ${onClick ? "hover:-translate-y-0.5 hover:shadow-md" : ""}`}
     >
-      <div className="flex items-start justify-between gap-1.5 sm:gap-2">
-        <div className="min-w-0">
-          <div className="flex items-center gap-1.5">
-            <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${palette.dot}`} />
-            <p className={`truncate text-[10px] font-medium sm:text-[11px] ${hero ? "text-white/85" : "text-gray-500 dark:text-gray-400"}`}>
-              {label}
-            </p>
-          </div>
-          <p className={`mt-1 text-base font-semibold tracking-tight tabular-nums sm:text-lg ${hero ? "text-white" : "text-gray-900 dark:text-white"}`}>
-            {value}
+      <div className="flex h-8 items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-1.5">
+          <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${palette.dot}`} />
+          <p className={`truncate text-[10px] font-medium leading-none sm:text-[11px] ${hero ? "text-white/85" : "text-gray-500 dark:text-gray-400"}`}>
+            {label}
           </p>
         </div>
         {icon ? (
-          <span className={`hidden h-8 w-8 shrink-0 place-items-center rounded-xl sm:grid ${palette.icon}`}>{icon}</span>
-        ) : null}
+          <span className={`grid h-8 w-8 shrink-0 place-items-center ${palette.icon}`}>{icon}</span>
+        ) : (
+          <span className="h-8 w-8 shrink-0" aria-hidden="true" />
+        )}
       </div>
-      <div className="mt-1.5 flex flex-wrap items-center gap-1.5 sm:mt-2">
-        {trend ? (
-          <span
-            className={`rounded-full px-2 py-0.5 text-[10px] font-semibold sm:text-[11px] ${
-              trend.up
-                ? hero
-                  ? "bg-white/20 text-white"
-                  : "bg-emerald-50 text-emerald-700"
-                : hero
-                  ? "bg-black/15 text-white"
-                  : "bg-rose-50 text-rose-700"
-            }`}
-          >
-            {trend.label}
-          </span>
-        ) : null}
+      <p className={`mt-2 truncate text-base font-semibold leading-none tracking-tight tabular-nums sm:text-lg ${hero ? "text-white" : "text-gray-900 dark:text-white"}`}>
+        {value}
+      </p>
+      <div className="mt-auto flex min-h-[2.5rem] flex-col justify-end gap-1 pt-2">
+        <div className="flex h-[1.25rem] items-center">
+          {trend ? (
+            <span
+              className={`rounded-full px-2 py-0.5 text-[10px] font-semibold leading-none sm:text-[11px] ${
+                trend.up
+                  ? hero
+                    ? "bg-white/20 text-white"
+                    : "bg-emerald-50 text-emerald-700"
+                  : hero
+                    ? "bg-black/15 text-white"
+                    : "bg-rose-50 text-rose-700"
+              }`}
+            >
+              {trend.label}
+            </span>
+          ) : null}
+        </div>
         {note ? (
-          <p className={`text-[10px] leading-4 sm:text-[11px] ${hero ? "text-white/75" : "text-gray-500"}`}>{note}</p>
-        ) : null}
+          <p className={`line-clamp-2 min-h-[2rem] text-[10px] leading-4 sm:text-[11px] ${hero ? "text-white/75" : "text-gray-500"}`}>
+            {note}
+          </p>
+        ) : (
+          <p className="min-h-[2rem]" aria-hidden="true" />
+        )}
       </div>
     </Tag>
   );
@@ -147,8 +153,8 @@ const pillTone = {
   "COD pending": "bg-amber-50 text-amber-800",
   Inspection: "bg-amber-50 text-amber-800",
   "Ready to ship": "bg-amber-50 text-amber-800",
-  Packing: "bg-pink-50 text-pink-800",
-  Processing: "bg-pink-50 text-pink-800",
+  Packing: "bg-leaf-50 text-leaf-800",
+  Processing: "bg-leaf-50 text-leaf-800",
   New: "bg-indigo-50 text-indigo-800",
   "Ready to Ship": "bg-amber-50 text-amber-800",
   "In Transit": "bg-sky-50 text-sky-800",
@@ -189,15 +195,15 @@ export function Status({ value }) {
 export function Surface({ title, action, children, className = "", padded = false }) {
   return (
     <section
-      className={`rounded-2xl border border-gray-200/80 bg-white shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-800 ${className.includes("overflow-") ? "" : "overflow-hidden"} ${className}`}
+      className={`rounded-xl border border-gray-200/80 bg-white shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-800 ${className.includes("overflow-") ? "" : "overflow-hidden"} ${className}`}
     >
       {title ? (
-        <div className="flex items-center justify-between gap-3 border-b border-gray-100 px-4 py-3.5 dark:border-gray-700">
+        <div className="flex items-center justify-between gap-2 border-b border-gray-100 px-3 py-2.5 dark:border-gray-700">
           <h2 className="text-sm font-semibold text-gray-900 dark:text-white">{title}</h2>
           {action}
         </div>
       ) : null}
-      {padded ? <div className="p-4">{children}</div> : children}
+      {padded ? <div className="p-3">{children}</div> : children}
     </section>
   );
 }
@@ -225,7 +231,7 @@ export function FilterChip({ active, children, onClick, count, className = "" })
       onClick={onClick}
       className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
         active
-          ? "border-pink-500 bg-pink-50 text-pink-800 dark:bg-pink-950/40 dark:text-pink-200"
+          ? "border-leaf-500 bg-leaf-50 text-leaf-800 dark:bg-leaf-950/40 dark:text-leaf-200"
           : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
       } ${className}`}
     >
@@ -237,7 +243,7 @@ export function FilterChip({ active, children, onClick, count, className = "" })
 
 export function Toolbar({ children, meta }) {
   return (
-    <div className="mb-4 flex flex-col gap-2.5 rounded-2xl border border-gray-200/80 bg-white/80 p-3 shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-800/80 sm:flex-row sm:flex-wrap sm:items-center">
+    <div className="mb-4 flex flex-col gap-2.5 rounded-xl border border-gray-200/80 bg-white/80 p-3 shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-800/80 sm:flex-row sm:flex-wrap sm:items-center">
       <div className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">{children}</div>
       {meta ? <p className="shrink-0 text-xs text-gray-500 sm:ml-auto">{meta}</p> : null}
     </div>
@@ -289,7 +295,7 @@ function RecordChrome({ title, onClose, eyebrow = "Record", align = "left" }) {
 export function DrawerShell({ title, onClose, children, footer, eyebrow = "Record" }) {
   return (
     <div className="fixed inset-0 z-40 flex justify-end bg-black/20 p-3 sm:p-4">
-      <aside className="flex h-full w-full max-w-md flex-col overflow-hidden rounded-2xl border border-gray-200/80 bg-[#f8fafc] shadow-2xl dark:border-gray-700 dark:bg-gray-950">
+      <aside className="flex h-full w-full max-w-md flex-col overflow-hidden rounded-xl border border-gray-200/80 bg-[#f8fafc] shadow-2xl dark:border-gray-700 dark:bg-gray-950">
         <RecordChrome title={title} onClose={onClose} eyebrow={eyebrow} />
         <div className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-4">{children}</div>
         {footer ? (
@@ -307,7 +313,7 @@ export function ModalShell({ title, onClose, children, footer, eyebrow = "New re
       <div
         role="dialog"
         aria-modal="true"
-        className={`flex max-h-[min(90vh,720px)] w-full ${width} flex-col overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-2xl dark:border-gray-700 dark:bg-gray-950 ${className}`}
+        className={`flex max-h-[min(90vh,720px)] w-full ${width} flex-col overflow-hidden rounded-xl border border-gray-200/80 bg-white shadow-2xl dark:border-gray-700 dark:bg-gray-950 ${className}`}
         onClick={(event) => event.stopPropagation()}
       >
         <RecordChrome title={title} onClose={onClose} eyebrow={eyebrow} align={align} />

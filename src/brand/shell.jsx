@@ -27,7 +27,7 @@ const noticeMeta = {
   order: { label: "Order", icon: ShoppingBag, tone: "bg-sky-50 text-sky-700 dark:bg-sky-950/40 dark:text-sky-300" },
   product: { label: "Product", icon: Package, tone: "bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300" },
   payment: { label: "Payment", icon: CircleDollarSign, tone: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300" },
-  store: { label: "Store", icon: Store, tone: "bg-pink-50 text-pink-700 dark:bg-pink-950/40 dark:text-pink-300" },
+  store: { label: "Store", icon: Store, tone: "bg-leaf-50 text-leaf-700 dark:bg-leaf-950/40 dark:text-leaf-300" },
   announcement: { label: "Platform", icon: Megaphone, tone: "bg-violet-50 text-violet-700 dark:bg-violet-950/40 dark:text-violet-300" },
 };
 
@@ -148,33 +148,33 @@ export default function Shell({ children, session, dark, onToggleDark, onLogout 
     return [...pages, ...orderHits, ...productHits, ...customerHits].slice(0, 8);
   }, [customers, orders, products, query]);
 
-  const desktopWidth = collapsed ? 72 : 256;
-  const drawerWidth = mobileOpen ? 288 : desktopWidth;
-  const railGap = 14;
-  const workspacePad = desktopWidth + railGap * 2;
+  const desktopWidth = collapsed ? 64 : 220;
+  const drawerWidth = mobileOpen ? 260 : desktopWidth;
+  const railGap = 0;
+  const workspacePad = desktopWidth + 8;
   const mark = (brand.name || "B").slice(0, 1).toUpperCase();
   const crumbs = findCrumb(location.pathname);
 
   return (
     <div className="app-shell">
       <aside
-        className={`app-rail fixed z-40 flex flex-col overflow-hidden transition-[width,transform,top,bottom,left] duration-200 max-lg:inset-y-0 max-lg:left-0 ${
+        className={`app-rail fixed top-2 bottom-0 left-0 z-40 flex flex-col overflow-hidden transition-[width,transform] duration-200 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full max-lg:pointer-events-none max-lg:invisible"
-        } lg:top-3.5 lg:bottom-3.5 lg:left-3.5 lg:visible lg:translate-x-0 lg:pointer-events-auto`}
+        } lg:visible lg:translate-x-0 lg:pointer-events-auto max-lg:top-0`}
         style={{ width: drawerWidth }}
       >
         <div className="flex h-[4.25rem] shrink-0 items-center gap-1 px-3">
           <div className="flex min-w-0 flex-1 items-center gap-2.5 overflow-hidden">
             <div
-              className="grid h-9 w-9 shrink-0 place-items-center rounded-xl text-xs font-semibold text-white shadow-sm shadow-pink-500/30"
-              style={{ background: brand.color || "linear-gradient(135deg,#ec4899,#e11d48)" }}
+              className="grid h-9 w-9 shrink-0 place-items-center rounded-xl text-xs font-semibold text-white shadow-sm shadow-leaf-500/30"
+              style={{ background: brand.color || "#001E55" }}
             >
               {mark}
             </div>
             {collapsed && !mobileOpen ? null : (
               <div className="min-w-0">
-                <span className="block truncate text-sm font-semibold whitespace-nowrap">{brand.name}</span>
-                <span className="block truncate text-[11px] text-gray-500">Brand Partner</span>
+                <span className="block truncate text-sm font-semibold whitespace-nowrap text-white">{brand.name}</span>
+                <span className="block truncate text-[11px] text-white/55">Brand Partner</span>
               </div>
             )}
           </div>
@@ -195,7 +195,7 @@ export default function Shell({ children, session, dark, onToggleDark, onLogout 
           {visibleNavGroups.map((group) => (
             <div key={group.label} className="mb-1.5">
               {collapsed && !mobileOpen ? null : (
-                <p className="px-4 pt-2.5 pb-1.5 text-[10px] font-semibold tracking-[0.14em] text-gray-400 uppercase dark:text-gray-500">
+                <p className="px-4 pt-2.5 pb-1.5 text-[10px] font-semibold tracking-[0.14em] text-white/40 uppercase">
                   {group.label}
                 </p>
               )}
@@ -235,16 +235,16 @@ export default function Shell({ children, session, dark, onToggleDark, onLogout 
         <button type="button" className="fixed inset-0 z-30 bg-black/40 lg:hidden" aria-label="Close menu" onClick={() => setMobileOpen(false)} />
       ) : null}
 
-      <div className="app-workspace transition-[padding] duration-200 max-lg:!pl-3" style={{ paddingLeft: workspacePad }}>
-        <header className="app-topbar relative sticky top-2 z-20 flex h-14 items-center gap-1 px-2 backdrop-blur sm:top-3.5 sm:h-[4.25rem] sm:gap-2 sm:px-3 lg:px-5">
+      <div className="app-workspace transition-[padding] duration-200 max-lg:!pl-2" style={{ paddingLeft: workspacePad }}>
+        <header className="app-topbar relative sticky top-2 z-20 flex h-14 items-center gap-1 px-2 backdrop-blur sm:gap-2 sm:px-3 lg:px-4">
           <div className="relative z-10 flex min-w-0 flex-1 items-center gap-1.5 lg:gap-2">
             <button type="button" className="icon-btn inline-grid shrink-0 lg:hidden" onClick={() => setMobileOpen(true)} aria-label="Open menu">
               <Menu className="h-5 w-5" />
             </button>
             {isDashboard ? (
               <p className="min-w-0 truncate text-sm font-bold tracking-tight sm:text-base lg:text-lg">
-                <span className="text-gray-600 dark:text-gray-300">{hello.when}, </span>
-                <span className="bg-gradient-to-r from-pink-600 to-rose-500 bg-clip-text text-transparent">{hello.name.split(" ")[0]}</span>
+                <span className="text-gray-900 dark:text-white">{hello.when}, </span>
+                <span className="font-semibold text-gray-900 dark:text-white">{hello.name.split(" ")[0]}</span>
               </p>
             ) : (
               <div className="min-w-0">
@@ -268,7 +268,7 @@ export default function Shell({ children, session, dark, onToggleDark, onLogout 
                 className="search-pill"
               />
               {searchOpen && results.length > 0 ? (
-                <div className="absolute top-full right-0 left-0 z-30 mt-2 max-h-72 overflow-hidden overflow-y-auto rounded-2xl border border-gray-200 bg-white shadow-xl dark:border-gray-700 dark:bg-gray-800">
+                <div className="absolute top-full right-0 left-0 z-30 mt-2 max-h-72 overflow-hidden overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-xl dark:border-gray-700 dark:bg-gray-800">
                   {results.map((result) => (
                     <button
                       key={`${result.kind}-${result.label}`}
@@ -306,7 +306,7 @@ export default function Shell({ children, session, dark, onToggleDark, onLogout 
                 <Search className="h-4 w-4" />
               </button>
               {searchOpen ? (
-                <div className="absolute top-11 right-0 z-30 w-[min(20rem,calc(100vw-1.25rem))] overflow-hidden rounded-2xl border border-gray-200 bg-white p-2 shadow-xl dark:border-gray-700 dark:bg-gray-800">
+                <div className="absolute top-11 right-0 z-30 w-[min(20rem,calc(100vw-1.25rem))] overflow-hidden rounded-xl border border-gray-200 bg-white p-2 shadow-xl dark:border-gray-700 dark:bg-gray-800">
                   <div className="relative">
                     <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
                     <input
@@ -388,7 +388,7 @@ export default function Shell({ children, session, dark, onToggleDark, onLogout 
             <div className="relative" ref={profileRef}>
               <button
                 type="button"
-                className="flex h-9 items-center gap-2 rounded-full border border-transparent bg-transparent py-0.5 pr-0 pl-0 transition hover:border-pink-200 hover:bg-pink-50/40 lg:h-11 lg:border-gray-200/80 lg:bg-white lg:pr-2.5 lg:pl-1 lg:shadow-[0_1px_2px_rgba(17,24,39,0.04)] dark:lg:border-gray-700 dark:lg:bg-gray-900"
+                className="flex h-9 items-center gap-2 rounded-full border border-transparent bg-transparent py-0.5 pr-0 pl-0 transition hover:border-leaf-200 hover:bg-leaf-50/40 lg:h-11 lg:border-gray-200/80 lg:bg-white lg:pr-2.5 lg:pl-1 lg:shadow-[0_1px_2px_rgba(17,24,39,0.04)] dark:lg:border-gray-700 dark:lg:bg-gray-900"
                 onClick={() => {
                   setProfileOpen((value) => !value);
                   setBellOpen(false);
@@ -400,7 +400,7 @@ export default function Shell({ children, session, dark, onToggleDark, onLogout 
               >
                 <span
                   className="grid h-9 w-9 place-items-center rounded-full text-[13px] font-semibold text-white shadow-sm ring-2 ring-white dark:ring-gray-900"
-                  style={{ background: brand.color || "#ec4899" }}
+                  style={{ background: brand.color || "#001E55" }}
                 >
                   {(brand.contactName || brand.name).slice(0, 1)}
                 </span>
@@ -462,7 +462,7 @@ function NotificationPanel({ unread, recentNotices, markAllRead, markRead, navig
     <div
       role="dialog"
       aria-label="Notifications"
-      className="absolute top-11 right-0 z-30 w-[min(24rem,calc(100vw-1.25rem))] overflow-hidden rounded-2xl border border-gray-200/90 bg-white shadow-[0_12px_40px_rgba(17,24,39,0.14)] dark:border-gray-700 dark:bg-gray-800"
+      className="absolute top-11 right-0 z-30 w-[min(24rem,calc(100vw-1.25rem))] overflow-hidden rounded-xl border border-gray-200/90 bg-white shadow-[0_12px_40px_rgba(17,24,39,0.14)] dark:border-gray-700 dark:bg-gray-800"
     >
       <div className="flex items-start justify-between gap-3 border-b border-gray-100 px-3.5 py-3 sm:px-4 dark:border-gray-700">
         <div className="min-w-0">
@@ -479,7 +479,7 @@ function NotificationPanel({ unread, recentNotices, markAllRead, markRead, navig
           ) : null}
           <button
             type="button"
-            className="text-xs font-semibold text-pink-600 hover:text-pink-700"
+            className="text-xs font-semibold text-leaf-600 hover:text-leaf-700"
             onClick={() => {
               setBellOpen(false);
               navigate("/brand/notifications/all");
@@ -507,7 +507,7 @@ function NotificationPanel({ unread, recentNotices, markAllRead, markRead, navig
                 <button
                   type="button"
                   className={`flex w-full gap-3 px-3.5 py-3 text-left transition hover:bg-gray-50 sm:px-4 dark:hover:bg-gray-700/40 ${
-                    note.read ? "" : "bg-pink-50/70 dark:bg-pink-950/25"
+                    note.read ? "" : "bg-leaf-50/70 dark:bg-leaf-950/25"
                   }`}
                   onClick={() => {
                     if (!note.read) markRead(note.id, true);
@@ -547,7 +547,7 @@ function NotificationPanel({ unread, recentNotices, markAllRead, markRead, navig
       <div className="border-t border-gray-100 px-3.5 py-2 dark:border-gray-700">
         <button
           type="button"
-          className="w-full rounded-xl py-2 text-center text-sm font-semibold text-pink-600 transition hover:bg-pink-50 dark:text-pink-400 dark:hover:bg-pink-950/20"
+          className="w-full rounded-xl py-2 text-center text-sm font-semibold text-leaf-600 transition hover:bg-leaf-50 dark:text-leaf-400 dark:hover:bg-leaf-950/20"
           onClick={() => {
             setBellOpen(false);
             navigate("/brand/notifications/all");
@@ -576,12 +576,12 @@ function ProfileMenu({
   return (
     <div
       role="menu"
-      className="absolute top-12 right-0 z-30 w-[min(16rem,calc(100vw-1.25rem))] overflow-hidden rounded-2xl border border-gray-200 bg-white py-1 shadow-xl dark:border-gray-700 dark:bg-gray-800"
+      className="absolute top-12 right-0 z-30 w-[min(16rem,calc(100vw-1.25rem))] overflow-hidden rounded-xl border border-gray-200 bg-white py-1 shadow-xl dark:border-gray-700 dark:bg-gray-800"
     >
       <div className="flex items-center gap-3 border-b border-gray-100 px-3.5 py-3 dark:border-gray-700">
         <span
           className="grid h-10 w-10 place-items-center rounded-full text-sm font-semibold text-white"
-          style={{ background: brand.color || "#ec4899" }}
+          style={{ background: brand.color || "#001E55" }}
         >
           {(brand.contactName || brand.name).slice(0, 1)}
         </span>

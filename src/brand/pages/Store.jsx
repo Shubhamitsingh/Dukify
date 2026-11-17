@@ -18,7 +18,7 @@ export default function StorePage() {
   const dirty = JSON.stringify(form) !== JSON.stringify(published);
 
   const preview = (
-    <div className={`mx-auto overflow-hidden rounded-2xl border border-gray-200 bg-white ${device === "mobile" ? "max-w-[320px]" : "w-full"}`}>
+    <div className={`mx-auto overflow-hidden rounded-xl border border-gray-200 bg-white ${device === "mobile" ? "max-w-[320px]" : "w-full"}`}>
       <div className="flex items-center justify-between px-4 py-3 text-white" style={{ background: form.color }}>
         <strong style={{ fontFamily: form.font }}>{form.logoText || brand.name}</strong>
         <span className="text-[11px]">{form.links.map((link) => link.label).join(" · ")}</span>
@@ -66,7 +66,7 @@ export default function StorePage() {
           preview: "Store preview",
           publish: "Publish store",
         }[section] || "Store"}
-        description="Shape your storefront. Checkout, payments, tax, and shipping stay with Pahachan."
+        description="Shape your storefront. Checkout, payments, tax, and shipping stay with Dukify."
         action={
           <>
             <button type="button" className="btn-soft" onClick={() => saveDraft(form)}>Save draft</button>
@@ -154,7 +154,7 @@ export default function StorePage() {
               <Field label="Store domain">
                 <input className="input-field" value={form.domain} onChange={(event) => set("domain", event.target.value.toLowerCase().replace(/\s/g, ""))} />
               </Field>
-              <p className="mt-2 text-xs text-gray-500">Custom DNS is handled by Pahachan. This field only stores the requested host.</p>
+              <p className="mt-2 text-xs text-gray-500">Custom DNS is handled by Dukify. This field only stores the requested host.</p>
             </div>
           )}
           {section === "publish" ? (

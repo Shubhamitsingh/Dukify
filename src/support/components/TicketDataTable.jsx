@@ -40,10 +40,10 @@ export function TicketDataTable({
   }, [menuId]);
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-900">
+    <div className="overflow-hidden rounded-xl border border-gray-200/80 bg-white shadow-[var(--app-shadow)] dark:border-gray-700 dark:bg-gray-900">
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-gray-100 px-3 py-2.5 dark:border-gray-800">
         <div className="flex items-center gap-2">
-          <span className="grid h-8 w-8 place-items-center rounded-xl bg-pink-50 text-pink-700 dark:bg-pink-950/40 dark:text-pink-200">
+          <span className="grid h-8 w-8 place-items-center rounded-xl bg-leaf-50 text-leaf-700 dark:bg-leaf-950/40 dark:text-leaf-200">
             <MessageSquareText className="h-4 w-4" />
           </span>
           <div>
@@ -88,15 +88,15 @@ export function TicketDataTable({
                     onOpen(ticket.id);
                   }
                 }}
-                className="group relative flex cursor-pointer gap-0 hover:bg-rose-50/40 dark:hover:bg-pink-950/20"
+                className="group relative flex cursor-pointer gap-0 hover:bg-rose-50/40 dark:hover:bg-leaf-950/20"
               >
                 <span className={`w-1 shrink-0 ${PRIORITY_RAIL[ticket.priority] || PRIORITY_RAIL.Medium}`} />
                 <div className="flex min-w-0 flex-1 flex-col gap-3 px-3 py-3 sm:flex-row sm:items-start sm:gap-4 sm:px-4">
                   <div className="flex min-w-0 flex-1 gap-3">
                     <span
-                      className={`mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-2xl text-xs font-semibold ${
+                      className={`mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-xl text-xs font-semibold ${
                         ticket.requesterType === "brand"
-                          ? "bg-pink-100 text-pink-800 dark:bg-pink-950/50 dark:text-pink-200"
+                          ? "bg-leaf-100 text-leaf-800 dark:bg-leaf-950/50 dark:text-leaf-200"
                           : "bg-indigo-100 text-indigo-800 dark:bg-indigo-950/50 dark:text-indigo-200"
                       }`}
                     >
@@ -125,7 +125,7 @@ export function TicketDataTable({
                           </span>
                         ) : null}
                       </div>
-                      <p className="mt-1 truncate text-sm font-semibold text-gray-900 group-hover:text-pink-800 dark:text-white dark:group-hover:text-pink-200">
+                      <p className="mt-1 truncate text-sm font-semibold text-gray-900 group-hover:text-leaf-800 dark:text-white dark:group-hover:text-leaf-200">
                         {ticket.subject}
                       </p>
                       <p className="mt-0.5 line-clamp-1 text-xs text-gray-500">{preview}</p>
@@ -194,7 +194,7 @@ export function TicketDataTable({
           })
         ) : (
           <div className="px-4 py-16 text-center">
-            <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-pink-50 text-pink-600 dark:bg-pink-950/40">
+            <div className="mx-auto grid h-12 w-12 place-items-center rounded-xl bg-leaf-50 text-leaf-600 dark:bg-leaf-950/40">
               <MessageSquareText className="h-5 w-5" />
             </div>
             <p className="mt-3 text-sm font-semibold text-gray-900 dark:text-white">Queue is clear for these filters</p>
@@ -239,7 +239,7 @@ function SortChip({ label, active, dir, onClick }) {
       type="button"
       onClick={onClick}
       className={`rounded-full px-2.5 py-1 font-semibold ${
-        active ? "bg-pink-500 text-white" : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300"
+        active ? "bg-leaf-500 text-white" : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300"
       }`}
     >
       {label}

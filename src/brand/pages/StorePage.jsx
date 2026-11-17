@@ -14,7 +14,7 @@ import { usePartner } from "../store";
 import { Field, Modal, PageHead, SoftButton, Status, Surface } from "../ui";
 
 const copy = {
-  overview: ["Store overview", "Your public storefront uses the last published draft. Checkout, tax, and shipping stay with Pahachan."],
+  overview: ["Store overview", "Your public storefront uses the last published draft. Checkout, tax, and shipping stay with Dukify."],
   editor: ["Storefront editor", "Change the parts of the store you own. Save a draft before you publish."],
   theme: ["Theme and appearance", "Pick a permitted colour and typeface. Platform checkout styling does not change."],
   identity: ["Logo and brand identity", "The logo mark is text in this demo. A file upload is simulated as the letters you enter."],
@@ -32,7 +32,7 @@ function Preview({ draft, products, mode }) {
   return (
     <div
       className={`overflow-hidden border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900 ${
-        mobile ? "mx-auto max-w-[320px] rounded-[1.75rem]" : "rounded-2xl"
+        mobile ? "mx-auto max-w-[320px] rounded-[1.75rem]" : "rounded-xl"
       }`}
     >
       {mobile ? <div className="mx-auto mt-2 mb-1 h-1 w-16 rounded-full bg-gray-200 dark:bg-gray-700" /> : null}
@@ -141,7 +141,7 @@ function Overview({ partner, draft, mode, setMode, onPublish, onSave }) {
           <Surface title="Brand snapshot" padded>
             <div className="flex items-start gap-3">
               <span
-                className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl text-base font-bold text-white shadow-sm"
+                className="grid h-12 w-12 shrink-0 place-items-center rounded-xl text-base font-bold text-white shadow-sm"
                 style={{ background: draft.color }}
               >
                 {(draft.faviconText || draft.logoText || "B").slice(0, 1)}
@@ -190,9 +190,9 @@ function Overview({ partner, draft, mode, setMode, onPublish, onSave }) {
                     key={item.to}
                     type="button"
                     onClick={() => navigate(item.to)}
-                    className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-left text-xs font-semibold text-gray-700 transition hover:border-pink-200 hover:bg-pink-50/40 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200"
+                    className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-left text-xs font-semibold text-gray-700 transition hover:border-leaf-200 hover:bg-leaf-50/40 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200"
                   >
-                    <Icon className="h-3.5 w-3.5 text-pink-600" />
+                    <Icon className="h-3.5 w-3.5 text-leaf-600" />
                     {item.label}
                   </button>
                 );
@@ -237,7 +237,7 @@ function Overview({ partner, draft, mode, setMode, onPublish, onSave }) {
               <button
                 type="button"
                 className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-[11px] font-semibold ${
-                  mode === "desktop" ? "border-pink-500 bg-pink-50 text-pink-800" : "border-gray-200 bg-white text-gray-600"
+                  mode === "desktop" ? "border-leaf-500 bg-leaf-50 text-leaf-800" : "border-gray-200 bg-white text-gray-600"
                 }`}
                 onClick={() => setMode("desktop")}
               >
@@ -247,7 +247,7 @@ function Overview({ partner, draft, mode, setMode, onPublish, onSave }) {
               <button
                 type="button"
                 className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-[11px] font-semibold ${
-                  mode === "mobile" ? "border-pink-500 bg-pink-50 text-pink-800" : "border-gray-200 bg-white text-gray-600"
+                  mode === "mobile" ? "border-leaf-500 bg-leaf-50 text-leaf-800" : "border-gray-200 bg-white text-gray-600"
                 }`}
                 onClick={() => setMode("mobile")}
               >
@@ -264,7 +264,7 @@ function Overview({ partner, draft, mode, setMode, onPublish, onSave }) {
             </span>
             <span>{draftDiffers ? "Showing draft" : "Matches live"}</span>
           </div>
-          <div className={`rounded-2xl bg-gray-50 p-3 dark:bg-gray-950/40 ${mode === "mobile" ? "py-5" : ""}`}>
+          <div className={`rounded-xl bg-gray-50 p-3 dark:bg-gray-950/40 ${mode === "mobile" ? "py-5" : ""}`}>
             <Preview draft={draft} products={partner.products} mode={mode} />
           </div>
         </Surface>
@@ -514,7 +514,7 @@ export default function StorePage({ section }) {
               </div>
             }
           >
-            <div className={`rounded-2xl bg-gray-50 p-3 dark:bg-gray-950/40 ${mode === "mobile" ? "py-5" : ""}`}>
+            <div className={`rounded-xl bg-gray-50 p-3 dark:bg-gray-950/40 ${mode === "mobile" ? "py-5" : ""}`}>
               <Preview draft={draft} products={partner.products} mode={mode} />
             </div>
           </Surface>

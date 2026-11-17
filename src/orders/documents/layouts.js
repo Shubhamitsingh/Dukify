@@ -170,7 +170,7 @@ export function buildPackingSlipHtml(order, settings = {}) {
   const body = `
   <div class="sheet">
     <h1>Packing slip</h1>
-    <p class="muted">Pahachan central fulfillment · ${esc(order.brand)} · ${esc(order.id)}</p>
+    <p class="muted">Dukify central fulfillment · ${esc(order.brand)} · ${esc(order.id)}</p>
     <div class="grid">
       <div>
         <h2>Ship to</h2>
@@ -208,11 +208,11 @@ export function buildTaxInvoiceHtml(order, settings = {}) {
   const body = `
   <div class="sheet">
     <h1>Tax invoice</h1>
-    <p class="muted">Mock invoice for session demo · ${esc(company.name || "Pahachan")}</p>
+    <p class="muted">Mock invoice for session demo · ${esc(company.name || "Dukify")}</p>
     <div class="grid">
       <div>
         <h2>Seller</h2>
-        <p>${esc(company.name || "Pahachan")}<br/>${esc(company.address || "")}<br/>${esc(company.city || "")} ${esc(company.pin || "")}<br/>GSTIN ${esc(company.gstin || "—")}</p>
+        <p>${esc(company.name || "Dukify")}<br/>${esc(company.address || "")}<br/>${esc(company.city || "")} ${esc(company.pin || "")}<br/>GSTIN ${esc(company.gstin || "—")}</p>
       </div>
       <div>
         <h2>Bill to / Ship to</h2>

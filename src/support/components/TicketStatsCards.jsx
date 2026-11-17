@@ -62,7 +62,7 @@ export function TicketStatsCards({ stats, activeStatus = "All", onStatusClick })
               key={item.key}
               type="button"
               onClick={() => onStatusClick?.(item.key)}
-              className={`group relative overflow-hidden rounded-2xl border p-3 text-left transition ${
+              className={`group relative overflow-hidden rounded-xl border p-3 text-left transition ${
                 selected
                   ? "border-sky-500 bg-sky-600 text-white shadow-md shadow-sky-600/25"
                   : "border-sky-100 bg-white hover:-translate-y-0.5 hover:border-sky-300 hover:shadow-md dark:border-sky-900/50 dark:bg-gray-900 dark:hover:border-sky-700"
