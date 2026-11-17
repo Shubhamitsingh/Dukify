@@ -169,9 +169,11 @@ body {
 .app-rail {
   background: var(--app-navy);
   border: none;
-  border-right: 1px solid rgba(255, 255, 255, 0.06);
-  /* Left flush; top inset via top-2, bottom edge-to-edge — round only top-right */
-  border-radius: 0 1rem 0 0;
+  /* Same radius as .app-main; inset so all four corners show */
+  top: 8px;
+  bottom: 8px;
+  left: 8px;
+  border-radius: var(--app-radius);
   color: #ffffff;
   box-shadow: 4px 0 24px rgba(0, 0, 0, 0.12);
 }
@@ -206,8 +208,9 @@ body {
   .dark .app-rail {
     top: 0;
     bottom: 0;
+    left: 0;
     border: none;
-    border-radius: 0;
+    border-radius: 1rem;
     box-shadow: none;
   }
 
@@ -264,6 +267,20 @@ body {
   .app-topbar,
   .dark .app-topbar {
     border-radius: 1rem;
+    background: #001e55;
+    color: #fff;
+    box-shadow: none;
+  }
+
+  .app-topbar .icon-btn,
+  .dark .app-topbar .icon-btn {
+    color: #fff;
+  }
+
+  .app-topbar .icon-btn:hover,
+  .dark .app-topbar .icon-btn:hover {
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
   }
 
   .app-main,

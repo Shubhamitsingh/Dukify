@@ -15,6 +15,7 @@ import {
   ShoppingBag,
   Store,
   Sun,
+  UserRound,
   X,
 } from "lucide-react";
 import { findCrumb, menu, navGroups, pathFor } from "./nav";
@@ -151,14 +152,14 @@ export default function Shell({ children, session, dark, onToggleDark, onLogout 
   const desktopWidth = collapsed ? 64 : 220;
   const drawerWidth = mobileOpen ? 260 : desktopWidth;
   const railGap = 0;
-  const workspacePad = desktopWidth + 8;
+  const workspacePad = desktopWidth + 16;
   const mark = (brand.name || "B").slice(0, 1).toUpperCase();
   const crumbs = findCrumb(location.pathname);
 
   return (
     <div className="app-shell">
       <aside
-        className={`app-rail fixed top-2 bottom-0 left-0 z-40 flex flex-col overflow-hidden transition-[width,transform] duration-200 ${
+        className={`app-rail fixed z-40 flex flex-col overflow-hidden transition-[width,transform] duration-200 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full max-lg:pointer-events-none max-lg:invisible"
         } lg:visible lg:translate-x-0 lg:pointer-events-auto max-lg:top-0`}
         style={{ width: drawerWidth }}
@@ -243,13 +244,13 @@ export default function Shell({ children, session, dark, onToggleDark, onLogout 
             </button>
             {isDashboard ? (
               <p className="min-w-0 truncate text-sm font-bold tracking-tight sm:text-base lg:text-lg">
-                <span className="text-gray-900 dark:text-white">{hello.when}, </span>
-                <span className="font-semibold text-gray-900 dark:text-white">{hello.name.split(" ")[0]}</span>
+                <span className="text-white lg:text-gray-900 dark:text-white">{hello.when}, </span>
+                <span className="font-semibold text-white lg:text-gray-900 dark:text-white">{hello.name.split(" ")[0]}</span>
               </p>
             ) : (
               <div className="min-w-0">
-                <p className="hidden truncate text-[11px] text-gray-500 sm:block sm:text-xs">{crumbs.join(" / ")}</p>
-                <p className="truncate text-sm font-semibold">{crumbs[crumbs.length - 1] || brand.name}</p>
+                <p className="hidden truncate text-[11px] text-white/70 sm:block sm:text-xs lg:text-gray-500">{crumbs.join(" / ")}</p>
+                <p className="truncate text-sm font-semibold text-white lg:text-gray-900">{crumbs[crumbs.length - 1] || brand.name}</p>
               </div>
             )}
           </div>
@@ -388,7 +389,7 @@ export default function Shell({ children, session, dark, onToggleDark, onLogout 
             <div className="relative" ref={profileRef}>
               <button
                 type="button"
-                className="flex h-9 items-center gap-2 rounded-full border border-transparent bg-transparent py-0.5 pr-0 pl-0 transition hover:border-leaf-200 hover:bg-leaf-50/40 lg:h-11 lg:border-gray-200/80 lg:bg-white lg:pr-2.5 lg:pl-1 lg:shadow-[0_1px_2px_rgba(17,24,39,0.04)] dark:lg:border-gray-700 dark:lg:bg-gray-900"
+                className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-white/80 bg-white/10 text-white transition hover:bg-white/20 lg:flex lg:h-11 lg:w-auto lg:items-center lg:gap-2 lg:border lg:border-gray-200/80 lg:bg-white lg:py-1 lg:pr-2.5 lg:pl-1 lg:text-[#001E55] lg:shadow-[0_1px_2px_rgba(17,24,39,0.04)] dark:lg:border-gray-700 dark:lg:bg-gray-900 dark:lg:text-white"
                 onClick={() => {
                   setProfileOpen((value) => !value);
                   setBellOpen(false);
@@ -398,11 +399,8 @@ export default function Shell({ children, session, dark, onToggleDark, onLogout 
                 aria-haspopup="menu"
                 aria-label="Account menu"
               >
-                <span
-                  className="grid h-9 w-9 place-items-center rounded-full text-[13px] font-semibold text-white shadow-sm ring-2 ring-white dark:ring-gray-900"
-                  style={{ background: brand.color || "#001E55" }}
-                >
-                  {(brand.contactName || brand.name).slice(0, 1)}
+                <span className="grid place-items-center lg:h-8 lg:w-8 lg:rounded-full lg:bg-[#EEF3FA] lg:text-[#001E55]">
+                  <UserRound className="h-4 w-4" strokeWidth={2} />
                 </span>
                 <span className="hidden text-left xl:block">
                   <span className="block text-[13px] leading-4 font-semibold text-gray-900 dark:text-white">
@@ -579,11 +577,8 @@ function ProfileMenu({
       className="absolute top-12 right-0 z-30 w-[min(16rem,calc(100vw-1.25rem))] overflow-hidden rounded-xl border border-gray-200 bg-white py-1 shadow-xl dark:border-gray-700 dark:bg-gray-800"
     >
       <div className="flex items-center gap-3 border-b border-gray-100 px-3.5 py-3 dark:border-gray-700">
-        <span
-          className="grid h-10 w-10 place-items-center rounded-full text-sm font-semibold text-white"
-          style={{ background: brand.color || "#001E55" }}
-        >
-          {(brand.contactName || brand.name).slice(0, 1)}
+        <span className="grid h-10 w-10 place-items-center rounded-full bg-[#EEF3FA] text-[#001E55]">
+          <UserRound className="h-5 w-5" strokeWidth={2} />
         </span>
         <div className="min-w-0">
           <p className="truncate text-sm font-semibold text-gray-900 dark:text-white">{brand.contactName || brand.name}</p>

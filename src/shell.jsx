@@ -161,12 +161,12 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
 
   const width = collapsed ? 64 : 220;
   const railGap = 0;
-  const workspacePad = width + 8;
+  const workspacePad = width + 16;
 
   return (
     <div className="app-shell">
       <aside
-        className={`app-rail fixed top-2 bottom-0 left-0 z-40 flex flex-col overflow-hidden transition-[width,transform] duration-200 ${
+        className={`app-rail fixed z-40 flex flex-col overflow-hidden transition-[width,transform] duration-200 ${
           mobileOpen ? "is-open translate-x-0" : "max-lg:-translate-x-[calc(100%+2rem)] lg:translate-x-0"
         } lg:translate-x-0 max-lg:top-0`}
         style={{ width }}
@@ -258,7 +258,7 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
               <Menu className="h-5 w-5" />
             </button>
             <img
-              src="/logo/logo-ducku-2.png"
+              src="/logo/logo-ducku-light.png"
               alt="Dukify"
               className="h-7 w-auto max-w-[7.25rem] shrink-0 object-contain object-left lg:hidden"
             />
@@ -466,7 +466,7 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
             <div className="relative" ref={profileRef}>
               <button
                 type="button"
-                className="flex h-11 items-center gap-2.5 rounded-full border border-gray-200/80 bg-white py-1 pr-2.5 pl-1 shadow-[0_1px_2px_rgba(17,24,39,0.04)] transition hover:border-leaf-200 hover:bg-leaf-50/40 dark:border-gray-700 dark:bg-gray-900 dark:hover:border-leaf-900/50 dark:hover:bg-leaf-950/20"
+                className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-white/80 bg-white/10 text-white transition hover:bg-white/20 sm:flex sm:h-11 sm:w-auto sm:items-center sm:gap-2.5 sm:border sm:border-gray-200/80 sm:bg-white sm:py-1 sm:pr-2.5 sm:pl-1 sm:text-[#001E55] sm:shadow-[0_1px_2px_rgba(17,24,39,0.04)] sm:hover:border-leaf-200 sm:hover:bg-leaf-50/40 dark:sm:border-gray-700 dark:sm:bg-gray-900 dark:sm:text-white"
                 onClick={() => {
                   setProfileOpen((value) => !value);
                   setBellOpen(false);
@@ -475,8 +475,8 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
                 aria-haspopup="menu"
                 aria-label="Account menu"
               >
-                <span className="grid h-8 w-8 place-items-center rounded-full bg-leaf-50 text-[12px] font-semibold tracking-tight text-leaf-700 ring-1 ring-leaf-100 dark:bg-leaf-950/40 dark:text-leaf-300 dark:ring-leaf-900/50">
-                  {(principal?.name || "P").slice(0, 1).toUpperCase()}
+                <span className="grid place-items-center sm:h-8 sm:w-8 sm:rounded-full sm:bg-leaf-50 sm:text-leaf-700 sm:ring-1 sm:ring-leaf-100 dark:sm:bg-leaf-950/40 dark:sm:text-leaf-300 dark:sm:ring-leaf-900/50">
+                  <UserRound className="h-4 w-4" strokeWidth={2} />
                 </span>
                 <span className="hidden text-left sm:block">
                   <span className="block text-[13px] leading-4 font-semibold text-gray-900 dark:text-white">{principal?.name || "User"}</span>
@@ -490,8 +490,8 @@ export function Shell({ children, onLogout, dark, onToggleDark }) {
                   className="absolute top-12 right-0 z-30 w-64 overflow-hidden rounded-xl border border-gray-200 bg-white py-1 shadow-xl dark:border-gray-700 dark:bg-gray-800"
                 >
                   <div className="flex items-center gap-3 border-b border-gray-100 px-3.5 py-3 dark:border-gray-700">
-                    <span className="grid h-9 w-9 place-items-center rounded-full bg-leaf-50 text-[13px] font-semibold tracking-tight text-leaf-700 ring-1 ring-leaf-100 dark:bg-leaf-950/40 dark:text-leaf-300 dark:ring-leaf-900/50">
-                      {(principal?.name || "P").slice(0, 1).toUpperCase()}
+                    <span className="grid h-9 w-9 place-items-center rounded-full bg-leaf-50 text-leaf-700 ring-1 ring-leaf-100 dark:bg-leaf-950/40 dark:text-leaf-300 dark:ring-leaf-900/50">
+                      <UserRound className="h-4 w-4" strokeWidth={2} />
                     </span>
                     <div className="min-w-0">
                       <p className="truncate text-sm font-semibold text-gray-900 dark:text-white">{principal?.name || "User"}</p>

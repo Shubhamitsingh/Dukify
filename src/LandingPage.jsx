@@ -10,10 +10,12 @@ import {
   MessageSquare,
   Package,
   Shirt,
+  Menu,
   Store,
   Truck,
   Users,
   Wallet,
+  X,
 } from "lucide-react";
 
 /**
@@ -26,6 +28,14 @@ const C = {
   card: "#FFFFFF", // White cards on Paper
   accent: "#EE8802",
 };
+
+const landingNav = [
+  { href: "#platform", label: "Platform" },
+  { href: "#how", label: "How it works" },
+  { href: "#results", label: "What you get" },
+  { href: "#pricing", label: "Pricing" },
+  { href: "#faq", label: "FAQ" },
+];
 
 const muted = "#64748B";
 const border = "#E2E8F0";
@@ -317,6 +327,7 @@ export function LandingPage() {
   const [tab, setTab] = useState(featureTabs[0].id);
   const [openFaq, setOpenFaq] = useState(0);
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [pastHero, setPastHero] = useState(false);
   const [heroLine, setHeroLine] = useState(0);
   const [heroAnim, setHeroAnim] = useState(true);
@@ -329,6 +340,20 @@ export function LandingPage() {
   const storeInViewRef = useRef(false);
   const prefetchedVideos = useRef(new Set());
   const active = featureTabs.find((t) => t.id === tab) || featureTabs[0];
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+    const onKey = (event) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [menuOpen]);
+
   const rotating = heroRotatingLines[heroLine];
   const liveStore = storeDemos[storeDemo];
 
@@ -659,8 +684,14 @@ export function LandingPage() {
         }
         .lp-hero-rotate {
           display: block;
-          min-height: 1.15em;
-          overflow: hidden;
+          min-height: 2.15em;
+          overflow: visible;
+        }
+        @media (min-width: 640px) {
+          .lp-hero-rotate {
+            min-height: 1.15em;
+            overflow: hidden;
+          }
         }
         .lp-hero-rotate-inner {
           display: inline-block;
@@ -706,19 +737,19 @@ export function LandingPage() {
       <header
         className="fixed inset-x-0 top-0 z-50 transition-all duration-300"
         style={{
-          background: scrolled ? "rgba(243,240,234,0.92)" : "transparent",
-          backdropFilter: scrolled ? "blur(10px)" : "none",
-          borderBottom: scrolled ? "1px solid #E2E8F0" : "1px solid transparent",
+          background: menuOpen ? "#F7F9FC" : scrolled ? "rgba(247,249,252,0.96)" : "transparent",
+          backdropFilter: menuOpen ? "none" : scrolled ? "blur(10px)" : "none",
+          borderBottom: menuOpen || scrolled ? "1px solid #E2E8F0" : "1px solid transparent",
         }}
       >
-        <div className="mx-auto flex h-16 w-full max-w-[1600px] items-center gap-6 px-6 sm:px-10 md:px-14 lg:h-[4.25rem] lg:px-16 xl:px-20">
+        <div className="mx-auto flex h-16 w-full max-w-[1600px] items-center gap-6 px-4 sm:px-10 md:px-14 lg:h-[4.25rem] lg:px-16 xl:px-20">
           {/* Left: logo + nav links (Shopify layout) */}
           <div className="flex min-w-0 flex-1 items-center gap-6 lg:gap-8">
-            <a href="#top" className="inline-flex shrink-0 items-center">
+            <a href="#top" className="inline-flex shrink-0 items-center" onClick={() => setMenuOpen(false)}>
               <img
-                src={scrolled ? "/logo/logo-ducku-2.png" : "/logo/logo-ducku-light.png"}
+                src={menuOpen || scrolled ? "/logo/logo-ducku-2.png" : "/logo/logo-ducku-light.png"}
                 alt="Dukify"
-                className="h-9 w-auto sm:h-10"
+                className="h-8 w-auto sm:h-10"
               />
             </a>
 
@@ -729,44 +760,82 @@ export function LandingPage() {
                   : "border border-white/10 bg-white/[0.04] text-white/75"
               }`}
             >
-              <a href="#platform" className={`rounded-full px-4 py-1.5 transition ${scrolled ? "hover:bg-[#EEF3FA]" : "hover:bg-white/10 hover:text-white"}`}>
-                Platform
-              </a>
-              <a href="#how" className={`rounded-full px-4 py-1.5 transition ${scrolled ? "hover:bg-[#EEF3FA]" : "hover:bg-white/10 hover:text-white"}`}>
-                How it works
-              </a>
-              <a href="#results" className={`rounded-full px-4 py-1.5 transition ${scrolled ? "hover:bg-[#EEF3FA]" : "hover:bg-white/10 hover:text-white"}`}>
-                What you get
-              </a>
-              <a href="#pricing" className={`rounded-full px-4 py-1.5 transition ${scrolled ? "hover:bg-[#EEF3FA]" : "hover:bg-white/10 hover:text-white"}`}>
-                Pricing
-              </a>
-              <a href="#faq" className={`rounded-full px-4 py-1.5 transition ${scrolled ? "hover:bg-[#EEF3FA]" : "hover:bg-white/10 hover:text-white"}`}>
-                FAQ
-              </a>
+              {landingNav.map((item) => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  className={`rounded-full px-4 py-1.5 transition ${scrolled ? "hover:bg-[#EEF3FA]" : "hover:bg-white/10 hover:text-white"}`}
+                >
+                  {item.label}
+                </a>
+              ))}
             </nav>
           </div>
 
-          <div className="flex shrink-0 items-center gap-4 sm:gap-5">
+          <div className="flex shrink-0 items-center gap-2 sm:gap-5">
             <Link
               to="/login"
-              className={`hidden text-[1rem] font-medium sm:inline transition-opacity hover:opacity-70 lg:text-[1.05rem] ${scrolled ? "text-[#001E55]" : "text-white"}`}
+              className={`hidden text-[1rem] font-medium transition-opacity hover:opacity-70 sm:inline lg:text-[1.05rem] ${scrolled ? "text-[#001E55]" : "text-white"}`}
             >
               Log in
             </Link>
             <Link
               to="/login"
-              className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-[0.95rem] font-bold text-[#001E55] transition hover:brightness-110 sm:px-6"
+              className="hidden items-center justify-center rounded-full px-5 py-2.5 text-[0.95rem] font-bold text-[#001E55] transition hover:brightness-110 sm:inline-flex sm:px-6"
               style={{ background: C.accent }}
             >
-              Open workspace
+              Start for free
             </Link>
+            <button
+              type="button"
+              className="grid h-11 w-11 place-items-center rounded-full md:hidden"
+              style={{ color: menuOpen || scrolled ? "#001E55" : "#FFFFFF" }}
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen((open) => !open)}
+            >
+              {menuOpen ? <X className="h-6 w-6" strokeWidth={2.25} /> : <Menu className="h-6 w-6" strokeWidth={2.25} />}
+            </button>
           </div>
         </div>
+
+        {menuOpen ? (
+          <div className="md:hidden">
+            <nav className="fixed inset-x-0 top-16 bottom-0 z-50 overflow-y-auto border-t border-[#E2E8F0] bg-[#F7F9FC] px-4 pb-8 pt-2">
+              {landingNav.map((item) => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  className="flex h-12 items-center border-b border-[#E2E8F0] text-base font-semibold text-[#001E55]"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {item.label}
+                </a>
+              ))}
+              <div className="mt-4 flex flex-col gap-3">
+                <Link
+                  to="/login"
+                  className="inline-flex h-12 w-full items-center justify-center rounded-full border border-[#001E55] bg-white text-[0.95rem] font-bold text-[#001E55]"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Log in
+                </Link>
+                <Link
+                  to="/login"
+                  className="inline-flex h-12 w-full items-center justify-center rounded-full text-[0.95rem] font-bold text-[#001E55]"
+                  style={{ background: C.accent }}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Start for free
+                </Link>
+              </div>
+            </nav>
+          </div>
+        ) : null}
       </header>
 
       <main id="top">
-        <section className="relative isolate min-h-[100svh] overflow-hidden">
+        <section className="relative isolate min-h-[78svh] overflow-hidden sm:min-h-[100svh]">
           {/* Layer 1a — poster paints immediately (LCP). Never lazy-load. */}
           <picture>
             <source
@@ -781,7 +850,7 @@ export function LandingPage() {
               height={HERO_POSTER.height}
               decoding="async"
               fetchPriority="high"
-              className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover object-[center_18%] sm:object-center"
+              className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover object-center"
               style={{ opacity: heroVideoPlaying ? 0 : 1, transition: "opacity 400ms ease" }}
               aria-hidden="true"
             />
@@ -791,7 +860,7 @@ export function LandingPage() {
           {heroVideoEnabled ? (
             <video
               ref={heroVideoRef}
-              className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover object-[center_18%] sm:object-center"
+              className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover object-center"
               style={{ opacity: heroVideoPlaying ? 1 : 0, transition: "opacity 400ms ease" }}
               muted
               playsInline
@@ -803,19 +872,26 @@ export function LandingPage() {
 
           {/* Layer 2 — dark overlay so text stays readable */}
           <div
-            className="absolute inset-0 z-[1]"
+            className="absolute inset-0 z-[1] sm:hidden"
+            style={{
+              background:
+                "radial-gradient(120% 70% at 50% 46%, rgba(9,9,11,0.62) 0%, rgba(9,9,11,0.38) 58%, rgba(9,9,11,0.22) 100%)",
+            }}
+          />
+          <div
+            className="absolute inset-0 z-[1] hidden sm:block"
             style={{
               background:
                 "linear-gradient(180deg, rgba(9,9,11,0.55) 0%, rgba(9,9,11,0.72) 45%, rgba(9,9,11,0.85) 100%)",
             }}
           />
 
-          {/* Layer 3 — centered SaaS-style hero type (reference format) */}
-          <div className="lp-shell relative z-[2] flex min-h-[100svh] items-end justify-center pb-28 pt-24 text-center sm:items-center sm:py-32">
+          {/* Layer 3 — phone and desktop: copy centered on the first screen */}
+          <div className="lp-shell relative z-[2] flex min-h-[78svh] items-center justify-center py-16 text-center sm:min-h-[100svh] sm:py-32">
             <div className="mx-auto flex w-full max-w-4xl flex-col items-center">
               <h1 className="font-bold tracking-[-0.04em] text-white">
-                <span className="block text-[2.15rem] leading-[1.08] min-[420px]:text-[2.45rem] sm:text-[clamp(3rem,8.5vw,6.25rem)] sm:leading-[1.05]">Start your clothing</span>
-                <span className="lp-hero-rotate mt-1 text-[1.7rem] leading-[1.15] min-[420px]:text-[1.95rem] sm:text-[clamp(2.35rem,6.5vw,4.75rem)]">
+                <span className="block text-[2.85rem] leading-[1.02] min-[420px]:text-[3.05rem] sm:text-[clamp(3rem,8.5vw,6.25rem)] sm:leading-[1.05]">Start your clothing</span>
+                <span className="lp-hero-rotate mt-1.5 block min-h-[2.15em] overflow-visible text-[2.3rem] leading-[1.05] min-[420px]:text-[2.5rem] sm:min-h-[1.15em] sm:overflow-hidden sm:text-[clamp(2.35rem,6.5vw,4.75rem)]">
                   <span className={`lp-hero-rotate-inner ${heroAnim ? "is-in" : "is-out"}`}>
                     {rotating.before}{" "}
                     <span style={{ color: C.accent }}>{rotating.accent}</span>
@@ -823,32 +899,32 @@ export function LandingPage() {
                 </span>
               </h1>
 
-              <p className="mt-4 max-w-[20rem] text-[0.95rem] font-medium leading-relaxed text-white/80 sm:mt-6 sm:max-w-xl sm:text-[clamp(1rem,2vw,1.2rem)]">
+              <p className="mt-4 max-w-[17.5rem] text-[0.92rem] font-medium leading-snug text-white/80 sm:mt-6 sm:max-w-xl sm:text-[clamp(1rem,2vw,1.2rem)] sm:leading-relaxed">
                 Your workspace to pick clothing, launch a branded store, and sell to the audience you already have.
               </p>
 
-              <div className="mt-7 flex w-full max-w-sm flex-col items-stretch gap-3 sm:mt-16 sm:w-auto sm:max-w-none sm:flex-row sm:flex-wrap sm:items-center sm:justify-center sm:gap-4">
+              <div className="mt-6 flex w-full max-w-[16.25rem] flex-col items-stretch gap-2.5 sm:mt-16 sm:w-auto sm:max-w-none sm:flex-row sm:flex-wrap sm:items-center sm:justify-center sm:gap-4">
                 <Link
                   to="/login"
                   className="inline-flex h-12 w-full items-center justify-center rounded-full px-8 text-[0.95rem] font-bold leading-none tracking-tight text-[#001E55] transition hover:brightness-110 sm:w-auto"
                   style={{ background: C.accent }}
                 >
-                  Open workspace
+                  Start for free
                 </Link>
-                <a
-                  href="#platform"
+                <Link
+                  to="/support"
                   className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full border border-white/25 bg-white/10 px-6 text-[0.95rem] font-semibold leading-none tracking-tight text-white transition hover:border-white/40 hover:bg-white/15 sm:w-auto"
                 >
-                  See the platform
+                  Book a demo
                   <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.25} />
-                </a>
+                </Link>
               </div>
             </div>
           </div>
 
         </section>
 
-        <section className="relative py-12 sm:py-16" style={{ background: C.bg }}>
+        <section className="relative z-10 -mt-8 rounded-t-[2rem] py-12 sm:mt-0 sm:rounded-none sm:py-16" style={{ background: C.bg }}>
           <div className="mb-8 flex flex-col items-center gap-2 px-4 text-center">
             <h2 className="max-w-xl text-[clamp(1.5rem,3vw,2.1rem)] font-bold tracking-[-0.03em] text-[#001E55]">
               Creators and brand owners who want their own clothing label
@@ -944,7 +1020,7 @@ export function LandingPage() {
         </section>
 
         {/* Free brand website — section heading + 80% site / 20% side copy */}
-        <section id="website" ref={storeSectionRef} className="py-16 sm:py-24" style={{ background: C.bg }}>
+        <section id="website" ref={storeSectionRef} className="pb-6 pt-12 sm:py-24" style={{ background: C.bg }}>
           <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
             <Reveal>
               <div className="mx-auto max-w-3xl text-center">
@@ -1041,7 +1117,7 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section id="platform" className="py-20 sm:py-28" style={{ background: C.bg }}>
+        <section id="platform" className="scroll-mt-20 pb-16 pt-6 sm:py-28" style={{ background: C.bg }}>
           <div className="lp-shell">
             <Reveal>
               <div className="mx-auto max-w-3xl text-center">
@@ -1341,7 +1417,7 @@ export function LandingPage() {
         </section>
 
         {/* What you get — phone-style feature cards + warm yellow accents */}
-        <section id="results" className="py-16 sm:py-24" style={{ background: C.bg }}>
+        <section id="results" className="scroll-mt-20 py-16 sm:py-24" style={{ background: C.bg }}>
           <div className="lp-shell">
             <Reveal>
               <div className="mb-12 max-w-2xl">
@@ -1421,7 +1497,7 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section id="how" className="py-16 sm:py-24" style={{ background: C.bg }}>
+        <section id="how" className="scroll-mt-20 py-16 sm:py-24" style={{ background: C.bg }}>
           <div className="lp-shell">
             <Reveal>
               <div className="mx-auto max-w-2xl text-center">
@@ -1537,7 +1613,7 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section id="pricing" className="py-16 sm:py-24" style={{ background: C.bg }}>
+        <section id="pricing" className="scroll-mt-20 py-16 sm:py-24" style={{ background: C.bg }}>
           <div className="lp-shell">
             <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-20">
               <Reveal>
@@ -1581,7 +1657,7 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section id="faq" className="py-16 sm:py-24" style={{ background: C.bg }}>
+        <section id="faq" className="scroll-mt-20 py-16 sm:py-24" style={{ background: C.bg }}>
           <Reveal>
             <div className="lp-shell max-w-[820px]">
               <div className="text-center">
@@ -1634,7 +1710,7 @@ export function LandingPage() {
                 Start a clothing brand with Dukify products—then continue in your brand workspace.
               </p>
               <Link to="/login" className="lp-btn-primary mt-9">
-                Open workspace <ArrowRight className="h-4 w-4" />
+                Start for free <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
           </Reveal>
